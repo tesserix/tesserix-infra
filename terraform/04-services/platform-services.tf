@@ -95,6 +95,18 @@ resource "google_cloud_run_v2_service" "auth_bff" {
       }
 
       env {
+        name  = "APP_ENV"
+        value = "production"
+      }
+      env {
+        name  = "GCP_PROJECT_ID"
+        value = var.project_id
+      }
+      env {
+        name  = "GIP_API_KEY"
+        value = var.identity_platform_api_key
+      }
+      env {
         name  = "OPENFGA_URL"
         value = google_cloud_run_v2_service.openfga.uri
       }
@@ -103,10 +115,6 @@ resource "google_cloud_run_v2_service" "auth_bff" {
       #   name  = "TENANT_SERVICE_URL"
       #   value = google_cloud_run_v2_service.tenant_service.uri
       # }
-      env {
-        name  = "IDENTITY_PLATFORM_API_KEY"
-        value = var.identity_platform_api_key
-      }
 
       env {
         name = "COOKIE_ENCRYPTION_KEY"
@@ -131,6 +139,15 @@ resource "google_cloud_run_v2_service" "auth_bff" {
         value_source {
           secret_key_ref {
             secret  = "openfga-preshared-key"
+            version = "latest"
+          }
+        }
+      }
+      env {
+        name = "PLATFORM_CLIENT_SECRET"
+        value_source {
+          secret_key_ref {
+            secret  = "platform-client-secret"
             version = "latest"
           }
         }

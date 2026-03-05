@@ -59,6 +59,7 @@ resource "google_secret_manager_secret" "manual" {
     "stripe-webhook-secret",
     "growthbook-api-key",
     "identity-platform-smtp-password",
+    "platform-client-secret",
   ])
 
   secret_id = each.key
