@@ -1,0 +1,9 @@
+# This file is kept for reference. The actual models are split per product:
+#
+#   platform/model.fga    — shared types (user, tenant, platform, product, document)
+#   marketplace/model.fga — marketplace-specific types (store, order, product_listing, etc.)
+#
+# Each product gets its own OpenFGA store. To add a new product:
+#   1. Create a new directory: openfga/{product-name}/model.fga
+#   2. Define product-specific types
+#   3. Register the store via OpenFGA API at deploy time (see go-shared/authz)

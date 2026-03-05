@@ -1,0 +1,45 @@
+model
+  schema 1.1
+
+# =============================================================================
+# PLATFORM AUTHORIZATION MODEL (Store: "platform")
+# =============================================================================
+# Shared across ALL products. Handles identity, tenancy, product access.
+# Products create their own OpenFGA stores with product-specific types.
+# =============================================================================
+
+type user
+
+type platform
+  relations
+    define super_admin: [user]
+    define admin: [user] or super_admin
+
+type tenant
+  relations
+    define owner: [user]
+    define admin: [user] or owner
+    define member: [user] or admin
+    define billing_admin: [user] or owner
+    define can_manage_members: admin
+    define can_manage_billing: billing_admin
+    define can_view_audit: admin
+
+# Which products a tenant has access to
+type product
+  relations
+    define tenant: [tenant]
+    define enabled: [tenant]
+    define admin: [user] or admin from tenant
+    define user: [user] or member from tenant
+
+# Platform-level documents (shared across products)
+type document
+  relations
+    define tenant: [tenant]
+    define owner: [user]
+    define editor: [user] or owner
+    define viewer: [user] or editor or member from tenant
+    define can_edit: editor
+    define can_view: viewer
+    define can_delete: owner

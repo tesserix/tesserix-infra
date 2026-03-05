@@ -1,0 +1,17 @@
+name = "tesserix-router"
+main = "worker.js"
+compatibility_date = "2026-03-01"
+
+[vars]
+AUTH_BFF_URL = "https://auth-bff-xxxxx.a.run.app"
+TESSERIX_HOME_URL = "https://tesserix-home-xxxxx.a.run.app"
+# STOREFRONT_URL = "https://mp-storefront-xxxxx.a.run.app"
+
+# Routes: update after deploying
+# [[routes]]
+# pattern = "tesserix.app/*"
+# zone_name = "tesserix.app"
+#
+# [[routes]]
+# pattern = "*.tesserix.app/*"
+# zone_name = "tesserix.app"

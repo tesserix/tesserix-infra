@@ -1,0 +1,64 @@
+model
+  schema 1.1
+
+# =============================================================================
+# MARKETPLACE AUTHORIZATION MODEL (Store: "marketplace")
+# =============================================================================
+# Product-specific types. Each product owns its own OpenFGA store.
+# Platform checks (tenant membership) happen in the "platform" store.
+# Marketplace checks (store/order/product access) happen here.
+#
+# To add a new product: create a new directory + model.fga, then register
+# a new OpenFGA store via the API at deploy time.
+# =============================================================================
+
+type user
+
+type store
+  relations
+    define owner: [user]
+    define manager: [user] or owner
+    define staff: [user] or manager
+    define can_manage_products: manager
+    define can_view_orders: staff
+    define can_manage_orders: manager
+    define can_manage_settings: owner
+    define can_manage_staff: owner
+    define can_view_analytics: manager
+
+type order
+  relations
+    define store: [store]
+    define customer: [user]
+    define can_view: customer or can_view_orders from store
+    define can_update: can_manage_orders from store
+    define can_cancel: customer or can_manage_orders from store
+
+type product_listing
+  relations
+    define store: [store]
+    define can_edit: can_manage_products from store
+    define can_view: [user, user:*]
+    define can_delete: can_manage_products from store
+
+type review
+  relations
+    define author: [user]
+    define store: [store]
+    define can_edit: author
+    define can_delete: author or can_manage_products from store
+    define can_view: [user, user:*]
+
+type coupon
+  relations
+    define store: [store]
+    define can_create: can_manage_products from store
+    define can_edit: can_manage_products from store
+    define can_view: [user, user:*]
+
+type vendor
+  relations
+    define store: [store]
+    define user: [user]
+    define can_edit: user or can_manage_staff from store
+    define can_view: can_view_orders from store
