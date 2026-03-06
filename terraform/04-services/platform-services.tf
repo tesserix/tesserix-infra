@@ -4,8 +4,9 @@
 
 # --- OpenFGA (authorization engine) ---
 resource "google_cloud_run_v2_service" "openfga" {
-  name     = "openfga"
-  location = var.region
+  name                = "openfga"
+  location            = var.region
+  deletion_protection = false
 
   template {
     service_account = local.sa_emails["openfga"]
@@ -70,8 +71,9 @@ resource "google_cloud_run_v2_service" "openfga" {
 
 # --- Auth BFF ---
 resource "google_cloud_run_v2_service" "auth_bff" {
-  name     = "auth-bff"
-  location = var.region
+  name                = "auth-bff"
+  location            = var.region
+  deletion_protection = false
 
   template {
     service_account = local.sa_emails["auth-bff"]
@@ -158,8 +160,9 @@ resource "google_cloud_run_v2_service" "auth_bff" {
 
 # --- Audit Service ---
 resource "google_cloud_run_v2_service" "audit_service" {
-  name     = "audit-service"
-  location = var.region
+  name                = "audit-service"
+  location            = var.region
+  deletion_protection = false
 
   template {
     service_account = local.sa_emails["audit-service"]
@@ -240,8 +243,9 @@ resource "google_cloud_run_v2_service" "audit_service" {
 
 # --- Tenant Service ---
 resource "google_cloud_run_v2_service" "tenant_service" {
-  name     = "tenant-service"
-  location = var.region
+  name                = "tenant-service"
+  location            = var.region
+  deletion_protection = false
 
   template {
     service_account = local.sa_emails["tenant-service"]
@@ -322,8 +326,9 @@ resource "google_cloud_run_v2_service" "tenant_service" {
 
 # --- Notification Service ---
 resource "google_cloud_run_v2_service" "notification_service" {
-  name     = "notification-service"
-  location = var.region
+  name                = "notification-service"
+  location            = var.region
+  deletion_protection = false
 
   template {
     service_account = local.sa_emails["notification-service"]
@@ -400,8 +405,9 @@ resource "google_cloud_run_v2_service" "notification_service" {
 
 # --- Tickets Service ---
 resource "google_cloud_run_v2_service" "tickets_service" {
-  name     = "tickets-service"
-  location = var.region
+  name                = "tickets-service"
+  location            = var.region
+  deletion_protection = false
 
   template {
     service_account = local.sa_emails["tickets-service"]
@@ -502,8 +508,9 @@ resource "google_cloud_run_v2_service" "tickets_service" {
 
 # --- Tesserix Home (Next.js admin portal) ---
 resource "google_cloud_run_v2_service" "tesserix_home" {
-  name     = "tesserix-home"
-  location = var.region
+  name                = "tesserix-home"
+  location            = var.region
+  deletion_protection = false
 
   template {
     service_account = local.sa_emails["tesserix-home"]
@@ -781,8 +788,9 @@ resource "google_cloud_run_v2_service" "qr_service" {
 
 # --- Analytics Service ---
 resource "google_cloud_run_v2_service" "analytics_service" {
-  name     = "analytics-service"
-  location = var.region
+  name                = "analytics-service"
+  location            = var.region
+  deletion_protection = false
 
   template {
     service_account = local.sa_emails["analytics-service"]
@@ -850,8 +858,9 @@ resource "google_cloud_run_v2_service" "analytics_service" {
 
 # --- Verification Service ---
 resource "google_cloud_run_v2_service" "verification_service" {
-  name     = "verification-service"
-  location = var.region
+  name                = "verification-service"
+  location            = var.region
+  deletion_protection = false
 
   template {
     service_account = local.sa_emails["verification-service"]
@@ -931,8 +940,9 @@ resource "google_cloud_run_v2_service" "verification_service" {
 
 # --- Feature Flags Service ---
 resource "google_cloud_run_v2_service" "feature_flags" {
-  name     = "feature-flags-service"
-  location = var.region
+  name                = "feature-flags-service"
+  location            = var.region
+  deletion_protection = false
 
   template {
     service_account = local.sa_emails["feature-flags-service"]
@@ -951,7 +961,7 @@ resource "google_cloud_run_v2_service" "feature_flags" {
       }
 
       resources {
-        limits   = { cpu = "0.5", memory = "128Mi" }
+        limits   = { cpu = "1", memory = "256Mi" }
         cpu_idle = true
       }
 
@@ -991,7 +1001,7 @@ resource "google_cloud_run_v2_service" "status_service" {
       }
 
       resources {
-        limits   = { cpu = "0.5", memory = "128Mi" }
+        limits   = { cpu = "1", memory = "256Mi" }
         cpu_idle = true
       }
 
