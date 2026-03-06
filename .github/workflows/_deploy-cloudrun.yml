@@ -60,14 +60,15 @@ jobs:
       - name: Deploy to Cloud Run
         run: |
           set -euo pipefail
-          DEPLOY_CMD="gcloud run services update ${{ inputs.service_name }}"
+          CONTAINER_FLAG=""
           if [[ -n "${{ inputs.container_name }}" ]]; then
-            DEPLOY_CMD="${DEPLOY_CMD} --container ${{ inputs.container_name }}"
+            CONTAINER_FLAG="--container ${{ inputs.container_name }}"
           fi
-          ${DEPLOY_CMD} \
+          gcloud run services update "${{ inputs.service_name }}" \
+            $CONTAINER_FLAG \
             --image "${{ inputs.image }}" \
-            --region ${{ inputs.region }} \
-            --project ${{ inputs.project }} \
+            --region "${{ inputs.region }}" \
+            --project "${{ inputs.project }}" \
             --quiet
 
       - name: Smoke test
