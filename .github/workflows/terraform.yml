@@ -10,6 +10,13 @@ on:
 
 env:
   TF_VERSION: "1.9.0"
+  TF_VAR_project_id: ${{ vars.TF_VAR_PROJECT_ID }}
+  TF_VAR_project_number: ${{ vars.TF_VAR_PROJECT_NUMBER }}
+  TF_VAR_region: ${{ vars.TF_VAR_REGION }}
+  TF_VAR_billing_account_id: ${{ secrets.TF_VAR_BILLING_ACCOUNT_ID }}
+  TF_VAR_state_bucket: ${{ vars.TF_STATE_BUCKET }}
+  TF_VAR_github_org: ${{ vars.TF_VAR_GITHUB_ORG }}
+  TF_VAR_identity_platform_api_key: ${{ vars.TF_VAR_GIP_API_KEY }}
 
 permissions:
   contents: read
@@ -43,10 +50,10 @@ jobs:
 
       - name: Terraform Plan
         working-directory: terraform/${{ matrix.stack }}
-        run: terraform plan -var-file=../terraform.tfvars -no-color
+        run: terraform plan -no-color
 
   apply:
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     needs: plan
     runs-on: ubuntu-latest
     environment: production
@@ -75,4 +82,4 @@ jobs:
 
       - name: Terraform Apply
         working-directory: terraform/${{ matrix.stack }}
-        run: terraform apply -var-file=../terraform.tfvars -auto-approve
+        run: terraform apply -auto-approve
