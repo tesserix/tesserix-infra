@@ -134,7 +134,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           platforms: ${{ inputs.platforms }}
-          build-args: GITHUB_TOKEN=${{ secrets.GO_PRIVATE_TOKEN }}
+          secrets: |
+            github_token=${{ secrets.GO_PRIVATE_TOKEN }}
           cache-from: type=gha,scope=release
           cache-to: type=gha,mode=max,scope=release
 
