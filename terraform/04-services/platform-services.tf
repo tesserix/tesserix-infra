@@ -429,6 +429,10 @@ resource "google_cloud_run_v2_service" "tickets_service" {
         value = "production"
       }
       env {
+        name  = "ENVIRONMENT"
+        value = "production"
+      }
+      env {
         name  = "GCP_PROJECT_ID"
         value = var.project_id
       }
@@ -529,6 +533,22 @@ resource "google_cloud_run_v2_service" "tesserix_home" {
       env {
         name  = "AUTH_BFF_URL"
         value = google_cloud_run_v2_service.auth_bff.uri
+      }
+      env {
+        name  = "TENANT_SERVICE_URL"
+        value = google_cloud_run_v2_service.tenant_service.uri
+      }
+      env {
+        name  = "TICKETS_SERVICE_URL"
+        value = "${google_cloud_run_v2_service.tickets_service.uri}/api/v1"
+      }
+      env {
+        name  = "AUDIT_SERVICE_URL"
+        value = "${google_cloud_run_v2_service.audit_service.uri}/api/v1"
+      }
+      env {
+        name  = "FEATURE_FLAGS_SERVICE_URL"
+        value = "${google_cloud_run_v2_service.feature_flags.uri}/api/v1"
       }
 
       env {
