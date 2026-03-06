@@ -531,6 +531,22 @@ resource "google_cloud_run_v2_service" "tesserix_home" {
         value = "production"
       }
       env {
+        name  = "NEXT_TELEMETRY_DISABLED"
+        value = "1"
+      }
+      env {
+        name  = "NEXT_PUBLIC_SITE_URL"
+        value = "https://tesserix.app"
+      }
+      env {
+        name  = "NEXT_PUBLIC_ONBOARDING_SITE_URL"
+        value = "https://mark8ly.com"
+      }
+      env {
+        name  = "PLATFORM_DOMAIN"
+        value = "tesserix.app"
+      }
+      env {
         name  = "AUTH_BFF_URL"
         value = google_cloud_run_v2_service.auth_bff.uri
       }
@@ -549,6 +565,14 @@ resource "google_cloud_run_v2_service" "tesserix_home" {
       env {
         name  = "FEATURE_FLAGS_SERVICE_URL"
         value = "${google_cloud_run_v2_service.feature_flags.uri}/api/v1"
+      }
+      env {
+        name  = "NOTIFICATION_SERVICE_URL"
+        value = "${google_cloud_run_v2_service.notification_service.uri}/api/v1"
+      }
+      env {
+        name  = "STATUS_DASHBOARD_SERVICE_URL"
+        value = "${google_cloud_run_v2_service.status_dashboard.uri}/api/v1"
       }
 
       env {

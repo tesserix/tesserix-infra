@@ -39,6 +39,8 @@ on:
         required: true
       GCP_SERVICE_ACCOUNT:
         required: true
+      DISPATCH_TOKEN:
+        required: false
 
 jobs:
   deploy:
@@ -116,6 +118,16 @@ jobs:
           else
             echo "No previous revision found, cannot rollback"
           fi
+
+      - name: Trigger Cloudflare Worker update
+        if: success() && secrets.DISPATCH_TOKEN != ''
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.DISPATCH_TOKEN }}
+          repository: tesserix/tesserix-infra
+          event-type: cloudrun-deployed
+          client-payload: '{"service": "${{ inputs.service_name }}"}'
+        continue-on-error: true
 
       - name: Deploy Summary
         if: always()
