@@ -43,7 +43,6 @@ jobs:
       - name: Terraform Plan
         working-directory: terraform/${{ matrix.stack }}
         run: terraform plan -var-file=../terraform.tfvars -no-color
-        continue-on-error: true
 
   apply:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'

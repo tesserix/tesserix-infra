@@ -1,0 +1,77 @@
+name: Deploy OpenFGA Models
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'openfga/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  GCP_REGION: asia-south1
+  GCP_PROJECT: tesserix
+
+jobs:
+  deploy-models:
+    name: Deploy OpenFGA Models
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_CI_SA }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Install FGA CLI
+        run: |
+          curl -fsSL https://github.com/openfga/cli/releases/latest/download/fga_linux_amd64.tar.gz \
+            | tar -xz
+          sudo mv fga /usr/local/bin/
+
+      - name: Get OpenFGA endpoint
+        run: |
+          FGA_URL=$(gcloud run services describe openfga \
+            --region=${{ env.GCP_REGION }} --project=${{ env.GCP_PROJECT }} \
+            --format="value(status.url)")
+          echo "FGA_URL=${FGA_URL}" >> $GITHUB_ENV
+
+      - name: Get preshared key
+        run: |
+          FGA_KEY=$(gcloud secrets versions access latest \
+            --secret=openfga-preshared-key --project=${{ env.GCP_PROJECT }})
+          echo "::add-mask::${FGA_KEY}"
+          echo "FGA_KEY=${FGA_KEY}" >> $GITHUB_ENV
+
+      - name: Deploy platform model
+        if: hashFiles('openfga/platform/model.fga') != ''
+        run: |
+          fga model validate --file openfga/platform/model.fga
+          STORE_ID=$(gcloud secrets versions access latest \
+            --secret=openfga-platform-store-id --project=${{ env.GCP_PROJECT }})
+          fga model write \
+            --store-id="${STORE_ID}" \
+            --api-url="${FGA_URL}" \
+            --api-token="${FGA_KEY}" \
+            --file openfga/platform/model.fga
+
+      - name: Deploy marketplace model
+        if: hashFiles('openfga/marketplace/model.fga') != ''
+        run: |
+          fga model validate --file openfga/marketplace/model.fga
+          STORE_ID=$(gcloud secrets versions access latest \
+            --secret=openfga-marketplace-store-id --project=${{ env.GCP_PROJECT }})
+          fga model write \
+            --store-id="${STORE_ID}" \
+            --api-url="${FGA_URL}" \
+            --api-token="${FGA_KEY}" \
+            --file openfga/marketplace/model.fga

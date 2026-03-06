@@ -1,0 +1,127 @@
+name: Deploy to Cloud Run
+
+on:
+  workflow_call:
+    inputs:
+      service_name:
+        required: true
+        type: string
+        description: 'Cloud Run service name'
+      image:
+        required: true
+        type: string
+        description: 'Full image URI with tag'
+      container_name:
+        required: false
+        type: string
+        default: ''
+        description: 'Container name for multi-container services (sidecar setup)'
+      region:
+        required: false
+        type: string
+        default: 'asia-south1'
+      project:
+        required: false
+        type: string
+        default: 'tesserix'
+      environment:
+        required: false
+        type: string
+        default: 'production'
+        description: 'GitHub Environment name'
+      health_path:
+        required: false
+        type: string
+        default: '/health'
+        description: 'Health check endpoint path'
+    secrets:
+      GCP_WORKLOAD_IDENTITY_PROVIDER:
+        required: true
+      GCP_SERVICE_ACCOUNT:
+        required: true
+
+jobs:
+  deploy:
+    name: Deploy ${{ inputs.service_name }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Deploy to Cloud Run
+        run: |
+          set -euo pipefail
+          DEPLOY_CMD="gcloud run services update ${{ inputs.service_name }}"
+          if [[ -n "${{ inputs.container_name }}" ]]; then
+            DEPLOY_CMD="${DEPLOY_CMD} --container ${{ inputs.container_name }}"
+          fi
+          ${DEPLOY_CMD} \
+            --image "${{ inputs.image }}" \
+            --region ${{ inputs.region }} \
+            --project ${{ inputs.project }} \
+            --quiet
+
+      - name: Smoke test
+        run: |
+          set -euo pipefail
+          SERVICE_URL=$(gcloud run services describe ${{ inputs.service_name }} \
+            --region=${{ inputs.region }} \
+            --project=${{ inputs.project }} \
+            --format="value(status.url)")
+
+          ID_TOKEN=$(gcloud auth print-identity-token \
+            --audiences="${SERVICE_URL}")
+
+          echo "Testing ${SERVICE_URL}${{ inputs.health_path }}"
+          for i in 1 2 3 4 5; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+              -H "Authorization: Bearer ${ID_TOKEN}" \
+              "${SERVICE_URL}${{ inputs.health_path }}" || true)
+            if [[ "$STATUS" == "200" ]]; then
+              echo "Health check passed (attempt $i)"
+              exit 0
+            fi
+            echo "Attempt $i: got $STATUS, waiting 10s..."
+            sleep 10
+          done
+          echo "Health check failed after 5 attempts"
+          exit 1
+
+      - name: Rollback on failure
+        if: failure()
+        run: |
+          set -euo pipefail
+          echo "Deployment or health check failed, rolling back..."
+          PREVIOUS=$(gcloud run revisions list \
+            --service=${{ inputs.service_name }} \
+            --region=${{ inputs.region }} \
+            --project=${{ inputs.project }} \
+            --sort-by=~createTime \
+            --limit=2 \
+            --format="value(name)" | tail -1)
+
+          if [[ -n "$PREVIOUS" ]]; then
+            gcloud run services update-traffic ${{ inputs.service_name }} \
+              --region=${{ inputs.region }} \
+              --project=${{ inputs.project }} \
+              --to-revisions="${PREVIOUS}=100"
+            echo "Rolled back to revision: ${PREVIOUS}"
+          else
+            echo "No previous revision found, cannot rollback"
+          fi
+
+      - name: Deploy Summary
+        if: always()
+        run: |
+          echo "## Cloud Run Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "**Service:** ${{ inputs.service_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Image:** \`${{ inputs.image }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Region:** ${{ inputs.region }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${{ inputs.environment }}" >> $GITHUB_STEP_SUMMARY
