@@ -581,6 +581,10 @@ resource "google_cloud_run_v2_service" "tesserix_home" {
         name  = "STATUS_DASHBOARD_SERVICE_URL"
         value = "${google_cloud_run_v2_service.status_service.uri}/api/v1"
       }
+      env {
+        name  = "SUBSCRIPTION_SERVICE_URL"
+        value = google_cloud_run_v2_service.subscription_service.uri
+      }
 
       env {
         name = "INTERNAL_SERVICE_KEY"
@@ -1005,6 +1009,14 @@ resource "google_cloud_run_v2_service" "feature_flags" {
 }
 
 # --- Status Service ---
+# Allow unauthenticated — internal monitoring, app-level auth not needed
+resource "google_cloud_run_service_iam_member" "status_service_public" {
+  service  = google_cloud_run_v2_service.status_service.name
+  location = var.region
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}
+
 resource "google_cloud_run_v2_service" "status_service" {
   name                = "status-service"
   location            = var.region
