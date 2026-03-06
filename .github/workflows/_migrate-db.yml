@@ -1,0 +1,112 @@
+name: Run DB Migrations
+
+on:
+  workflow_call:
+    inputs:
+      service_name:
+        required: true
+        type: string
+        description: 'Service name (e.g., tickets-service)'
+      db_name:
+        required: true
+        type: string
+        description: 'Database name (e.g., tickets_db)'
+      db_user:
+        required: true
+        type: string
+        description: 'Database user (e.g., tickets_user)'
+      db_secret_name:
+        required: true
+        type: string
+        description: 'Secret Manager secret name for DB password (e.g., tickets-db-password)'
+      migrations_path:
+        required: false
+        type: string
+        default: 'migrations'
+        description: 'Path to migration files relative to repo root'
+      instance_connection_name:
+        required: false
+        type: string
+        default: 'tesserix:asia-south1:tesserix-main'
+        description: 'Cloud SQL instance connection name'
+      project:
+        required: false
+        type: string
+        default: 'tesserix'
+        description: 'GCP project ID'
+    secrets:
+      GCP_WORKLOAD_IDENTITY_PROVIDER:
+        required: true
+      GCP_SERVICE_ACCOUNT:
+        required: true
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Install Cloud SQL Auth Proxy
+        run: |
+          curl -sSL https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.14.3/cloud-sql-proxy.linux.amd64 \
+            -o cloud-sql-proxy
+          chmod +x cloud-sql-proxy
+
+      - name: Install golang-migrate
+        run: |
+          curl -sSL https://github.com/golang-migrate/migrate/releases/download/v4.18.1/migrate.linux-amd64.tar.gz \
+            | tar xz
+          chmod +x migrate
+
+      - name: Fetch DB password from Secret Manager
+        id: db_password
+        run: |
+          PASSWORD=$(gcloud secrets versions access latest \
+            --secret="${{ inputs.db_secret_name }}" \
+            --project="${{ inputs.project }}")
+          echo "::add-mask::${PASSWORD}"
+          echo "password=${PASSWORD}" >> "$GITHUB_OUTPUT"
+
+      - name: Start Cloud SQL Auth Proxy
+        run: |
+          ./cloud-sql-proxy "${{ inputs.instance_connection_name }}" \
+            --port 5432 \
+            --quiet &
+          # Wait for proxy to be ready
+          for i in $(seq 1 10); do
+            if pg_isready -h 127.0.0.1 -p 5432 2>/dev/null; then
+              echo "Cloud SQL proxy is ready"
+              break
+            fi
+            if [ "$i" = "10" ]; then
+              echo "::error::Cloud SQL proxy failed to start"
+              exit 1
+            fi
+            sleep 1
+          done
+
+      - name: Run migrations
+        run: |
+          echo "Running migrations for ${{ inputs.service_name }} on ${{ inputs.db_name }}..."
+          ./migrate \
+            -path "${{ inputs.migrations_path }}" \
+            -database "postgres://${{ inputs.db_user }}:${{ steps.db_password.outputs.password }}@127.0.0.1:5432/${{ inputs.db_name }}?sslmode=disable" \
+            up
+          echo "Migrations completed successfully"
+
+      - name: Show migration version
+        if: always()
+        run: |
+          ./migrate \
+            -path "${{ inputs.migrations_path }}" \
+            -database "postgres://${{ inputs.db_user }}:${{ steps.db_password.outputs.password }}@127.0.0.1:5432/${{ inputs.db_name }}?sslmode=disable" \
+            version 2>&1 || true
