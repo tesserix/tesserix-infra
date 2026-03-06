@@ -78,13 +78,9 @@ jobs:
             --project=${{ inputs.project }} \
             --format="value(status.url)")
 
-          ID_TOKEN=$(gcloud auth print-identity-token \
-            --audiences="${SERVICE_URL}")
-
           echo "Testing ${SERVICE_URL}${{ inputs.health_path }}"
           for i in 1 2 3 4 5; do
             STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-              -H "Authorization: Bearer ${ID_TOKEN}" \
               "${SERVICE_URL}${{ inputs.health_path }}" || true)
             if [[ "$STATUS" == "200" ]]; then
               echo "Health check passed (attempt $i)"
