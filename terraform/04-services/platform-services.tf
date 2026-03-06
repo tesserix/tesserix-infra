@@ -398,6 +398,104 @@ resource "google_cloud_run_v2_service" "notification_service" {
   }
 }
 
+# --- Tickets Service ---
+resource "google_cloud_run_v2_service" "tickets_service" {
+  name     = "tickets-service"
+  location = var.region
+
+  template {
+    service_account = local.sa_emails["tickets-service"]
+
+    scaling {
+      min_instance_count = 0
+      max_instance_count = 5
+    }
+
+    containers {
+      name  = "tickets-service"
+      image = "${local.gar_url}/tickets-service:latest"
+
+      ports {
+        container_port = 8080
+      }
+
+      resources {
+        limits   = { cpu = "1", memory = "256Mi" }
+        cpu_idle = true
+      }
+
+      env {
+        name  = "APP_ENV"
+        value = "production"
+      }
+      env {
+        name  = "GCP_PROJECT_ID"
+        value = var.project_id
+      }
+      env {
+        name  = "DB_HOST"
+        value = "localhost"
+      }
+      env {
+        name  = "DB_PORT"
+        value = "5432"
+      }
+      env {
+        name  = "DB_NAME"
+        value = "tickets_db"
+      }
+      env {
+        name  = "DB_USER"
+        value = "tickets_user"
+      }
+      env {
+        name  = "DB_SSLMODE"
+        value = "disable" # Proxy handles encryption
+      }
+      env {
+        name  = "OPENFGA_URL"
+        value = google_cloud_run_v2_service.openfga.uri
+      }
+      env {
+        name  = "NOTIFICATION_SERVICE_URL"
+        value = google_cloud_run_v2_service.notification_service.uri
+      }
+      env {
+        name  = "TENANT_SERVICE_URL"
+        value = google_cloud_run_v2_service.tenant_service.uri
+      }
+
+      env {
+        name = "DB_PASSWORD"
+        value_source {
+          secret_key_ref {
+            secret  = "tickets-db-password"
+            version = "latest"
+          }
+        }
+      }
+      env {
+        name = "OPENFGA_API_KEY"
+        value_source {
+          secret_key_ref {
+            secret  = "openfga-preshared-key"
+            version = "latest"
+          }
+        }
+      }
+    }
+
+    containers {
+      name  = "cloud-sql-proxy"
+      image = "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.14.3"
+      args  = [local.sql_connection]
+      resources {
+        limits = { cpu = "0.5", memory = "256Mi" }
+      }
+    }
+  }
+}
+
 # --- Tesserix Home (Next.js admin portal) ---
 resource "google_cloud_run_v2_service" "tesserix_home" {
   name     = "tesserix-home"

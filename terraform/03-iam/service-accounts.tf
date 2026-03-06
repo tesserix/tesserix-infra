@@ -83,6 +83,13 @@ locals {
       publishes_events = false
       storage_apps     = []
     }
+    "tickets-service" = {
+      secrets  = ["tickets-db-password", "openfga-preshared-key"]
+      has_db   = true
+      invokes  = ["openfga", "tenant-service", "notification-service", "document-service"]
+      publishes_events = true
+      storage_apps     = []
+    }
     "document-service" = {
       secrets  = ["documents-db-password"]
       has_db   = true

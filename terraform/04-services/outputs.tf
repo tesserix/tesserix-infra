@@ -7,6 +7,7 @@ output "service_urls" {
     "notification-service"  = google_cloud_run_v2_service.notification_service.uri
     "tesserix-home"         = google_cloud_run_v2_service.tesserix_home.uri
     "feature-flags-service" = google_cloud_run_v2_service.feature_flags.uri
+    "tickets-service"       = google_cloud_run_v2_service.tickets_service.uri
     "status-dashboard"      = google_cloud_run_v2_service.status_dashboard.uri
   }
 }

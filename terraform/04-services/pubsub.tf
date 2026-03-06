@@ -69,6 +69,16 @@ resource "google_pubsub_subscription" "notification_push" {
   }
 }
 
+# --- Ticket Events ---
+resource "google_pubsub_topic" "ticket_events" {
+  name                       = "tesserix-ticket-events"
+  message_retention_duration = "604800s" # 7 days
+}
+
+resource "google_pubsub_topic" "ticket_events_dlq" {
+  name = "tesserix-ticket-events-dlq"
+}
+
 # --- Subscription/Billing Events ---
 resource "google_pubsub_topic" "subscription_events" {
   name                       = "tesserix-subscription-events"
