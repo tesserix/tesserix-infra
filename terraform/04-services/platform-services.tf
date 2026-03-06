@@ -572,7 +572,7 @@ resource "google_cloud_run_v2_service" "tesserix_home" {
       }
       env {
         name  = "STATUS_DASHBOARD_SERVICE_URL"
-        value = "${google_cloud_run_v2_service.status_dashboard.uri}/api/v1"
+        value = "${google_cloud_run_v2_service.status_service.uri}/api/v1"
       }
 
       env {
@@ -965,13 +965,13 @@ resource "google_cloud_run_v2_service" "feature_flags" {
   }
 }
 
-# --- Status Dashboard ---
-resource "google_cloud_run_v2_service" "status_dashboard" {
-  name     = "status-dashboard"
+# --- Status Service ---
+resource "google_cloud_run_v2_service" "status_service" {
+  name     = "status-service"
   location = var.region
 
   template {
-    service_account = local.sa_emails["status-dashboard"]
+    service_account = local.sa_emails["status-service"]
 
     scaling {
       min_instance_count = 0
@@ -979,8 +979,8 @@ resource "google_cloud_run_v2_service" "status_dashboard" {
     }
 
     containers {
-      name  = "status-dashboard"
-      image = "${local.gar_url}/status-dashboard-service:latest"
+      name  = "status-service"
+      image = "${local.gar_url}/status-service:latest"
 
       ports {
         container_port = 8080

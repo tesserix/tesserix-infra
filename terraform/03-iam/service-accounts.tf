@@ -97,7 +97,7 @@ locals {
       publishes_events = false
       storage_apps     = ["platform"]
     }
-    "status-dashboard" = {
+    "status-service" = {
       secrets  = []
       has_db   = false
       invokes  = []
@@ -219,6 +219,12 @@ locals {
 }
 
 # --- Create all service accounts ---
+# Rename: status-dashboard → status-service
+moved {
+  from = google_service_account.services["status-dashboard"]
+  to   = google_service_account.services["status-service"]
+}
+
 resource "google_service_account" "services" {
   for_each     = local.all_services
   account_id   = "sa-${each.key}"

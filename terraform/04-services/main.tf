@@ -34,3 +34,15 @@ locals {
   sa_emails      = data.terraform_remote_state.iam.outputs.service_account_emails
   gar_url        = "${var.region}-docker.pkg.dev/${var.project_id}/services"
 }
+
+# Rename: status-dashboard → status-service
+moved {
+  from = google_cloud_run_v2_service.status_dashboard
+  to   = google_cloud_run_v2_service.status_service
+}
+
+# One-time imports for pre-existing Cloud Run services
+import {
+  to = google_cloud_run_v2_service.qr_service
+  id = "projects/${var.project_id}/locations/${var.region}/services/qr-service"
+}
