@@ -1008,14 +1008,30 @@ resource "google_cloud_run_v2_service" "feature_flags" {
   }
 }
 
-# --- Status Service ---
-# Allow unauthenticated — internal monitoring, app-level auth not needed
-resource "google_cloud_run_service_iam_member" "status_service_public" {
-  service  = google_cloud_run_v2_service.status_service.name
+# =============================================================================
+# PUBLIC ACCESS — Backend services use app-level auth (JWT), not Cloud Run IAM.
+# Allow unauthenticated at Cloud Run level for all backend services.
+# =============================================================================
+locals {
+  public_services = {
+    subscription  = google_cloud_run_v2_service.subscription_service.name
+    notification  = google_cloud_run_v2_service.notification_service.name
+    document      = google_cloud_run_v2_service.document_service.name
+    verification  = google_cloud_run_v2_service.verification_service.name
+    analytics     = google_cloud_run_v2_service.analytics_service.name
+    status        = google_cloud_run_v2_service.status_service.name
+  }
+}
+
+resource "google_cloud_run_service_iam_member" "public_access" {
+  for_each = local.public_services
+  service  = each.value
   location = var.region
   role     = "roles/run.invoker"
   member   = "allUsers"
 }
+
+# --- Status Service ---
 
 resource "google_cloud_run_v2_service" "status_service" {
   name                = "status-service"
