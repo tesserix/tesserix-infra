@@ -60,6 +60,8 @@ locals {
     "subscriptions_db",
     "documents_db",
     "tickets_db",
+    "analytics_db",
+    "verifications_db",
   ]
 
   marketplace_databases = [

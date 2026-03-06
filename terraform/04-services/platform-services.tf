@@ -588,6 +588,344 @@ resource "google_cloud_run_v2_service" "tesserix_home" {
   }
 }
 
+# --- Subscription Service ---
+resource "google_cloud_run_v2_service" "subscription_service" {
+  name     = "subscription-service"
+  location = var.region
+
+  template {
+    service_account = local.sa_emails["subscription-service"]
+
+    scaling {
+      min_instance_count = 0
+      max_instance_count = 5
+    }
+
+    containers {
+      name  = "subscription-service"
+      image = "${local.gar_url}/subscription-service:latest"
+
+      ports {
+        container_port = 8080
+      }
+
+      resources {
+        limits   = { cpu = "1", memory = "256Mi" }
+        cpu_idle = true
+      }
+
+      env {
+        name  = "ENVIRONMENT"
+        value = "production"
+      }
+      env {
+        name  = "GCP_PROJECT_ID"
+        value = var.project_id
+      }
+      env {
+        name  = "DB_HOST"
+        value = "localhost"
+      }
+      env {
+        name  = "DB_PORT"
+        value = "5432"
+      }
+      env {
+        name  = "DB_NAME"
+        value = "subscriptions_db"
+      }
+      env {
+        name  = "DB_USER"
+        value = "subscriptions_user"
+      }
+      env {
+        name  = "DB_SSLMODE"
+        value = "disable"
+      }
+      env {
+        name  = "TENANT_SERVICE_URL"
+        value = google_cloud_run_v2_service.tenant_service.uri
+      }
+
+      env {
+        name = "DB_PASSWORD"
+        value_source {
+          secret_key_ref {
+            secret  = "subscriptions-db-password"
+            version = "latest"
+          }
+        }
+      }
+      env {
+        name = "STRIPE_SECRET_KEY"
+        value_source {
+          secret_key_ref {
+            secret  = "stripe-secret-key"
+            version = "latest"
+          }
+        }
+      }
+    }
+
+    containers {
+      name  = "cloud-sql-proxy"
+      image = "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.14.3"
+      args  = [local.sql_connection]
+      resources {
+        limits = { cpu = "0.5", memory = "256Mi" }
+      }
+    }
+  }
+}
+
+# --- Document Service ---
+resource "google_cloud_run_v2_service" "document_service" {
+  name     = "document-service"
+  location = var.region
+
+  template {
+    service_account = local.sa_emails["document-service"]
+
+    scaling {
+      min_instance_count = 0
+      max_instance_count = 5
+    }
+
+    containers {
+      name  = "document-service"
+      image = "${local.gar_url}/document-service:latest"
+
+      ports {
+        container_port = 8080
+      }
+
+      resources {
+        limits   = { cpu = "1", memory = "256Mi" }
+        cpu_idle = true
+      }
+
+      env {
+        name  = "DB_HOST"
+        value = "localhost"
+      }
+      env {
+        name  = "DB_PORT"
+        value = "5432"
+      }
+      env {
+        name  = "DB_NAME"
+        value = "documents_db"
+      }
+      env {
+        name  = "DB_USER"
+        value = "documents_user"
+      }
+      env {
+        name  = "DB_SSLMODE"
+        value = "disable"
+      }
+
+      env {
+        name = "DB_PASSWORD"
+        value_source {
+          secret_key_ref {
+            secret  = "documents-db-password"
+            version = "latest"
+          }
+        }
+      }
+    }
+
+    containers {
+      name  = "cloud-sql-proxy"
+      image = "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.14.3"
+      args  = [local.sql_connection]
+      resources {
+        limits = { cpu = "0.5", memory = "256Mi" }
+      }
+    }
+  }
+}
+
+# --- QR Service ---
+resource "google_cloud_run_v2_service" "qr_service" {
+  name     = "qr-service"
+  location = var.region
+
+  template {
+    service_account = local.sa_emails["qr-service"]
+
+    scaling {
+      min_instance_count = 0
+      max_instance_count = 3
+    }
+
+    containers {
+      name  = "qr-service"
+      image = "${local.gar_url}/qr-service:latest"
+
+      ports {
+        container_port = 8080
+      }
+
+      resources {
+        limits   = { cpu = "0.5", memory = "128Mi" }
+        cpu_idle = true
+      }
+    }
+  }
+}
+
+# --- Analytics Service ---
+resource "google_cloud_run_v2_service" "analytics_service" {
+  name     = "analytics-service"
+  location = var.region
+
+  template {
+    service_account = local.sa_emails["analytics-service"]
+
+    scaling {
+      min_instance_count = 0
+      max_instance_count = 3
+    }
+
+    containers {
+      name  = "analytics-service"
+      image = "${local.gar_url}/analytics-service:latest"
+
+      ports {
+        container_port = 8091
+      }
+
+      resources {
+        limits   = { cpu = "1", memory = "256Mi" }
+        cpu_idle = true
+      }
+
+      env {
+        name  = "DB_HOST"
+        value = "localhost"
+      }
+      env {
+        name  = "DB_PORT"
+        value = "5432"
+      }
+      env {
+        name  = "DB_NAME"
+        value = "analytics_db"
+      }
+      env {
+        name  = "DB_USER"
+        value = "analytics_user"
+      }
+      env {
+        name  = "DB_SSL_MODE"
+        value = "disable"
+      }
+
+      env {
+        name = "DB_PASSWORD"
+        value_source {
+          secret_key_ref {
+            secret  = "analytics-db-password"
+            version = "latest"
+          }
+        }
+      }
+    }
+
+    containers {
+      name  = "cloud-sql-proxy"
+      image = "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.14.3"
+      args  = [local.sql_connection]
+      resources {
+        limits = { cpu = "0.5", memory = "256Mi" }
+      }
+    }
+  }
+}
+
+# --- Verification Service ---
+resource "google_cloud_run_v2_service" "verification_service" {
+  name     = "verification-service"
+  location = var.region
+
+  template {
+    service_account = local.sa_emails["verification-service"]
+
+    scaling {
+      min_instance_count = 0
+      max_instance_count = 5
+    }
+
+    containers {
+      name  = "verification-service"
+      image = "${local.gar_url}/verification-service:latest"
+
+      ports {
+        container_port = 8080
+      }
+
+      resources {
+        limits   = { cpu = "1", memory = "256Mi" }
+        cpu_idle = true
+      }
+
+      env {
+        name  = "ENVIRONMENT"
+        value = "production"
+      }
+      env {
+        name  = "GCP_PROJECT_ID"
+        value = var.project_id
+      }
+      env {
+        name  = "DB_HOST"
+        value = "localhost"
+      }
+      env {
+        name  = "DB_PORT"
+        value = "5432"
+      }
+      env {
+        name  = "DB_NAME"
+        value = "verifications_db"
+      }
+      env {
+        name  = "DB_USER"
+        value = "verifications_user"
+      }
+      env {
+        name  = "DB_SSLMODE"
+        value = "disable"
+      }
+      env {
+        name  = "NOTIFICATION_SERVICE_URL"
+        value = google_cloud_run_v2_service.notification_service.uri
+      }
+
+      env {
+        name = "DB_PASSWORD"
+        value_source {
+          secret_key_ref {
+            secret  = "verifications-db-password"
+            version = "latest"
+          }
+        }
+      }
+    }
+
+    containers {
+      name  = "cloud-sql-proxy"
+      image = "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.14.3"
+      args  = [local.sql_connection]
+      resources {
+        limits = { cpu = "0.5", memory = "256Mi" }
+      }
+    }
+  }
+}
+
 # --- Feature Flags Service ---
 resource "google_cloud_run_v2_service" "feature_flags" {
   name     = "feature-flags-service"

@@ -104,6 +104,27 @@ locals {
       publishes_events = false
       storage_apps     = []
     }
+    "qr-service" = {
+      secrets  = []
+      has_db   = false
+      invokes  = []
+      publishes_events = false
+      storage_apps     = []
+    }
+    "analytics-service" = {
+      secrets  = ["analytics-db-password"]
+      has_db   = true
+      invokes  = []
+      publishes_events = false
+      storage_apps     = []
+    }
+    "verification-service" = {
+      secrets  = ["verifications-db-password"]
+      has_db   = true
+      invokes  = ["notification-service"]
+      publishes_events = true
+      storage_apps     = []
+    }
     "tesserix-home" = {
       secrets  = ["shared-internal-service-key"]
       has_db   = false
