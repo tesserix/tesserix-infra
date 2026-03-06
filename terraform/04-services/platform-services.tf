@@ -590,8 +590,9 @@ resource "google_cloud_run_v2_service" "tesserix_home" {
 
 # --- Subscription Service ---
 resource "google_cloud_run_v2_service" "subscription_service" {
-  name     = "subscription-service"
-  location = var.region
+  name                = "subscription-service"
+  location            = var.region
+  deletion_protection = false
 
   template {
     service_account = local.sa_emails["subscription-service"]
@@ -680,8 +681,9 @@ resource "google_cloud_run_v2_service" "subscription_service" {
 
 # --- Document Service ---
 resource "google_cloud_run_v2_service" "document_service" {
-  name     = "document-service"
-  location = var.region
+  name                = "document-service"
+  location            = var.region
+  deletion_protection = false
 
   template {
     service_account = local.sa_emails["document-service"]
@@ -749,8 +751,9 @@ resource "google_cloud_run_v2_service" "document_service" {
 
 # --- QR Service ---
 resource "google_cloud_run_v2_service" "qr_service" {
-  name     = "qr-service"
-  location = var.region
+  name                = "qr-service"
+  location            = var.region
+  deletion_protection = false
 
   template {
     service_account = local.sa_emails["qr-service"]
@@ -769,7 +772,7 @@ resource "google_cloud_run_v2_service" "qr_service" {
       }
 
       resources {
-        limits   = { cpu = "0.5", memory = "128Mi" }
+        limits   = { cpu = "1", memory = "256Mi" }
         cpu_idle = true
       }
     }
@@ -967,8 +970,9 @@ resource "google_cloud_run_v2_service" "feature_flags" {
 
 # --- Status Service ---
 resource "google_cloud_run_v2_service" "status_service" {
-  name     = "status-service"
-  location = var.region
+  name                = "status-service"
+  location            = var.region
+  deletion_protection = false
 
   template {
     service_account = local.sa_emails["status-service"]
