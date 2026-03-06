@@ -120,7 +120,7 @@ jobs:
           fi
 
       - name: Trigger Cloudflare Worker update
-        if: success() && secrets.DISPATCH_TOKEN != ''
+        if: success() && env.HAS_DISPATCH_TOKEN == 'true'
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.DISPATCH_TOKEN }}
@@ -128,6 +128,8 @@ jobs:
           event-type: cloudrun-deployed
           client-payload: '{"service": "${{ inputs.service_name }}"}'
         continue-on-error: true
+        env:
+          HAS_DISPATCH_TOKEN: ${{ secrets.DISPATCH_TOKEN != '' }}
 
       - name: Deploy Summary
         if: always()
