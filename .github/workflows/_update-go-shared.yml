@@ -1,0 +1,62 @@
+name: Update go-shared
+
+on:
+  workflow_call:
+    inputs:
+      service_name:
+        required: true
+        type: string
+        description: 'Service name for commit message'
+      version:
+        required: true
+        type: string
+        description: 'go-shared version tag (e.g., v1.3.1)'
+    secrets:
+      GO_PRIVATE_TOKEN:
+        required: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GO_PRIVATE_TOKEN }}
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache: true
+
+      - name: Configure Git for private repos
+        run: git config --global url."https://${{ secrets.GO_PRIVATE_TOKEN }}@github.com/".insteadOf "https://github.com/"
+        env:
+          GOPRIVATE: github.com/tesserix/*
+
+      - name: Update go-shared dependency
+        run: |
+          GOFLAGS=-mod=mod go get github.com/tesserix/go-shared@${{ inputs.version }}
+          go mod tidy
+        env:
+          GOPRIVATE: github.com/tesserix/*
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet go.mod go.sum; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No changes to go.mod/go.sum — already up to date"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "go.mod/go.sum updated"
+            git diff go.mod
+          fi
+
+      - name: Commit and push
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add go.mod go.sum
+          git commit -m "deps: update go-shared to ${{ inputs.version }}"
+          git push
