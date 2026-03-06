@@ -34,11 +34,3 @@ locals {
   sa_emails      = data.terraform_remote_state.iam.outputs.service_account_emails
   gar_url        = "${var.region}-docker.pkg.dev/${var.project_id}/services"
 }
-
-# Remove old status-dashboard from state (replaced by status-service)
-removed {
-  from = google_cloud_run_v2_service.status_dashboard
-  lifecycle {
-    destroy = false
-  }
-}

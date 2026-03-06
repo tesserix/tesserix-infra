@@ -714,6 +714,14 @@ resource "google_cloud_run_v2_service" "document_service" {
       }
 
       env {
+        name  = "ENVIRONMENT"
+        value = "production"
+      }
+      env {
+        name  = "GCP_PROJECT_ID"
+        value = var.project_id
+      }
+      env {
         name  = "DB_HOST"
         value = "localhost"
       }
@@ -925,6 +933,24 @@ resource "google_cloud_run_v2_service" "verification_service" {
           }
         }
       }
+      env {
+        name = "API_KEY"
+        value_source {
+          secret_key_ref {
+            secret  = "shared-internal-service-key"
+            version = "latest"
+          }
+        }
+      }
+      env {
+        name = "ENCRYPTION_KEY"
+        value_source {
+          secret_key_ref {
+            secret  = "verification-encryption-key"
+            version = "latest"
+          }
+        }
+      }
     }
 
     containers {
@@ -994,7 +1020,7 @@ resource "google_cloud_run_v2_service" "status_service" {
 
     containers {
       name  = "status-service"
-      image = "${local.gar_url}/status-service:latest"
+      image = "gcr.io/cloudrun/hello:latest"
 
       ports {
         container_port = 8080

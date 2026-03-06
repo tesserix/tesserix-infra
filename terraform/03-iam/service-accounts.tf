@@ -119,7 +119,7 @@ locals {
       storage_apps     = []
     }
     "verification-service" = {
-      secrets  = ["verifications-db-password"]
+      secrets  = ["verifications-db-password", "shared-internal-service-key", "verification-encryption-key"]
       has_db   = true
       invokes  = ["notification-service"]
       publishes_events = true
@@ -219,12 +219,6 @@ locals {
 }
 
 # --- Create all service accounts ---
-# Rename: status-dashboard → status-service
-moved {
-  from = google_service_account.services["status-dashboard"]
-  to   = google_service_account.services["status-service"]
-}
-
 resource "google_service_account" "services" {
   for_each     = local.all_services
   account_id   = "sa-${each.key}"
