@@ -1,6 +1,6 @@
-# tesserix-infra
+# Tesserix Infra
 
-Infrastructure, CI/CD workflows, and platform configuration for the Tesserix platform.
+Infrastructure-as-code, CI/CD workflows, and platform configuration for the Tesserix platform. Manages GCP resources via Terraform, edge routing via Cloudflare Workers, and authorization models via OpenFGA.
 
 ## Repository Structure
 
@@ -9,7 +9,7 @@ tesserix-infra/
 ├── .github/workflows/       # GitHub Actions (reusable + infra-specific)
 │   ├── _build-go.yml        # Reusable: build + test Go services
 │   ├── _build-nextjs.yml    # Reusable: build + lint Next.js apps
-│   ├── _release-go.yml      # Reusable: release Go services (tag → GitHub Release)
+│   ├── _release-go.yml      # Reusable: release Go services (tag -> GitHub Release)
 │   ├── _release-nextjs.yml  # Reusable: release Next.js apps
 │   ├── _deploy-cloudrun.yml # Reusable: deploy to Cloud Run + smoke test + rollback
 │   ├── _migrate-db.yml      # Reusable: run DB migrations via Cloud SQL proxy
@@ -82,7 +82,7 @@ terraform plan -var-file=../terraform.tfvars
 terraform apply -var-file=../terraform.tfvars
 ```
 
-Stacks must be applied in order: `01-foundation` → `02-core` → `03-iam` → `04-services`.
+Stacks must be applied in order: `01-foundation` -> `02-core` -> `03-iam` -> `04-services`.
 
 On push to `main`, the `terraform.yml` workflow handles this automatically.
 
@@ -91,45 +91,50 @@ On push to `main`, the `terraform.yml` workflow handles this automatically.
 Each service repo needs these GitHub secrets:
 
 ```bash
-gh secret set GO_PRIVATE_TOKEN -R tesserix/<repo>        # GitHub PAT (repo scope)
-gh secret set GCP_WORKLOAD_IDENTITY_PROVIDER -R tesserix/<repo>  # projects/677812215720/locations/global/workloadIdentityPools/github-pool/providers/github-provider
-gh secret set GCP_SERVICE_ACCOUNT -R tesserix/<repo>     # sa-github-ci@tesserix.iam.gserviceaccount.com
+gh secret set GO_PRIVATE_TOKEN -R tesserix/<repo>
+gh secret set GCP_WORKLOAD_IDENTITY_PROVIDER -R tesserix/<repo>
+gh secret set GCP_SERVICE_ACCOUNT -R tesserix/<repo>
 ```
 
 For repos that trigger Cloudflare updates (auth-bff, tesserix-home):
+
 ```bash
-gh secret set DISPATCH_TOKEN -R tesserix/<repo>           # GitHub PAT (repo scope)
+gh secret set DISPATCH_TOKEN -R tesserix/<repo>
 ```
 
-### 3. Workflow sharing
+### 3. Workflow Sharing
 
 Enable cross-repo workflow access:
 
-**tesserix-infra** → Settings → Actions → General → Access → *"Accessible from repositories in the 'tesserix' organization"*
+**tesserix-infra** -> Settings -> Actions -> General -> Access -> *"Accessible from repositories in the 'tesserix' organization"*
 
 ## CI/CD Pipelines
 
 ### Push to main (any service)
+
 ```
-build + test → migrate DB (if applicable) → deploy Cloud Run → smoke test → cleanup images
-                                             └─ auto-rollback on failure
+build + test -> migrate DB (if applicable) -> deploy Cloud Run -> smoke test -> cleanup images
+                                               |-> auto-rollback on failure
 ```
 
 ### Tag release (any service)
+
 ```
-build + test → security scan → GitHub Release → migrate DB → deploy → cleanup
+build + test -> security scan -> GitHub Release -> migrate DB -> deploy -> cleanup
 ```
 
 ### go-shared release
+
 ```
-tag → test → release → dispatch to 6 repos → auto-update go.mod → triggers CI
+tag -> test -> release -> dispatch to 6 repos -> auto-update go.mod -> triggers CI
 ```
 
 ### Infrastructure changes
+
 ```
-terraform/** push → plan all stacks → apply sequentially (on main)
-cloudflare/** push → deploy Cloudflare Worker
-openfga/** push   → validate + deploy authorization models
+terraform/** push -> plan all stacks -> apply sequentially (on main)
+cloudflare/** push -> deploy Cloudflare Worker
+openfga/** push   -> validate + deploy authorization models
 ```
 
 Full documentation: **[docs/ci-cd.md](docs/ci-cd.md)**
@@ -165,3 +170,7 @@ Edge routing at `tesserix.app`:
 | `{tenant}.tesserix.app` | Storefront (future) |
 
 Auto-deploys when auth-bff or tesserix-home deploys (via `repository_dispatch`), or when `cloudflare/**` files change.
+
+## License
+
+Proprietary - Tesserix
