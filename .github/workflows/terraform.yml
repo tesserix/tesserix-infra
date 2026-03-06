@@ -119,6 +119,13 @@ jobs:
           terraform init \
             -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}" \
             -backend-config="prefix=04-services"
+      - name: Untaint resources
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        working-directory: terraform/04-services
+        run: |
+          for resource in $(terraform state list | grep google_cloud_run_v2_service); do
+            terraform untaint "$resource" 2>/dev/null || true
+          done
       - name: Terraform Plan
         working-directory: terraform/04-services
         run: terraform plan -no-color
