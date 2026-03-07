@@ -128,8 +128,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           platforms: ${{ inputs.platforms }}
-          build-args: |
-            PKG_READ_TOKEN=${{ secrets.PKG_READ_TOKEN }}
+          secrets: |
+            NODE_AUTH_TOKEN=${{ secrets.PKG_READ_TOKEN }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
