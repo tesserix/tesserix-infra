@@ -5,6 +5,12 @@ compatibility_date = "2026-03-01"
 [vars]
 AUTH_BFF_URL = "PLACEHOLDER"
 TESSERIX_HOME_URL = "PLACEHOLDER"
+STOREFRONT_URL = "PLACEHOLDER"
+BASE_DOMAIN = "mark8ly.com"
+
+[[kv_namespaces]]
+binding = "TENANT_ROUTES"
+id = "PLACEHOLDER_KV_NAMESPACE_ID"
 
 [[routes]]
 pattern = "tesserix.app/*"
@@ -13,3 +19,7 @@ zone_name = "tesserix.app"
 [[routes]]
 pattern = "*.tesserix.app/*"
 zone_name = "tesserix.app"
+
+[[routes]]
+pattern = "*.mark8ly.com/*"
+zone_name = "mark8ly.com"
