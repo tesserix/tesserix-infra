@@ -400,11 +400,15 @@ resource "google_cloud_run_v2_service" "marketplace_onboarding" {
   }
 }
 
-# --- Status Service (placeholder) --------------------------------------------
+# --- Status Service -----------------------------------------------------------
 resource "google_cloud_run_v2_service" "status_service" {
   name                = "status-service"
   location            = var.region
   deletion_protection = false
+
+  lifecycle {
+    ignore_changes = [template[0].containers[0].image]
+  }
 
   template {
     service_account = local.sa_emails["status-service"]
