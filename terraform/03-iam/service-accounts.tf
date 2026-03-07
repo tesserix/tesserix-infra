@@ -132,10 +132,31 @@ locals {
       publishes_events = false
       storage_apps     = []
     }
+    "location-service" = {
+      secrets  = ["location-db-password", "openfga-preshared-key"]
+      has_db   = true
+      invokes  = ["openfga"]
+      publishes_events = false
+      storage_apps     = []
+    }
+    "tenant-router-service" = {
+      secrets  = ["tenant-router-db-password", "shared-internal-service-key", "cloudflare-api-token"]
+      has_db   = true
+      invokes  = ["notification-service", "audit-service"]
+      publishes_events = true
+      storage_apps     = []
+    }
   }
 
   # Marketplace product services
   marketplace_services = {
+    "marketplace-onboarding" = {
+      secrets  = ["mp_onboarding-db-password", "shared-internal-service-key"]
+      has_db   = true
+      invokes  = ["auth-bff", "tenant-service", "location-service", "verification-service", "tenant-router-service"]
+      publishes_events = false
+      storage_apps     = []
+    }
     "mp-storefront" = {
       secrets  = []
       has_db   = false

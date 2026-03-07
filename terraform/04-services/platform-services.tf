@@ -1008,18 +1008,339 @@ resource "google_cloud_run_v2_service" "feature_flags" {
   }
 }
 
+# --- Location Service ---
+resource "google_cloud_run_v2_service" "location_service" {
+  name                = "location-service"
+  location            = var.region
+  deletion_protection = false
+
+  template {
+    service_account = local.sa_emails["location-service"]
+
+    scaling {
+      min_instance_count = 0
+      max_instance_count = 3
+    }
+
+    containers {
+      name  = "location-service"
+      image = "${local.gar_url}/location-service:latest"
+
+      ports {
+        container_port = 8080
+      }
+
+      resources {
+        limits   = { cpu = "1", memory = "256Mi" }
+        cpu_idle = true
+      }
+
+      env {
+        name  = "ENVIRONMENT"
+        value = "production"
+      }
+      env {
+        name  = "GCP_PROJECT_ID"
+        value = var.project_id
+      }
+      env {
+        name  = "DB_HOST"
+        value = "localhost"
+      }
+      env {
+        name  = "DB_PORT"
+        value = "5432"
+      }
+      env {
+        name  = "DB_NAME"
+        value = "location_db"
+      }
+      env {
+        name  = "DB_USER"
+        value = "location_user"
+      }
+      env {
+        name  = "DB_SSLMODE"
+        value = "disable"
+      }
+      env {
+        name  = "OPENFGA_URL"
+        value = google_cloud_run_v2_service.openfga.uri
+      }
+
+      env {
+        name = "DB_PASSWORD"
+        value_source {
+          secret_key_ref {
+            secret  = "location-db-password"
+            version = "latest"
+          }
+        }
+      }
+      env {
+        name = "OPENFGA_API_KEY"
+        value_source {
+          secret_key_ref {
+            secret  = "openfga-preshared-key"
+            version = "latest"
+          }
+        }
+      }
+    }
+
+    containers {
+      name  = "cloud-sql-proxy"
+      image = "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.14.3"
+      args  = [local.sql_connection]
+      resources {
+        limits = { cpu = "0.5", memory = "256Mi" }
+      }
+    }
+  }
+}
+
+# --- Tenant Router Service ---
+resource "google_cloud_run_v2_service" "tenant_router_service" {
+  name                = "tenant-router-service"
+  location            = var.region
+  deletion_protection = false
+
+  template {
+    service_account = local.sa_emails["tenant-router-service"]
+
+    scaling {
+      min_instance_count = 0
+      max_instance_count = 3
+    }
+
+    containers {
+      name  = "tenant-router-service"
+      image = "${local.gar_url}/tenant-router-service:latest"
+
+      ports {
+        container_port = 8089
+      }
+
+      resources {
+        limits   = { cpu = "1", memory = "256Mi" }
+        cpu_idle = true
+      }
+
+      env {
+        name  = "GCP_PROJECT_ID"
+        value = var.project_id
+      }
+      env {
+        name  = "PLATFORM_DOMAIN"
+        value = "tesserix.app"
+      }
+      env {
+        name  = "BASE_DOMAIN"
+        value = "mark8ly.com"
+      }
+      env {
+        name  = "DB_HOST"
+        value = "localhost"
+      }
+      env {
+        name  = "DB_PORT"
+        value = "5432"
+      }
+      env {
+        name  = "DB_NAME"
+        value = "tenant_router_db"
+      }
+      env {
+        name  = "DB_USER"
+        value = "tenant_router_user"
+      }
+      env {
+        name  = "DB_SSLMODE"
+        value = "disable"
+      }
+      env {
+        name  = "NOTIFICATION_SERVICE_URL"
+        value = google_cloud_run_v2_service.notification_service.uri
+      }
+      env {
+        name  = "AUDIT_SERVICE_URL"
+        value = google_cloud_run_v2_service.audit_service.uri
+      }
+
+      env {
+        name = "DB_PASSWORD"
+        value_source {
+          secret_key_ref {
+            secret  = "tenant-router-db-password"
+            version = "latest"
+          }
+        }
+      }
+      env {
+        name = "API_KEY"
+        value_source {
+          secret_key_ref {
+            secret  = "shared-internal-service-key"
+            version = "latest"
+          }
+        }
+      }
+      env {
+        name = "CLOUDFLARE_API_TOKEN"
+        value_source {
+          secret_key_ref {
+            secret  = "cloudflare-api-token"
+            version = "latest"
+          }
+        }
+      }
+    }
+
+    containers {
+      name  = "cloud-sql-proxy"
+      image = "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.14.3"
+      args  = [local.sql_connection]
+      resources {
+        limits = { cpu = "0.5", memory = "256Mi" }
+      }
+    }
+  }
+}
+
+# --- Marketplace Onboarding (Next.js) ---
+resource "google_cloud_run_v2_service" "marketplace_onboarding" {
+  name                = "marketplace-onboarding"
+  location            = var.region
+  deletion_protection = false
+
+  template {
+    service_account = local.sa_emails["marketplace-onboarding"]
+
+    scaling {
+      min_instance_count = 0
+      max_instance_count = 5
+    }
+
+    containers {
+      name  = "marketplace-onboarding"
+      image = "${local.gar_url}/marketplace-onboarding:latest"
+
+      ports {
+        container_port = 3000
+      }
+
+      resources {
+        limits   = { cpu = "1", memory = "512Mi" }
+        cpu_idle = true
+      }
+
+      env {
+        name  = "NODE_ENV"
+        value = "production"
+      }
+      env {
+        name  = "NEXT_TELEMETRY_DISABLED"
+        value = "1"
+      }
+      env {
+        name  = "GCP_PROJECT_ID"
+        value = var.project_id
+      }
+      env {
+        name  = "NEXT_PUBLIC_SITE_URL"
+        value = "https://mark8ly.com"
+      }
+      env {
+        name  = "NEXT_PUBLIC_BASE_DOMAIN"
+        value = "mark8ly.com"
+      }
+      env {
+        name  = "AUTH_BFF_URL"
+        value = google_cloud_run_v2_service.auth_bff.uri
+      }
+      env {
+        name  = "TENANT_SERVICE_URL"
+        value = google_cloud_run_v2_service.tenant_service.uri
+      }
+      env {
+        name  = "LOCATION_SERVICE_URL"
+        value = google_cloud_run_v2_service.location_service.uri
+      }
+      env {
+        name  = "VERIFICATION_SERVICE_URL"
+        value = google_cloud_run_v2_service.verification_service.uri
+      }
+      env {
+        name  = "TENANT_ROUTER_URL"
+        value = google_cloud_run_v2_service.tenant_router_service.uri
+      }
+      env {
+        name  = "CONTENT_DB_HOST"
+        value = "localhost"
+      }
+      env {
+        name  = "CONTENT_DB_PORT"
+        value = "5432"
+      }
+      env {
+        name  = "CONTENT_DB_NAME"
+        value = "mp_onboarding_db"
+      }
+      env {
+        name  = "CONTENT_DB_USER"
+        value = "mp_onboarding_user"
+      }
+      env {
+        name  = "CONTENT_DB_SSLMODE"
+        value = "disable"
+      }
+
+      env {
+        name = "CONTENT_DB_PASSWORD"
+        value_source {
+          secret_key_ref {
+            secret  = "mp_onboarding-db-password"
+            version = "latest"
+          }
+        }
+      }
+      env {
+        name = "INTERNAL_SERVICE_KEY"
+        value_source {
+          secret_key_ref {
+            secret  = "shared-internal-service-key"
+            version = "latest"
+          }
+        }
+      }
+    }
+
+    containers {
+      name  = "cloud-sql-proxy"
+      image = "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.14.3"
+      args  = [local.sql_connection]
+      resources {
+        limits = { cpu = "0.5", memory = "256Mi" }
+      }
+    }
+  }
+}
+
 # =============================================================================
 # PUBLIC ACCESS — Backend services use app-level auth (JWT), not Cloud Run IAM.
 # Allow unauthenticated at Cloud Run level for all backend services.
 # =============================================================================
 locals {
   public_services = {
-    subscription  = google_cloud_run_v2_service.subscription_service.name
-    notification  = google_cloud_run_v2_service.notification_service.name
-    document      = google_cloud_run_v2_service.document_service.name
-    verification  = google_cloud_run_v2_service.verification_service.name
-    analytics     = google_cloud_run_v2_service.analytics_service.name
-    status        = google_cloud_run_v2_service.status_service.name
+    subscription          = google_cloud_run_v2_service.subscription_service.name
+    notification          = google_cloud_run_v2_service.notification_service.name
+    document              = google_cloud_run_v2_service.document_service.name
+    verification          = google_cloud_run_v2_service.verification_service.name
+    analytics             = google_cloud_run_v2_service.analytics_service.name
+    status                = google_cloud_run_v2_service.status_service.name
+    location              = google_cloud_run_v2_service.location_service.name
+    tenant_router         = google_cloud_run_v2_service.tenant_router_service.name
+    marketplace_onboarding = google_cloud_run_v2_service.marketplace_onboarding.name
   }
 }
 

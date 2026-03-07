@@ -62,6 +62,8 @@ locals {
     "tickets_db",
     "analytics_db",
     "verifications_db",
+    "location_db",
+    "tenant_router_db",
   ]
 
   marketplace_databases = [
@@ -75,6 +77,7 @@ locals {
     "mp_reviews_db",
     "mp_vendors_db",
     "mp_customers_db",
+    "mp_onboarding_db",
   ]
 
   all_databases = concat(local.platform_databases, local.marketplace_databases)
