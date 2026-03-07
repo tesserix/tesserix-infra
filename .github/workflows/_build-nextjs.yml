@@ -58,7 +58,7 @@ jobs:
       - run: npm ci
         env:
           NODE_AUTH_TOKEN: ${{ secrets.PKG_READ_TOKEN }}
-      - run: npx next lint --dir .
+      - run: npx eslint .
 
   build:
     name: Build and Push
