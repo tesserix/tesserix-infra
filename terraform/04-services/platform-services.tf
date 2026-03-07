@@ -1171,7 +1171,7 @@ resource "google_cloud_run_v2_service" "tenant_router_service" {
         name = "DB_PASSWORD"
         value_source {
           secret_key_ref {
-            secret  = "tenant-router-db-password"
+            secret  = "tenant_router-db-password"
             version = "latest"
           }
         }

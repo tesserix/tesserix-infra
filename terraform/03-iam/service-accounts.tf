@@ -140,7 +140,7 @@ locals {
       storage_apps     = []
     }
     "tenant-router-service" = {
-      secrets  = ["tenant-router-db-password", "shared-internal-service-key", "cloudflare-api-token"]
+      secrets  = ["tenant_router-db-password", "shared-internal-service-key", "cloudflare-api-token"]
       has_db   = true
       invokes  = ["notification-service", "audit-service"]
       publishes_events = true

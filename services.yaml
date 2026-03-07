@@ -304,7 +304,7 @@ services:
     publishesEvents: true
     pubsubTopic: ""
     secrets:
-      - tenant-router-db-password
+      - tenant_router-db-password
       - shared-internal-service-key
       - cloudflare-api-token
     storageApps: []
