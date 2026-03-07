@@ -222,6 +222,10 @@ resource "google_cloud_run_v2_service" "tesserix_home" {
         name  = "PLATFORM_DOMAIN"
         value = "tesserix.app"
       }
+      env {
+        name  = "CSRF_ALLOWED_DOMAINS"
+        value = "tesserix.app"
+      }
 
       # Cross-service URLs — resolved after all services are planned
       env {
@@ -322,6 +326,10 @@ resource "google_cloud_run_v2_service" "marketplace_onboarding" {
       }
       env {
         name  = "NEXT_PUBLIC_BASE_DOMAIN"
+        value = "mark8ly.com"
+      }
+      env {
+        name  = "CSRF_ALLOWED_DOMAINS"
         value = "mark8ly.com"
       }
 
