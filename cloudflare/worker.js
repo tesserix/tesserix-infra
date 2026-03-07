@@ -30,8 +30,13 @@ export default {
       return proxy(request, url, env.TESSERIX_HOME_URL);
     }
 
-    // --- Tenant subdomains: *.mark8ly.com ---
+    // --- Marketplace onboarding: mark8ly.com (root) ---
     const baseDomain = env.BASE_DOMAIN || "mark8ly.com";
+    if (host === baseDomain || host === `www.${baseDomain}`) {
+      return proxy(request, url, env.MARKETPLACE_ONBOARDING_URL);
+    }
+
+    // --- Tenant subdomains: *.mark8ly.com ---
     if (host.endsWith(`.${baseDomain}`)) {
       const subdomain = host.replace(`.${baseDomain}`, "");
 

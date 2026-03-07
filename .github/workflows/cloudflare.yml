@@ -38,16 +38,21 @@ jobs:
           TESSERIX_HOME_URL=$(gcloud run services describe tesserix-home \
             --region=asia-south1 --project=tesserix \
             --format="value(status.url)")
+          MARKETPLACE_ONBOARDING_URL=$(gcloud run services describe marketplace-onboarding \
+            --region=asia-south1 --project=tesserix \
+            --format="value(status.url)")
 
           echo "AUTH_BFF_URL=${AUTH_BFF_URL}" >> $GITHUB_ENV
           echo "TESSERIX_HOME_URL=${TESSERIX_HOME_URL}" >> $GITHUB_ENV
+          echo "MARKETPLACE_ONBOARDING_URL=${MARKETPLACE_ONBOARDING_URL}" >> $GITHUB_ENV
           echo "Resolved URLs:"
           echo "  auth-bff: ${AUTH_BFF_URL}"
           echo "  tesserix-home: ${TESSERIX_HOME_URL}"
+          echo "  marketplace-onboarding: ${MARKETPLACE_ONBOARDING_URL}"
 
       - name: Deploy Worker
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           workingDirectory: cloudflare
-          command: deploy --var AUTH_BFF_URL:${{ env.AUTH_BFF_URL }} --var TESSERIX_HOME_URL:${{ env.TESSERIX_HOME_URL }}
+          command: deploy --var AUTH_BFF_URL:${{ env.AUTH_BFF_URL }} --var TESSERIX_HOME_URL:${{ env.TESSERIX_HOME_URL }} --var MARKETPLACE_ONBOARDING_URL:${{ env.MARKETPLACE_ONBOARDING_URL }}
