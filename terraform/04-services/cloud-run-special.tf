@@ -293,7 +293,7 @@ resource "google_cloud_run_v2_service" "marketplace_onboarding" {
 
     containers {
       name  = "marketplace-onboarding"
-      image = "${local.gar_url}/marketplace-onboarding:latest"
+      image = "gcr.io/cloudrun/hello:latest"
 
       ports {
         container_port = 3000
