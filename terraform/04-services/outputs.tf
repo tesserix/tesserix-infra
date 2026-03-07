@@ -1,7 +1,8 @@
-# All service URIs — merged from standard, simple, and special resources.
+# All service URIs — merged from base, dependent, simple, and special resources.
 output "service_urls" {
   value = merge(
-    { for k, v in google_cloud_run_v2_service.standard : k => v.uri },
+    { for k, v in google_cloud_run_v2_service.base : k => v.uri },
+    { for k, v in google_cloud_run_v2_service.dependent : k => v.uri },
     { for k, v in google_cloud_run_v2_service.simple : k => v.uri },
     {
       "openfga"                = google_cloud_run_v2_service.openfga.uri

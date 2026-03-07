@@ -128,7 +128,7 @@ resource "google_cloud_run_v2_service" "auth_bff" {
       # TODO: uncomment after deploying tenant-service
       # env {
       #   name  = "TENANT_SERVICE_URL"
-      #   value = google_cloud_run_v2_service.standard["tenant-service"].uri
+      #   value = google_cloud_run_v2_service.base["tenant-service"].uri
       # }
 
       env {
@@ -230,15 +230,15 @@ resource "google_cloud_run_v2_service" "tesserix_home" {
       }
       env {
         name  = "TENANT_SERVICE_URL"
-        value = google_cloud_run_v2_service.standard["tenant-service"].uri
+        value = google_cloud_run_v2_service.base["tenant-service"].uri
       }
       env {
         name  = "TICKETS_SERVICE_URL"
-        value = "${google_cloud_run_v2_service.standard["tickets-service"].uri}/api/v1"
+        value = "${google_cloud_run_v2_service.dependent["tickets-service"].uri}/api/v1"
       }
       env {
         name  = "AUDIT_SERVICE_URL"
-        value = "${google_cloud_run_v2_service.standard["audit-service"].uri}/api/v1"
+        value = "${google_cloud_run_v2_service.base["audit-service"].uri}/api/v1"
       }
       env {
         name  = "FEATURE_FLAGS_SERVICE_URL"
@@ -246,7 +246,7 @@ resource "google_cloud_run_v2_service" "tesserix_home" {
       }
       env {
         name  = "NOTIFICATION_SERVICE_URL"
-        value = "${google_cloud_run_v2_service.standard["notification-service"].uri}/api/v1"
+        value = "${google_cloud_run_v2_service.base["notification-service"].uri}/api/v1"
       }
       env {
         name  = "STATUS_DASHBOARD_SERVICE_URL"
@@ -254,7 +254,7 @@ resource "google_cloud_run_v2_service" "tesserix_home" {
       }
       env {
         name  = "SUBSCRIPTION_SERVICE_URL"
-        value = google_cloud_run_v2_service.standard["subscription-service"].uri
+        value = google_cloud_run_v2_service.dependent["subscription-service"].uri
       }
 
       env {
@@ -332,19 +332,19 @@ resource "google_cloud_run_v2_service" "marketplace_onboarding" {
       }
       env {
         name  = "TENANT_SERVICE_URL"
-        value = google_cloud_run_v2_service.standard["tenant-service"].uri
+        value = google_cloud_run_v2_service.base["tenant-service"].uri
       }
       env {
         name  = "LOCATION_SERVICE_URL"
-        value = google_cloud_run_v2_service.standard["location-service"].uri
+        value = google_cloud_run_v2_service.base["location-service"].uri
       }
       env {
         name  = "VERIFICATION_SERVICE_URL"
-        value = google_cloud_run_v2_service.standard["verification-service"].uri
+        value = google_cloud_run_v2_service.dependent["verification-service"].uri
       }
       env {
         name  = "TENANT_ROUTER_URL"
-        value = google_cloud_run_v2_service.standard["tenant-router-service"].uri
+        value = google_cloud_run_v2_service.dependent["tenant-router-service"].uri
       }
 
       # Content DB (uses CONTENT_DB_* prefix — not standard DB_* names)

@@ -20,7 +20,7 @@ resource "google_pubsub_subscription" "audit_push" {
   topic = google_pubsub_topic.audit_events.id
 
   push_config {
-    push_endpoint = "${google_cloud_run_v2_service.standard["audit-service"].uri}/events"
+    push_endpoint = "${google_cloud_run_v2_service.base["audit-service"].uri}/events"
     oidc_token {
       service_account_email = data.terraform_remote_state.iam.outputs.service_account_emails["audit-service"]
     }
@@ -52,7 +52,7 @@ resource "google_pubsub_subscription" "notification_push" {
   topic = google_pubsub_topic.notification_events.id
 
   push_config {
-    push_endpoint = "${google_cloud_run_v2_service.standard["notification-service"].uri}/events"
+    push_endpoint = "${google_cloud_run_v2_service.base["notification-service"].uri}/events"
     oidc_token {
       service_account_email = data.terraform_remote_state.iam.outputs.service_account_emails["notification-service"]
     }

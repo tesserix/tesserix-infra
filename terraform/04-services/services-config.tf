@@ -267,20 +267,24 @@ locals {
   }
 
   # ---------------------------------------------------------------------------
-  # Unified URI lookup used by services that reference each other.
-  # Merges URIs from the three resource sets so any service can resolve any
-  # other service by name regardless of which resource it comes from.
+  # Two-tier split: base services have no cross-standard-service refs,
+  # dependent services reference only base services. This avoids the Terraform
+  # for_each self-referencing cycle.
   # ---------------------------------------------------------------------------
+  base_db_services      = { for k, v in local.standard_db_services : k => v if length(v.service_urls) == 0 }
+  dependent_db_services = { for k, v in local.standard_db_services : k => v if length(v.service_urls) > 0 }
+
   # ---------------------------------------------------------------------------
   # Public-access IAM: services that allow allUsers at the Cloud Run layer.
   # App-level GIP JWT auth handles actual security for backend services.
   # ---------------------------------------------------------------------------
   public_services = merge(
     # All standard DB services are publicly reachable
-    { for k, _ in local.standard_db_services : k => k },
+    { for k, _ in local.base_db_services : k => k },
+    { for k, _ in local.dependent_db_services : k => k },
     # Simple services
     { for k, _ in local.simple_services : k => k },
-    # Selected special services (tenant-router is already in standard_db_services)
+    # Selected special services
     {
       "marketplace-onboarding" = "marketplace-onboarding"
       "status-service"         = "status-service"

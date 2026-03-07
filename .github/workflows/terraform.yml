@@ -119,30 +119,21 @@ jobs:
           terraform init \
             -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}" \
             -backend-config="prefix=04-services"
-      - name: Migrate state to for_each resources
+      - name: Migrate state to two-tier for_each resources
         working-directory: terraform/04-services
         run: |
-          # Standard DB services (old individual → for_each standard)
-          terraform state mv 'google_cloud_run_v2_service.audit_service' 'google_cloud_run_v2_service.standard["audit-service"]' 2>/dev/null || true
-          terraform state mv 'google_cloud_run_v2_service.tenant_service' 'google_cloud_run_v2_service.standard["tenant-service"]' 2>/dev/null || true
-          terraform state mv 'google_cloud_run_v2_service.notification_service' 'google_cloud_run_v2_service.standard["notification-service"]' 2>/dev/null || true
-          terraform state mv 'google_cloud_run_v2_service.tickets_service' 'google_cloud_run_v2_service.standard["tickets-service"]' 2>/dev/null || true
-          terraform state mv 'google_cloud_run_v2_service.subscription_service' 'google_cloud_run_v2_service.standard["subscription-service"]' 2>/dev/null || true
-          terraform state mv 'google_cloud_run_v2_service.document_service' 'google_cloud_run_v2_service.standard["document-service"]' 2>/dev/null || true
-          terraform state mv 'google_cloud_run_v2_service.location_service' 'google_cloud_run_v2_service.standard["location-service"]' 2>/dev/null || true
-          terraform state mv 'google_cloud_run_v2_service.verification_service' 'google_cloud_run_v2_service.standard["verification-service"]' 2>/dev/null || true
-          terraform state mv 'google_cloud_run_v2_service.analytics_service' 'google_cloud_run_v2_service.standard["analytics-service"]' 2>/dev/null || true
-          terraform state mv 'google_cloud_run_v2_service.tenant_router_service' 'google_cloud_run_v2_service.standard["tenant-router-service"]' 2>/dev/null || true
-          # Simple services
-          terraform state mv 'google_cloud_run_v2_service.qr_service' 'google_cloud_run_v2_service.simple["qr-service"]' 2>/dev/null || true
-          terraform state mv 'google_cloud_run_v2_service.feature_flags' 'google_cloud_run_v2_service.simple["feature-flags-service"]' 2>/dev/null || true
-          # IAM members (old keys → new service-name keys)
-          terraform state mv 'google_cloud_run_service_iam_member.public_access["analytics"]' 'google_cloud_run_service_iam_member.public_access["analytics-service"]' 2>/dev/null || true
-          terraform state mv 'google_cloud_run_service_iam_member.public_access["document"]' 'google_cloud_run_service_iam_member.public_access["document-service"]' 2>/dev/null || true
-          terraform state mv 'google_cloud_run_service_iam_member.public_access["notification"]' 'google_cloud_run_service_iam_member.public_access["notification-service"]' 2>/dev/null || true
-          terraform state mv 'google_cloud_run_service_iam_member.public_access["status"]' 'google_cloud_run_service_iam_member.public_access["status-service"]' 2>/dev/null || true
-          terraform state mv 'google_cloud_run_service_iam_member.public_access["subscription"]' 'google_cloud_run_service_iam_member.public_access["subscription-service"]' 2>/dev/null || true
-          terraform state mv 'google_cloud_run_service_iam_member.public_access["verification"]' 'google_cloud_run_service_iam_member.public_access["verification-service"]' 2>/dev/null || true
+          # Base DB services (no cross-service refs) → google_cloud_run_v2_service.base
+          terraform state mv 'google_cloud_run_v2_service.standard["audit-service"]' 'google_cloud_run_v2_service.base["audit-service"]' 2>/dev/null || true
+          terraform state mv 'google_cloud_run_v2_service.standard["tenant-service"]' 'google_cloud_run_v2_service.base["tenant-service"]' 2>/dev/null || true
+          terraform state mv 'google_cloud_run_v2_service.standard["notification-service"]' 'google_cloud_run_v2_service.base["notification-service"]' 2>/dev/null || true
+          terraform state mv 'google_cloud_run_v2_service.standard["document-service"]' 'google_cloud_run_v2_service.base["document-service"]' 2>/dev/null || true
+          terraform state mv 'google_cloud_run_v2_service.standard["location-service"]' 'google_cloud_run_v2_service.base["location-service"]' 2>/dev/null || true
+          terraform state mv 'google_cloud_run_v2_service.standard["analytics-service"]' 'google_cloud_run_v2_service.base["analytics-service"]' 2>/dev/null || true
+          # Dependent DB services (have cross-service refs) → google_cloud_run_v2_service.dependent
+          terraform state mv 'google_cloud_run_v2_service.standard["tickets-service"]' 'google_cloud_run_v2_service.dependent["tickets-service"]' 2>/dev/null || true
+          terraform state mv 'google_cloud_run_v2_service.standard["subscription-service"]' 'google_cloud_run_v2_service.dependent["subscription-service"]' 2>/dev/null || true
+          terraform state mv 'google_cloud_run_v2_service.standard["verification-service"]' 'google_cloud_run_v2_service.dependent["verification-service"]' 2>/dev/null || true
+          terraform state mv 'google_cloud_run_v2_service.standard["tenant-router-service"]' 'google_cloud_run_v2_service.dependent["tenant-router-service"]' 2>/dev/null || true
       - name: Terraform Plan
         working-directory: terraform/04-services
         run: terraform plan -no-color
