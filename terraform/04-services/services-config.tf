@@ -271,21 +271,6 @@ locals {
   # Merges URIs from the three resource sets so any service can resolve any
   # other service by name regardless of which resource it comes from.
   # ---------------------------------------------------------------------------
-  all_service_uris = merge(
-    # Standard DB services
-    { for k, v in google_cloud_run_v2_service.standard : k => v.uri },
-    # Simple stateless services
-    { for k, v in google_cloud_run_v2_service.simple : k => v.uri },
-    # Special individually-defined services
-    {
-      "openfga"                = google_cloud_run_v2_service.openfga.uri
-      "auth-bff"               = google_cloud_run_v2_service.auth_bff.uri
-      "tesserix-home"          = google_cloud_run_v2_service.tesserix_home.uri
-      "marketplace-onboarding" = google_cloud_run_v2_service.marketplace_onboarding.uri
-      "status-service"         = google_cloud_run_v2_service.status_service.uri
-    }
-  )
-
   # ---------------------------------------------------------------------------
   # Public-access IAM: services that allow allUsers at the Cloud Run layer.
   # App-level GIP JWT auth handles actual security for backend services.
@@ -295,11 +280,10 @@ locals {
     { for k, _ in local.standard_db_services : k => k },
     # Simple services
     { for k, _ in local.simple_services : k => k },
-    # Selected special services
+    # Selected special services (tenant-router is already in standard_db_services)
     {
       "marketplace-onboarding" = "marketplace-onboarding"
       "status-service"         = "status-service"
-      "tenant-router-service"  = "tenant-router-service"
     }
   )
 }

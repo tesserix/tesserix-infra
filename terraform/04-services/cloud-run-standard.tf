@@ -105,9 +105,9 @@ resource "google_cloud_run_v2_service" "standard" {
         value = "disable" # Cloud SQL proxy handles TLS
       }
 
-      # -- Optional: OPENFGA_URL (resolved via merged URI map) ---------------
+      # -- Optional: OPENFGA_URL (resolved via special service URIs) ----------
       dynamic "env" {
-        for_each = each.value.openfga_url ? [local.all_service_uris["openfga"]] : []
+        for_each = each.value.openfga_url ? [google_cloud_run_v2_service.openfga.uri] : []
         content {
           name  = "OPENFGA_URL"
           value = env.value
@@ -126,11 +126,12 @@ resource "google_cloud_run_v2_service" "standard" {
       }
 
       # -- Service-to-service URL references ---------------------------------
+      # Values in service_urls map to keys in the standard for_each set.
       dynamic "env" {
         for_each = each.value.service_urls
         content {
           name  = env.key
-          value = local.all_service_uris[env.value]
+          value = google_cloud_run_v2_service.standard[env.value].uri
         }
       }
 
