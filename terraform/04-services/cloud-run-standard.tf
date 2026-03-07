@@ -16,6 +16,14 @@ resource "google_cloud_run_v2_service" "standard" {
   location            = var.region
   deletion_protection = false
 
+  # CI owns the container image after initial creation — don't revert it.
+  lifecycle {
+    ignore_changes = [
+      template[0].containers[0].image,
+      template[0].containers[1].image,
+    ]
+  }
+
   template {
     service_account = local.sa_emails[each.key]
 
@@ -167,6 +175,12 @@ resource "google_cloud_run_v2_service" "simple" {
   name                = each.key
   location            = var.region
   deletion_protection = false
+
+  lifecycle {
+    ignore_changes = [
+      template[0].containers[0].image,
+    ]
+  }
 
   template {
     service_account = local.sa_emails[each.key]
