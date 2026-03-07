@@ -249,7 +249,7 @@ resource "google_cloud_run_v2_service" "tesserix_home" {
         value = "${google_cloud_run_v2_service.base["notification-service"].uri}/api/v1"
       }
       env {
-        name  = "STATUS_DASHBOARD_SERVICE_URL"
+        name  = "STATUS_SERVICE_URL"
         value = "${google_cloud_run_v2_service.status_service.uri}/api/v1"
       }
       env {
