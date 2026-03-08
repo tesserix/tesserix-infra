@@ -114,9 +114,12 @@ async function lookupRoute(env, slug) {
 function proxy(request, url, targetOrigin) {
   const target = new URL(targetOrigin);
   const newUrl = new URL(url.pathname + url.search, target);
+  const headers = new Headers(request.headers);
+  headers.set("x-forwarded-host", url.hostname);
+  headers.set("x-forwarded-proto", url.protocol.replace(":", ""));
   const newRequest = new Request(newUrl, {
     method: request.method,
-    headers: request.headers,
+    headers,
     body: request.body,
     redirect: "manual",
   });
@@ -127,14 +130,17 @@ function proxy(request, url, targetOrigin) {
 function proxyWithTenant(request, url, targetOrigin, tenantId, slug, originalHost) {
   const target = new URL(targetOrigin);
   const newUrl = new URL(url.pathname + url.search, target);
+  const headers = new Headers(request.headers);
+  headers.set("x-forwarded-host", originalHost);
+  headers.set("x-forwarded-proto", url.protocol.replace(":", ""));
+  headers.set("X-Tenant-ID", tenantId);
+  headers.set("X-Tenant-Slug", slug);
+  headers.set("X-Original-Host", originalHost);
   const newRequest = new Request(newUrl, {
     method: request.method,
-    headers: request.headers,
+    headers,
     body: request.body,
     redirect: "manual",
   });
-  newRequest.headers.set("X-Tenant-ID", tenantId);
-  newRequest.headers.set("X-Tenant-Slug", slug);
-  newRequest.headers.set("X-Original-Host", originalHost);
   return fetch(newRequest);
 }
