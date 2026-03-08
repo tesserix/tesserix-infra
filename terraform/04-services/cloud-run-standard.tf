@@ -119,6 +119,15 @@ resource "google_cloud_run_v2_service" "base" {
         }
       }
 
+      # -- notification-service: SendGrid sender config (bespoke) ------------
+      dynamic "env" {
+        for_each = each.key == "notification-service" ? { SENDGRID_FROM_EMAIL = "noreply@mark8ly.com", SENDGRID_FROM_NAME = "mark8ly" } : {}
+        content {
+          name  = env.key
+          value = env.value
+        }
+      }
+
       # -- Secrets -----------------------------------------------------------
       dynamic "env" {
         for_each = each.value.secrets
