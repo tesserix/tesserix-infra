@@ -71,6 +71,25 @@ jobs:
             --project "${{ inputs.project }}" \
             --quiet
 
+      - name: Route traffic to new revision
+        id: route
+        run: |
+          set -euo pipefail
+          # Get the latest revision (just deployed)
+          LATEST=$(gcloud run revisions list \
+            --service=${{ inputs.service_name }} \
+            --region=${{ inputs.region }} \
+            --project=${{ inputs.project }} \
+            --sort-by=~createTime \
+            --limit=1 \
+            --format="value(name)")
+          echo "latest_revision=${LATEST}" >> "$GITHUB_OUTPUT"
+          echo "Routing 100% traffic to ${LATEST}"
+          gcloud run services update-traffic ${{ inputs.service_name }} \
+            --region=${{ inputs.region }} \
+            --project=${{ inputs.project }} \
+            --to-revisions="${LATEST}=100"
+
       - name: Smoke test
         run: |
           set -euo pipefail
@@ -97,7 +116,8 @@ jobs:
         if: failure()
         run: |
           set -euo pipefail
-          echo "Deployment or health check failed, rolling back..."
+          echo "Smoke test failed, rolling back..."
+          # Roll back to the second-most-recent revision (the one before the deploy)
           PREVIOUS=$(gcloud run revisions list \
             --service=${{ inputs.service_name }} \
             --region=${{ inputs.region }} \

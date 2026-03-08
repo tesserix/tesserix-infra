@@ -108,6 +108,17 @@ resource "google_cloud_run_v2_service" "base" {
         }
       }
 
+      # -- tenant-service: notification-service URL (bespoke, base-to-base) --
+      # Cannot use service_urls (would move to dependent tier and break
+      # tickets-service / subscription-service refs). Safe cross-instance ref.
+      dynamic "env" {
+        for_each = each.key == "tenant-service" ? ["NOTIFICATION_SERVICE_URL"] : []
+        content {
+          name  = env.value
+          value = google_cloud_run_v2_service.base["notification-service"].uri
+        }
+      }
+
       # -- Secrets -----------------------------------------------------------
       dynamic "env" {
         for_each = each.value.secrets
