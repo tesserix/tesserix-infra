@@ -9,6 +9,7 @@ output "service_urls" {
       "auth-bff"               = google_cloud_run_v2_service.auth_bff.uri
       "tesserix-home"          = google_cloud_run_v2_service.tesserix_home.uri
       "marketplace-onboarding" = google_cloud_run_v2_service.marketplace_onboarding.uri
+      "marketplace-admin"      = google_cloud_run_v2_service.marketplace_admin.uri
       "status-service"         = google_cloud_run_v2_service.status_service.uri
     }
   )

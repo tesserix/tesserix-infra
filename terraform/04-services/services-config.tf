@@ -2,7 +2,7 @@
 # SERVICE CONFIGURATION — locals-based map driving for_each Cloud Run resources
 # =============================================================================
 # Special services (openfga, auth-bff, tesserix-home, marketplace-onboarding,
-# status-service) are defined individually in cloud-run-special.tf because
+# marketplace-admin, status-service) are defined individually in cloud-run-special.tf because
 # they have unique images, env shapes, or resource limits that don't fit the
 # standard template.
 # =============================================================================
@@ -287,6 +287,7 @@ locals {
     # Selected special services
     {
       "marketplace-onboarding" = "marketplace-onboarding"
+      "marketplace-admin"      = "marketplace-admin"
       "status-service"         = "status-service"
     }
   )

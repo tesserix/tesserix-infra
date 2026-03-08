@@ -8,7 +8,7 @@
 //   tesserix.app/auth/*                → auth-bff Cloud Run
 //   tesserix.app/*                     → tesserix-home Cloud Run
 //   {slug}.mark8ly.com/*               → marketplace storefront
-//   {slug}-admin.mark8ly.com/*         → tesserix-home (admin panel)
+//   {slug}-admin.mark8ly.com/*         → marketplace-admin (admin panel)
 //   {slug}-admin.mark8ly.com/auth/*    → auth-bff
 //   {slug}-api.mark8ly.com/*           → API gateway
 //   custom-domain.com/*                → KV lookup → storefront
@@ -57,8 +57,8 @@ export default {
           return proxyWithTenant(request, url, env.AUTH_BFF_URL, route.tenant_id, slug, host);
         }
 
-        // Everything else → tesserix-home (admin panel)
-        return proxyWithTenant(request, url, env.TESSERIX_HOME_URL, route.tenant_id, slug, host);
+        // Everything else → marketplace-admin (admin panel)
+        return proxyWithTenant(request, url, env.MARKETPLACE_ADMIN_URL, route.tenant_id, slug, host);
       }
 
       // API subdomain: {slug}-api.mark8ly.com

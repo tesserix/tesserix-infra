@@ -8,6 +8,7 @@ AUTH_BFF_URL = "https://auth-bff-e737nq7avq-el.a.run.app"
 TESSERIX_HOME_URL = "https://tesserix-home-e737nq7avq-el.a.run.app"
 STOREFRONT_URL = "PLACEHOLDER"
 MARKETPLACE_ONBOARDING_URL = "https://marketplace-onboarding-e737nq7avq-el.a.run.app"
+MARKETPLACE_ADMIN_URL = "PLACEHOLDER"
 BASE_DOMAIN = "mark8ly.com"
 
 [[kv_namespaces]]

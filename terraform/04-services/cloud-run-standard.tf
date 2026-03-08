@@ -390,6 +390,7 @@ resource "google_cloud_run_service_iam_member" "public_access" {
     google_cloud_run_v2_service.auth_bff,
     google_cloud_run_v2_service.tesserix_home,
     google_cloud_run_v2_service.marketplace_onboarding,
+    google_cloud_run_v2_service.marketplace_admin,
     google_cloud_run_v2_service.status_service,
   ]
 }

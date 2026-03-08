@@ -157,6 +157,13 @@ locals {
       publishes_events = false
       storage_apps     = []
     }
+    "marketplace-admin" = {
+      secrets  = ["shared-internal-service-key"]
+      has_db   = false
+      invokes  = ["auth-bff", "tenant-service", "mp-products", "mp-orders", "mp-vendors", "mp-customers"]
+      publishes_events = false
+      storage_apps     = []
+    }
     "mp-storefront" = {
       secrets  = []
       has_db   = false

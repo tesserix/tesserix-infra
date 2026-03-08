@@ -330,6 +330,22 @@ services:
       - shared-internal-service-key
     storageApps: []
 
+  marketplace-admin:
+    displayName: Marketplace Admin
+    type: frontend
+    lang: nextjs
+    appGroup: mark8ly
+    hasDb: false
+    migration: none
+    usesGoShared: false
+    sidecar: none
+    invokes: [auth-bff, tenant-service, mp-products, mp-orders, mp-vendors, mp-customers, mp-categories, mp-coupons, mp-reviews, mp-shipping, settings-service, subscription-service, tickets-service, notification-service, feature-flags-service, document-service, location-service]
+    publishesEvents: false
+    pubsubTopic: ""
+    secrets:
+      - shared-internal-service-key
+    storageApps: []
+
   mp-storefront:
     displayName: Marketplace Storefront
     type: frontend

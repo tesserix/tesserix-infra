@@ -10,7 +10,8 @@
 #                             google_cloud_run_v2_service.simple   (for_each)
 #                             google_cloud_run_service_iam_member.public_access
 #   cloud-run-special.tf    — openfga, auth-bff, tesserix-home,
-#                             marketplace-onboarding, status-service
+#                             marketplace-onboarding, marketplace-admin,
+#                             status-service
 #
 # This file is intentionally empty. It is kept to preserve git history context.
 # =============================================================================
