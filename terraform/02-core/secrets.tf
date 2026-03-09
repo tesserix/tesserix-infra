@@ -62,6 +62,7 @@ resource "google_secret_manager_secret" "manual" {
     "platform-client-secret",
     "mp-admin-client-secret",
     "mp-storefront-client-secret",
+    "openfga-marketplace-store-id",
   ])
 
   secret_id = each.key

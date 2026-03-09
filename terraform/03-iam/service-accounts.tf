@@ -84,7 +84,7 @@ locals {
       storage_apps     = []
     }
     "tickets-service" = {
-      secrets  = ["tickets-db-password", "openfga-preshared-key"]
+      secrets  = ["tickets-db-password", "openfga-preshared-key", "openfga-marketplace-store-id"]
       has_db   = true
       invokes  = ["openfga", "tenant-service", "notification-service", "document-service"]
       publishes_events = true
@@ -133,7 +133,7 @@ locals {
       storage_apps     = []
     }
     "location-service" = {
-      secrets  = ["location-db-password", "openfga-preshared-key"]
+      secrets  = ["location-db-password", "openfga-preshared-key", "openfga-marketplace-store-id"]
       has_db   = true
       invokes  = ["openfga"]
       publishes_events = false
@@ -172,107 +172,107 @@ locals {
       storage_apps     = []
     }
     "mp-products" = {
-      secrets  = ["mp_products-db-password", "openfga-preshared-key"]
+      secrets  = ["mp_products-db-password", "openfga-preshared-key", "openfga-marketplace-store-id"]
       has_db   = true
       invokes  = ["openfga"]
       publishes_events = true
       storage_apps     = ["marketplace"]
     }
     "mp-orders" = {
-      secrets  = ["mp_orders-db-password", "openfga-preshared-key"]
+      secrets  = ["mp_orders-db-password", "openfga-preshared-key", "openfga-marketplace-store-id"]
       has_db   = true
       invokes  = ["openfga", "mp-inventory", "mp-payments", "notification-service"]
       publishes_events = true
       storage_apps     = []
     }
     "mp-payments" = {
-      secrets  = ["mp_payments-db-password", "stripe-secret-key", "stripe-webhook-secret", "openfga-preshared-key"]
+      secrets  = ["mp_payments-db-password", "stripe-secret-key", "stripe-webhook-secret", "openfga-preshared-key", "openfga-marketplace-store-id"]
       has_db   = true
       invokes  = ["openfga"]
       publishes_events = true
       storage_apps     = []
     }
     "mp-inventory" = {
-      secrets  = ["mp_inventory-db-password"]
+      secrets  = ["mp_inventory-db-password", "openfga-preshared-key", "openfga-marketplace-store-id"]
       has_db   = true
-      invokes  = []
+      invokes  = ["openfga"]
       publishes_events = true
       storage_apps     = []
     }
     "mp-shipping" = {
-      secrets  = ["mp_shipping-db-password"]
+      secrets  = ["mp_shipping-db-password", "openfga-preshared-key", "openfga-marketplace-store-id"]
       has_db   = true
-      invokes  = []
+      invokes  = ["openfga"]
       publishes_events = false
       storage_apps     = []
     }
     "mp-categories" = {
-      secrets  = ["mp_categories-db-password"]
+      secrets  = ["mp_categories-db-password", "openfga-preshared-key", "openfga-marketplace-store-id"]
       has_db   = true
-      invokes  = []
+      invokes  = ["openfga"]
       publishes_events = false
       storage_apps     = []
     }
     "mp-coupons" = {
-      secrets  = ["mp_coupons-db-password"]
+      secrets  = ["mp_coupons-db-password", "openfga-preshared-key", "openfga-marketplace-store-id"]
       has_db   = true
-      invokes  = []
+      invokes  = ["openfga"]
       publishes_events = false
       storage_apps     = []
     }
     "mp-reviews" = {
-      secrets  = ["mp_reviews-db-password", "openfga-preshared-key"]
+      secrets  = ["mp_reviews-db-password", "openfga-preshared-key", "openfga-marketplace-store-id"]
       has_db   = true
       invokes  = ["openfga"]
       publishes_events = false
       storage_apps     = ["marketplace"]
     }
     "mp-vendors" = {
-      secrets  = ["mp_vendors-db-password", "openfga-preshared-key"]
+      secrets  = ["mp_vendors-db-password", "openfga-preshared-key", "openfga-marketplace-store-id"]
       has_db   = true
       invokes  = ["openfga"]
       publishes_events = false
       storage_apps     = ["marketplace"]
     }
     "mp-customers" = {
-      secrets  = ["mp_customers-db-password", "openfga-preshared-key"]
+      secrets  = ["mp_customers-db-password", "openfga-preshared-key", "openfga-marketplace-store-id"]
       has_db   = true
       invokes  = ["openfga"]
       publishes_events = false
       storage_apps     = []
     }
     "mp-staff" = {
-      secrets  = ["mp_staff-db-password", "openfga-preshared-key"]
+      secrets  = ["mp_staff-db-password", "openfga-preshared-key", "openfga-marketplace-store-id"]
       has_db   = true
       invokes  = ["openfga", "document-service"]
       publishes_events = true
       storage_apps     = []
     }
     "mp-content" = {
-      secrets  = ["mp_content-db-password"]
+      secrets  = ["mp_content-db-password", "openfga-preshared-key", "openfga-marketplace-store-id"]
       has_db   = true
-      invokes  = ["mp-staff"]
+      invokes  = ["openfga"]
       publishes_events = false
       storage_apps     = []
     }
     "mp-approvals" = {
-      secrets  = ["mp_approvals-db-password"]
+      secrets  = ["mp_approvals-db-password", "openfga-preshared-key", "openfga-marketplace-store-id"]
       has_db   = true
-      invokes  = ["mp-staff"]
+      invokes  = ["openfga"]
       publishes_events = true
       storage_apps     = []
     }
     "mp-gift-cards" = {
-      secrets  = ["mp_gift_cards-db-password"]
+      secrets  = ["mp_gift_cards-db-password", "openfga-preshared-key", "openfga-marketplace-store-id"]
       has_db   = true
-      invokes  = ["mp-staff"]
+      invokes  = ["openfga"]
       publishes_events = true
       storage_apps     = []
     }
     "mp-marketing" = {
-      secrets  = ["mp_marketing-db-password"]
+      secrets  = ["mp_marketing-db-password", "openfga-preshared-key", "openfga-marketplace-store-id"]
       has_db   = true
-      invokes  = ["mp-staff", "notification-service"]
+      invokes  = ["openfga", "notification-service"]
       publishes_events = true
       storage_apps     = []
     }
@@ -284,9 +284,9 @@ locals {
       storage_apps     = []
     }
     "mp-tax" = {
-      secrets  = ["mp_tax-db-password"]
+      secrets  = ["mp_tax-db-password", "openfga-preshared-key", "openfga-marketplace-store-id"]
       has_db   = true
-      invokes  = []
+      invokes  = ["openfga"]
       publishes_events = true
       storage_apps     = []
     }

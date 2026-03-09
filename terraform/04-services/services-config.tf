@@ -111,8 +111,9 @@ locals {
         "TENANT_SERVICE_URL"       = "tenant-service"
       }
       secrets = {
-        "DB_PASSWORD"     = "tickets-db-password"
-        "OPENFGA_API_KEY" = "openfga-preshared-key"
+        "DB_PASSWORD"                  = "tickets-db-password"
+        "OPENFGA_API_KEY"              = "openfga-preshared-key"
+        "OPENFGA_MARKETPLACE_STORE_ID" = "openfga-marketplace-store-id"
       }
     }
 
@@ -169,8 +170,9 @@ locals {
       openfga_url    = true
       service_urls   = {}
       secrets = {
-        "DB_PASSWORD"     = "location-db-password"
-        "OPENFGA_API_KEY" = "openfga-preshared-key"
+        "DB_PASSWORD"                  = "location-db-password"
+        "OPENFGA_API_KEY"              = "openfga-preshared-key"
+        "OPENFGA_MARKETPLACE_STORE_ID" = "openfga-marketplace-store-id"
       }
     }
 
@@ -232,8 +234,9 @@ locals {
       openfga_url    = true
       service_urls   = {}
       secrets = {
-        "DB_PASSWORD"     = "mp_products-db-password"
-        "OPENFGA_API_KEY" = "openfga-preshared-key"
+        "DB_PASSWORD"                  = "mp_products-db-password"
+        "OPENFGA_API_KEY"              = "openfga-preshared-key"
+        "OPENFGA_MARKETPLACE_STORE_ID" = "openfga-marketplace-store-id"
       }
     }
 
@@ -251,10 +254,11 @@ locals {
       openfga_url    = true
       service_urls   = {}
       secrets = {
-        "DB_PASSWORD"          = "mp_payments-db-password"
-        "STRIPE_SECRET_KEY"    = "stripe-secret-key"
-        "STRIPE_WEBHOOK_SECRET" = "stripe-webhook-secret"
-        "OPENFGA_API_KEY"      = "openfga-preshared-key"
+        "DB_PASSWORD"                  = "mp_payments-db-password"
+        "STRIPE_SECRET_KEY"            = "stripe-secret-key"
+        "STRIPE_WEBHOOK_SECRET"        = "stripe-webhook-secret"
+        "OPENFGA_API_KEY"              = "openfga-preshared-key"
+        "OPENFGA_MARKETPLACE_STORE_ID" = "openfga-marketplace-store-id"
       }
     }
 
@@ -269,10 +273,12 @@ locals {
       env_project_id = true
       env_app_env    = false
       env_platform   = false
-      openfga_url    = false
+      openfga_url    = true
       service_urls   = {}
       secrets = {
-        "DB_PASSWORD" = "mp_inventory-db-password"
+        "DB_PASSWORD"                  = "mp_inventory-db-password"
+        "OPENFGA_API_KEY"              = "openfga-preshared-key"
+        "OPENFGA_MARKETPLACE_STORE_ID" = "openfga-marketplace-store-id"
       }
     }
 
@@ -287,10 +293,12 @@ locals {
       env_project_id = true
       env_app_env    = false
       env_platform   = false
-      openfga_url    = false
+      openfga_url    = true
       service_urls   = {}
       secrets = {
-        "DB_PASSWORD" = "mp_shipping-db-password"
+        "DB_PASSWORD"                  = "mp_shipping-db-password"
+        "OPENFGA_API_KEY"              = "openfga-preshared-key"
+        "OPENFGA_MARKETPLACE_STORE_ID" = "openfga-marketplace-store-id"
       }
     }
 
@@ -305,10 +313,12 @@ locals {
       env_project_id = true
       env_app_env    = false
       env_platform   = false
-      openfga_url    = false
+      openfga_url    = true
       service_urls   = {}
       secrets = {
-        "DB_PASSWORD" = "mp_categories-db-password"
+        "DB_PASSWORD"                  = "mp_categories-db-password"
+        "OPENFGA_API_KEY"              = "openfga-preshared-key"
+        "OPENFGA_MARKETPLACE_STORE_ID" = "openfga-marketplace-store-id"
       }
     }
 
@@ -323,10 +333,12 @@ locals {
       env_project_id = true
       env_app_env    = false
       env_platform   = false
-      openfga_url    = false
+      openfga_url    = true
       service_urls   = {}
       secrets = {
-        "DB_PASSWORD" = "mp_coupons-db-password"
+        "DB_PASSWORD"                  = "mp_coupons-db-password"
+        "OPENFGA_API_KEY"              = "openfga-preshared-key"
+        "OPENFGA_MARKETPLACE_STORE_ID" = "openfga-marketplace-store-id"
       }
     }
 
@@ -344,8 +356,9 @@ locals {
       openfga_url    = true
       service_urls   = {}
       secrets = {
-        "DB_PASSWORD"     = "mp_reviews-db-password"
-        "OPENFGA_API_KEY" = "openfga-preshared-key"
+        "DB_PASSWORD"                  = "mp_reviews-db-password"
+        "OPENFGA_API_KEY"              = "openfga-preshared-key"
+        "OPENFGA_MARKETPLACE_STORE_ID" = "openfga-marketplace-store-id"
       }
     }
 
@@ -363,8 +376,9 @@ locals {
       openfga_url    = true
       service_urls   = {}
       secrets = {
-        "DB_PASSWORD"     = "mp_vendors-db-password"
-        "OPENFGA_API_KEY" = "openfga-preshared-key"
+        "DB_PASSWORD"                  = "mp_vendors-db-password"
+        "OPENFGA_API_KEY"              = "openfga-preshared-key"
+        "OPENFGA_MARKETPLACE_STORE_ID" = "openfga-marketplace-store-id"
       }
     }
 
@@ -382,8 +396,9 @@ locals {
       openfga_url    = true
       service_urls   = {}
       secrets = {
-        "DB_PASSWORD"     = "mp_customers-db-password"
-        "OPENFGA_API_KEY" = "openfga-preshared-key"
+        "DB_PASSWORD"                  = "mp_customers-db-password"
+        "OPENFGA_API_KEY"              = "openfga-preshared-key"
+        "OPENFGA_MARKETPLACE_STORE_ID" = "openfga-marketplace-store-id"
       }
     }
 
@@ -401,8 +416,9 @@ locals {
       openfga_url    = true
       service_urls   = {}
       secrets = {
-        "DB_PASSWORD"     = "mp_staff-db-password"
-        "OPENFGA_API_KEY" = "openfga-preshared-key"
+        "DB_PASSWORD"                  = "mp_staff-db-password"
+        "OPENFGA_API_KEY"              = "openfga-preshared-key"
+        "OPENFGA_MARKETPLACE_STORE_ID" = "openfga-marketplace-store-id"
       }
     }
 
@@ -417,10 +433,12 @@ locals {
       env_project_id = true
       env_app_env    = false
       env_platform   = false
-      openfga_url    = false
+      openfga_url    = true
       service_urls   = {}
       secrets = {
-        "DB_PASSWORD" = "mp_content-db-password"
+        "DB_PASSWORD"                  = "mp_content-db-password"
+        "OPENFGA_API_KEY"              = "openfga-preshared-key"
+        "OPENFGA_MARKETPLACE_STORE_ID" = "openfga-marketplace-store-id"
       }
     }
 
@@ -435,10 +453,12 @@ locals {
       env_project_id = true
       env_app_env    = false
       env_platform   = false
-      openfga_url    = false
+      openfga_url    = true
       service_urls   = {}
       secrets = {
-        "DB_PASSWORD" = "mp_approvals-db-password"
+        "DB_PASSWORD"                  = "mp_approvals-db-password"
+        "OPENFGA_API_KEY"              = "openfga-preshared-key"
+        "OPENFGA_MARKETPLACE_STORE_ID" = "openfga-marketplace-store-id"
       }
     }
 
@@ -453,10 +473,12 @@ locals {
       env_project_id = true
       env_app_env    = false
       env_platform   = false
-      openfga_url    = false
+      openfga_url    = true
       service_urls   = {}
       secrets = {
-        "DB_PASSWORD" = "mp_gift_cards-db-password"
+        "DB_PASSWORD"                  = "mp_gift_cards-db-password"
+        "OPENFGA_API_KEY"              = "openfga-preshared-key"
+        "OPENFGA_MARKETPLACE_STORE_ID" = "openfga-marketplace-store-id"
       }
     }
 
@@ -471,10 +493,12 @@ locals {
       env_project_id = true
       env_app_env    = false
       env_platform   = false
-      openfga_url    = false
+      openfga_url    = true
       service_urls   = {}
       secrets = {
-        "DB_PASSWORD" = "mp_tax-db-password"
+        "DB_PASSWORD"                  = "mp_tax-db-password"
+        "OPENFGA_API_KEY"              = "openfga-preshared-key"
+        "OPENFGA_MARKETPLACE_STORE_ID" = "openfga-marketplace-store-id"
       }
     }
 
@@ -518,8 +542,9 @@ locals {
         "NOTIFICATION_SERVICE_URL" = "notification-service"
       }
       secrets = {
-        "DB_PASSWORD"     = "mp_orders-db-password"
-        "OPENFGA_API_KEY" = "openfga-preshared-key"
+        "DB_PASSWORD"                  = "mp_orders-db-password"
+        "OPENFGA_API_KEY"              = "openfga-preshared-key"
+        "OPENFGA_MARKETPLACE_STORE_ID" = "openfga-marketplace-store-id"
       }
     }
 
@@ -534,13 +559,14 @@ locals {
       env_project_id = true
       env_app_env    = false
       env_platform   = false
-      openfga_url    = false
+      openfga_url    = true
       service_urls = {
-        "STAFF_SERVICE_URL"        = "mp-staff"
         "NOTIFICATION_SERVICE_URL" = "notification-service"
       }
       secrets = {
-        "DB_PASSWORD" = "mp_marketing-db-password"
+        "DB_PASSWORD"                  = "mp_marketing-db-password"
+        "OPENFGA_API_KEY"              = "openfga-preshared-key"
+        "OPENFGA_MARKETPLACE_STORE_ID" = "openfga-marketplace-store-id"
       }
     }
 
