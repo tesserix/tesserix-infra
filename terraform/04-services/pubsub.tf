@@ -69,6 +69,38 @@ resource "google_pubsub_subscription" "notification_push" {
   }
 }
 
+# --- Tenant Events ---
+resource "google_pubsub_topic" "tenant_events" {
+  name                       = "tesserix-tenant-events"
+  message_retention_duration = "604800s" # 7 days
+}
+
+resource "google_pubsub_topic" "tenant_events_dlq" {
+  name = "tesserix-tenant-events-dlq"
+}
+
+resource "google_pubsub_subscription" "subscription_service_tenant_push" {
+  name  = "subscription-service-tenant-push"
+  topic = google_pubsub_topic.tenant_events.id
+
+  push_config {
+    push_endpoint = "${google_cloud_run_v2_service.base["subscription-service"].uri}/events/push"
+    oidc_token {
+      service_account_email = data.terraform_remote_state.iam.outputs.service_account_emails["subscription-service"]
+    }
+  }
+
+  dead_letter_policy {
+    dead_letter_topic     = google_pubsub_topic.tenant_events_dlq.id
+    max_delivery_attempts = 5
+  }
+
+  retry_policy {
+    minimum_backoff = "10s"
+    maximum_backoff = "600s"
+  }
+}
+
 # --- Ticket Events ---
 resource "google_pubsub_topic" "ticket_events" {
   name                       = "tesserix-ticket-events"
