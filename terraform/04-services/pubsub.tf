@@ -139,6 +139,32 @@ resource "google_pubsub_topic" "subscription_events" {
   message_retention_duration = "604800s"
 }
 
+resource "google_pubsub_topic" "subscription_events_dlq" {
+  name = "tesserix-subscription-events-dlq"
+}
+
+resource "google_pubsub_subscription" "audit_subscription_push" {
+  name  = "audit-service-subscription-push"
+  topic = google_pubsub_topic.subscription_events.id
+
+  push_config {
+    push_endpoint = "${google_cloud_run_v2_service.base["audit-service"].uri}/events"
+    oidc_token {
+      service_account_email = data.terraform_remote_state.iam.outputs.service_account_emails["audit-service"]
+    }
+  }
+
+  dead_letter_policy {
+    dead_letter_topic     = google_pubsub_topic.subscription_events_dlq.id
+    max_delivery_attempts = 5
+  }
+
+  retry_policy {
+    minimum_backoff = "10s"
+    maximum_backoff = "600s"
+  }
+}
+
 # =============================================================================
 # MARKETPLACE EVENT TOPICS
 # =============================================================================
