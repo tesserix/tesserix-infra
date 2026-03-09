@@ -115,6 +115,10 @@ resource "google_cloud_run_v2_service" "auth_bff" {
         value = "production"
       }
       env {
+        name  = "PRODUCTS_CONFIG_PATH"
+        value = "/products.yaml"
+      }
+      env {
         name  = "GCP_PROJECT_ID"
         value = var.project_id
       }
@@ -164,6 +168,24 @@ resource "google_cloud_run_v2_service" "auth_bff" {
         value_source {
           secret_key_ref {
             secret  = "platform-client-secret"
+            version = "latest"
+          }
+        }
+      }
+      env {
+        name = "MP_ADMIN_CLIENT_SECRET"
+        value_source {
+          secret_key_ref {
+            secret  = "mp-admin-client-secret"
+            version = "latest"
+          }
+        }
+      }
+      env {
+        name = "MP_STOREFRONT_CLIENT_SECRET"
+        value_source {
+          secret_key_ref {
+            secret  = "mp-storefront-client-secret"
             version = "latest"
           }
         }

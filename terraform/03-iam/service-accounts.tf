@@ -28,7 +28,7 @@ locals {
   # Platform services (shared by all products)
   platform_services = {
     "auth-bff" = {
-      secrets  = ["auth-bff-cookie-encryption-key", "auth-bff-csrf-secret", "openfga-preshared-key", "platform-client-secret"]
+      secrets  = ["auth-bff-cookie-encryption-key", "auth-bff-csrf-secret", "openfga-preshared-key", "platform-client-secret", "mp-admin-client-secret", "mp-storefront-client-secret"]
       has_db   = false
       invokes  = ["openfga", "tenant-service"]
       publishes_events = true

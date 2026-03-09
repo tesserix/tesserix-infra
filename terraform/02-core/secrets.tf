@@ -60,6 +60,8 @@ resource "google_secret_manager_secret" "manual" {
     "growthbook-api-key",
     "identity-platform-smtp-password",
     "platform-client-secret",
+    "mp-admin-client-secret",
+    "mp-storefront-client-secret",
   ])
 
   secret_id = each.key
