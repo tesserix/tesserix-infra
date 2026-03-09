@@ -263,7 +263,7 @@ locals {
       storage_apps     = []
     }
     "mp-gift-cards" = {
-      secrets  = ["mp_gift-cards-db-password"]
+      secrets  = ["mp_gift_cards-db-password"]
       has_db   = true
       invokes  = ["mp-staff"]
       publishes_events = true

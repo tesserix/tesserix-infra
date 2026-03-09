@@ -456,7 +456,7 @@ locals {
       openfga_url    = false
       service_urls   = {}
       secrets = {
-        "DB_PASSWORD" = "mp_gift-cards-db-password"
+        "DB_PASSWORD" = "mp_gift_cards-db-password"
       }
     }
 
