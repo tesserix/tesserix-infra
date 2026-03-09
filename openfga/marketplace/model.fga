@@ -14,18 +14,267 @@ model
 
 type user
 
+# -----------------------------------------------------------------------------
+# Store — the top-level marketplace tenant. All staff are related to a store.
+# Role hierarchy: owner > admin > manager > staff > viewer
+# Computed permissions cascade down the hierarchy via "or" unions.
+# -----------------------------------------------------------------------------
 type store
   relations
+    # --- Direct role assignments ---
     define owner: [user]
-    define manager: [user] or owner
+    define admin: [user] or owner
+    define manager: [user] or admin
     define staff: [user] or manager
+    define viewer: [user] or staff
+
+    # --- Staff & Team management ---
+    define can_read_staff: viewer
+    define can_create_staff: admin
+    define can_update_staff: admin
+    define can_delete_staff: owner
+    define can_import_staff: admin
+    define can_export_staff: admin
+    define can_manage_staff: admin
+    define can_read_departments: viewer
+    define can_manage_departments: manager
+    define can_read_teams: viewer
+    define can_manage_teams: manager
+
+    # --- Roles & Permissions ---
+    define can_read_roles: viewer
+    define can_manage_roles: owner
+    define can_assign_roles: admin
+    define can_read_permissions: manager
+
+    # --- Orders ---
+    define can_view_orders: staff
+    define can_create_orders: staff
+    define can_edit_orders: manager
+    define can_cancel_orders: manager
+    define can_refund_orders: manager
+    define can_fulfill_orders: staff
+    define can_export_orders: manager
+    define can_manage_orders: manager
+
+    # --- Returns ---
+    define can_read_returns: staff
+    define can_create_returns: staff
+    define can_approve_returns: manager
+    define can_reject_returns: manager
+    define can_refund_returns: manager
+    define can_inspect_returns: staff
+
+    # --- Products & Catalog ---
+    define can_view_products: viewer
+    define can_create_products: staff
+    define can_edit_products: staff
+    define can_delete_products: manager
+    define can_publish_products: manager
+    define can_manage_pricing: manager
+    define can_import_products: manager
+    define can_export_products: manager
+    define can_manage_products: manager
+
+    # --- Categories ---
+    define can_view_categories: viewer
+    define can_manage_categories: manager
+
+    # --- Inventory ---
+    define can_view_inventory: staff
+    define can_adjust_inventory: staff
+    define can_view_inventory_history: staff
+    define can_manage_inventory_alerts: manager
+    define can_view_transfers: staff
+    define can_manage_transfers: manager
+    define can_view_warehouses: staff
+    define can_manage_warehouses: manager
+
+    # --- Payments ---
+    define can_read_payments: manager
+    define can_refund_payments: manager
+    define can_read_gateway: manager
+    define can_manage_gateway: owner
+    define can_manage_fees: owner
+    define can_view_payment_methods: manager
+    define can_enable_payment_methods: admin
+    define can_config_payment_methods: owner
+    define can_test_payment_methods: admin
+
+    # --- Customers ---
+    define can_view_customers: staff
+    define can_create_customers: staff
+    define can_edit_customers: staff
+    define can_delete_customers: admin
+    define can_export_customers: manager
+    define can_lock_customers: admin
+
+    # --- Vendors ---
+    define can_read_vendors: staff
+    define can_create_vendors: admin
+    define can_update_vendors: manager
+    define can_approve_vendors: admin
+    define can_manage_vendors: admin
+    define can_payout_vendors: owner
+
+    # --- Tickets ---
+    define can_read_tickets: staff
+    define can_create_tickets: staff
+    define can_update_tickets: staff
+    define can_assign_tickets: manager
+    define can_escalate_tickets: manager
+    define can_resolve_tickets: staff
+
+    # --- Marketing & Coupons ---
+    define can_view_coupons: staff
+    define can_manage_coupons: manager
+    define can_view_campaigns: staff
+    define can_manage_campaigns: manager
+    define can_send_email: manager
+    define can_view_reviews: staff
+    define can_moderate_reviews: manager
+    define can_manage_banners: manager
+    define can_view_loyalty: staff
+    define can_manage_loyalty: manager
+    define can_adjust_loyalty_points: manager
+    define can_view_carts: staff
+    define can_recover_carts: manager
+    define can_view_segments: manager
+    define can_manage_segments: manager
+
+    # --- Analytics ---
+    define can_view_dashboard: staff
+    define can_view_reports: manager
+    define can_view_sales_analytics: manager
+    define can_view_product_stats: manager
+    define can_view_realtime: manager
+    define can_export_reports: manager
+    define can_view_analytics: manager
+
+    # --- Audit ---
+    define can_read_audit: admin
+    define can_export_audit: admin
+
+    # --- Settings ---
+    define can_read_settings: manager
+    define can_update_settings: admin
+    define can_manage_settings: owner
+
+    # --- Storefronts ---
+    define can_read_storefronts: staff
+    define can_create_storefronts: admin
+    define can_update_storefronts: admin
+    define can_delete_storefronts: owner
+
+    # --- Shipping ---
+    define can_read_shipping: staff
+    define can_create_shipping: manager
+    define can_update_shipping: manager
+    define can_manage_shipping: admin
+
+    # --- Notifications ---
+    define can_read_notifications: staff
+    define can_manage_notifications: admin
+
+    # --- Approvals ---
+    define can_read_approvals: staff
+    define can_create_approvals: staff
+    define can_approve: manager
+    define can_reject: manager
+    define can_manage_approvals: owner
+
+    # --- Documents ---
+    define can_read_documents: staff
+    define can_manage_documents: manager
+    define can_verify_documents: manager
+
+    # --- Invitations ---
+    define can_create_invitations: admin
+    define can_read_invitations: admin
+    define can_revoke_invitations: admin
+
+    # --- Delegations ---
+    define can_read_delegations: admin
+    define can_manage_delegations: admin
+
+    # --- Gift Cards ---
+    define can_view_gift_cards: staff
+    define can_create_gift_cards: manager
+    define can_edit_gift_cards: manager
+    define can_delete_gift_cards: admin
+    define can_redeem_gift_cards: staff
+
+    # --- Tax ---
+    define can_read_tax: manager
+    define can_manage_tax: admin
+
+    # --- Locations ---
+    define can_read_locations: staff
+    define can_manage_locations: admin
+
+    # --- Integrations (SSO/SCIM) ---
+    define can_view_sso: admin
+    define can_manage_sso: owner
+    define can_view_scim: admin
+    define can_manage_scim: owner
+
+    # --- Ads ---
+    define can_view_ads_campaigns: staff
+    define can_create_ads_campaigns: manager
+    define can_edit_ads_campaigns: manager
+    define can_delete_ads_campaigns: admin
+    define can_approve_ads_campaigns: admin
+    define can_pause_ads_campaigns: manager
+    define can_view_ads_creatives: staff
+    define can_manage_ads_creatives: manager
+    define can_approve_ads_creatives: admin
+    define can_view_ads_billing: admin
+    define can_manage_ads_billing: owner
+    define can_refund_ads: admin
+    define can_manage_ads_tiers: owner
+    define can_view_ads_revenue: admin
+    define can_view_ads_targeting: manager
+    define can_manage_ads_targeting: admin
+    define can_view_ads_analytics: manager
+    define can_export_ads_analytics: manager
+    define can_view_ads_placements: manager
+    define can_manage_ads_placements: admin
+
+    # --- Content ---
+    define can_view_content: viewer
+    define can_create_content: staff
+    define can_edit_content: staff
+    define can_delete_content: manager
+
+# -----------------------------------------------------------------------------
+# Vendor — marketplace vendor within a store. Vendor staff have vendor-scoped access.
+# -----------------------------------------------------------------------------
+type vendor
+  relations
+    define store: [store]
+    define owner: [user]
+    define admin: [user] or owner
+    define manager: [user] or admin
+    define staff: [user] or manager
+
+    # Vendor-scoped permissions (subset of store permissions)
+    define can_read_staff: staff
+    define can_manage_staff: admin
+    define can_view_products: staff
     define can_manage_products: manager
     define can_view_orders: staff
     define can_manage_orders: manager
-    define can_manage_settings: owner
-    define can_manage_staff: owner
+    define can_view_inventory: staff
+    define can_adjust_inventory: staff
     define can_view_analytics: manager
+    define can_read_settings: admin
+    define can_update_settings: owner
+    define can_edit: admin or can_manage_vendors from store
+    define can_view: staff or can_read_vendors from store
 
+# -----------------------------------------------------------------------------
+# Order — individual order, can be checked at resource level if needed.
+# -----------------------------------------------------------------------------
 type order
   relations
     define store: [store]
@@ -34,6 +283,9 @@ type order
     define can_update: can_manage_orders from store
     define can_cancel: customer or can_manage_orders from store
 
+# -----------------------------------------------------------------------------
+# Product listing — individual product.
+# -----------------------------------------------------------------------------
 type product_listing
   relations
     define store: [store]
@@ -41,24 +293,23 @@ type product_listing
     define can_view: [user, user:*]
     define can_delete: can_manage_products from store
 
+# -----------------------------------------------------------------------------
+# Review
+# -----------------------------------------------------------------------------
 type review
   relations
     define author: [user]
     define store: [store]
     define can_edit: author
-    define can_delete: author or can_manage_products from store
+    define can_delete: author or can_moderate_reviews from store
     define can_view: [user, user:*]
 
+# -----------------------------------------------------------------------------
+# Coupon
+# -----------------------------------------------------------------------------
 type coupon
   relations
     define store: [store]
-    define can_create: can_manage_products from store
-    define can_edit: can_manage_products from store
+    define can_create: can_manage_coupons from store
+    define can_edit: can_manage_coupons from store
     define can_view: [user, user:*]
-
-type vendor
-  relations
-    define store: [store]
-    define user: [user]
-    define can_edit: user or can_manage_staff from store
-    define can_view: can_view_orders from store

@@ -1,0 +1,399 @@
+---
+# =============================================================================
+# OpenFGA Model Tests for Marketplace Store
+# Run: fga model test --tests tests.yaml --model model.fga
+# =============================================================================
+name: Marketplace Authorization Model Tests
+
+tuples:
+  # --- Store role assignments ---
+  - user: user:alice
+    relation: owner
+    object: store:acme
+  - user: user:bob
+    relation: admin
+    object: store:acme
+  - user: user:carol
+    relation: manager
+    object: store:acme
+  - user: user:dave
+    relation: staff
+    object: store:acme
+  - user: user:eve
+    relation: viewer
+    object: store:acme
+
+  # --- Vendor role assignments ---
+  - user: store:acme
+    relation: store
+    object: vendor:vend1
+  - user: user:frank
+    relation: owner
+    object: vendor:vend1
+  - user: user:grace
+    relation: staff
+    object: vendor:vend1
+
+  # --- Order relationships ---
+  - user: store:acme
+    relation: store
+    object: order:ord1
+  - user: user:customer1
+    relation: customer
+    object: order:ord1
+
+  # --- Product listing relationships ---
+  - user: store:acme
+    relation: store
+    object: product_listing:prod1
+
+  # --- Review relationships ---
+  - user: store:acme
+    relation: store
+    object: review:rev1
+  - user: user:customer1
+    relation: author
+    object: review:rev1
+
+  # --- Coupon relationships ---
+  - user: store:acme
+    relation: store
+    object: coupon:coup1
+
+tests:
+  # ===== ROLE HIERARCHY TESTS =====
+  - name: "Owner has all role levels"
+    check:
+      - user: user:alice
+        object: store:acme
+        assertions:
+          owner: true
+          admin: true
+          manager: true
+          staff: true
+          viewer: true
+
+  - name: "Admin inherits manager, staff, viewer but NOT owner"
+    check:
+      - user: user:bob
+        object: store:acme
+        assertions:
+          owner: false
+          admin: true
+          manager: true
+          staff: true
+          viewer: true
+
+  - name: "Manager inherits staff, viewer but NOT admin"
+    check:
+      - user: user:carol
+        object: store:acme
+        assertions:
+          admin: false
+          manager: true
+          staff: true
+          viewer: true
+
+  - name: "Staff inherits viewer but NOT manager"
+    check:
+      - user: user:dave
+        object: store:acme
+        assertions:
+          manager: false
+          staff: true
+          viewer: true
+
+  - name: "Viewer has only viewer role"
+    check:
+      - user: user:eve
+        object: store:acme
+        assertions:
+          staff: false
+          viewer: true
+
+  # ===== STAFF MANAGEMENT PERMISSIONS =====
+  - name: "Staff management permissions cascade correctly"
+    check:
+      - user: user:alice # owner
+        object: store:acme
+        assertions:
+          can_read_staff: true
+          can_create_staff: true
+          can_update_staff: true
+          can_delete_staff: true
+          can_manage_staff: true
+      - user: user:bob # admin
+        object: store:acme
+        assertions:
+          can_read_staff: true
+          can_create_staff: true
+          can_delete_staff: false
+          can_manage_staff: true
+      - user: user:carol # manager
+        object: store:acme
+        assertions:
+          can_read_staff: true
+          can_create_staff: false
+          can_manage_staff: false
+      - user: user:dave # staff
+        object: store:acme
+        assertions:
+          can_read_staff: true
+          can_create_staff: false
+      - user: user:eve # viewer
+        object: store:acme
+        assertions:
+          can_read_staff: true
+          can_create_staff: false
+
+  # ===== ROLE MANAGEMENT PERMISSIONS =====
+  - name: "Only owner can manage roles"
+    check:
+      - user: user:alice
+        object: store:acme
+        assertions:
+          can_manage_roles: true
+          can_assign_roles: true
+      - user: user:bob
+        object: store:acme
+        assertions:
+          can_manage_roles: false
+          can_assign_roles: true
+      - user: user:carol
+        object: store:acme
+        assertions:
+          can_manage_roles: false
+          can_assign_roles: false
+
+  # ===== ORDER PERMISSIONS =====
+  - name: "Order permissions cascade correctly"
+    check:
+      - user: user:alice
+        object: store:acme
+        assertions:
+          can_view_orders: true
+          can_manage_orders: true
+          can_refund_orders: true
+      - user: user:dave # staff
+        object: store:acme
+        assertions:
+          can_view_orders: true
+          can_manage_orders: false
+          can_fulfill_orders: true
+      - user: user:eve # viewer
+        object: store:acme
+        assertions:
+          can_view_orders: false
+          can_fulfill_orders: false
+
+  # ===== PRODUCT PERMISSIONS =====
+  - name: "Product permissions cascade correctly"
+    check:
+      - user: user:carol # manager
+        object: store:acme
+        assertions:
+          can_view_products: true
+          can_manage_products: true
+          can_delete_products: true
+      - user: user:dave # staff
+        object: store:acme
+        assertions:
+          can_view_products: true
+          can_create_products: true
+          can_edit_products: true
+          can_delete_products: false
+      - user: user:eve # viewer
+        object: store:acme
+        assertions:
+          can_view_products: true
+          can_create_products: false
+
+  # ===== PAYMENT PERMISSIONS =====
+  - name: "Payment config permissions are owner-only"
+    check:
+      - user: user:alice
+        object: store:acme
+        assertions:
+          can_config_payment_methods: true
+          can_manage_gateway: true
+          can_manage_fees: true
+      - user: user:bob # admin
+        object: store:acme
+        assertions:
+          can_config_payment_methods: false
+          can_enable_payment_methods: true
+          can_test_payment_methods: true
+      - user: user:carol # manager
+        object: store:acme
+        assertions:
+          can_read_payments: true
+          can_enable_payment_methods: false
+
+  # ===== SETTINGS & SSO =====
+  - name: "Settings and SSO permissions"
+    check:
+      - user: user:alice
+        object: store:acme
+        assertions:
+          can_manage_settings: true
+          can_manage_sso: true
+          can_manage_scim: true
+      - user: user:bob # admin
+        object: store:acme
+        assertions:
+          can_update_settings: true
+          can_manage_settings: false
+          can_view_sso: true
+          can_manage_sso: false
+      - user: user:carol # manager
+        object: store:acme
+        assertions:
+          can_read_settings: true
+          can_update_settings: false
+
+  # ===== VENDOR SCOPED PERMISSIONS =====
+  - name: "Vendor owner has vendor-level permissions"
+    check:
+      - user: user:frank
+        object: vendor:vend1
+        assertions:
+          can_read_staff: true
+          can_manage_staff: true
+          can_view_products: true
+          can_manage_products: true
+          can_view_orders: true
+          can_manage_orders: true
+          can_update_settings: true
+
+  - name: "Vendor staff has limited vendor permissions"
+    check:
+      - user: user:grace
+        object: vendor:vend1
+        assertions:
+          can_read_staff: true
+          can_manage_staff: false
+          can_view_products: true
+          can_manage_products: false
+          can_view_orders: true
+          can_manage_orders: false
+
+  - name: "Store owner can manage vendors"
+    check:
+      - user: user:alice
+        object: vendor:vend1
+        assertions:
+          can_edit: true
+          can_view: true
+
+  # ===== RESOURCE-LEVEL CHECKS =====
+  - name: "Order resource-level access"
+    check:
+      - user: user:customer1
+        object: order:ord1
+        assertions:
+          can_view: true
+          can_cancel: true
+          can_update: false
+      - user: user:carol # manager via store
+        object: order:ord1
+        assertions:
+          can_view: true
+          can_update: true
+          can_cancel: true
+      - user: user:dave # staff via store
+        object: order:ord1
+        assertions:
+          can_view: true
+          can_update: false
+
+  - name: "Product listing resource-level access"
+    check:
+      - user: user:carol # manager
+        object: product_listing:prod1
+        assertions:
+          can_edit: true
+          can_delete: true
+      - user: user:dave # staff - not manager
+        object: product_listing:prod1
+        assertions:
+          can_edit: false
+          can_delete: false
+
+  - name: "Review moderation"
+    check:
+      - user: user:customer1
+        object: review:rev1
+        assertions:
+          can_edit: true
+          can_delete: true
+      - user: user:carol # manager
+        object: review:rev1
+        assertions:
+          can_edit: false
+          can_delete: true
+
+  - name: "Coupon management"
+    check:
+      - user: user:carol # manager
+        object: coupon:coup1
+        assertions:
+          can_create: true
+          can_edit: true
+      - user: user:dave # staff
+        object: coupon:coup1
+        assertions:
+          can_create: false
+          can_edit: false
+
+  # ===== AUDIT & DOCUMENTS =====
+  - name: "Audit is admin-only"
+    check:
+      - user: user:bob # admin
+        object: store:acme
+        assertions:
+          can_read_audit: true
+          can_export_audit: true
+      - user: user:carol # manager
+        object: store:acme
+        assertions:
+          can_read_audit: false
+
+  - name: "Documents permissions"
+    check:
+      - user: user:carol # manager
+        object: store:acme
+        assertions:
+          can_read_documents: true
+          can_manage_documents: true
+          can_verify_documents: true
+      - user: user:dave # staff
+        object: store:acme
+        assertions:
+          can_read_documents: true
+          can_manage_documents: false
+
+  # ===== INVITATION PERMISSIONS =====
+  - name: "Invitations require admin"
+    check:
+      - user: user:bob # admin
+        object: store:acme
+        assertions:
+          can_create_invitations: true
+          can_read_invitations: true
+          can_revoke_invitations: true
+      - user: user:carol # manager
+        object: store:acme
+        assertions:
+          can_create_invitations: false
+
+  # ===== UNRELATED USER =====
+  - name: "Unrelated user has no access"
+    check:
+      - user: user:stranger
+        object: store:acme
+        assertions:
+          owner: false
+          viewer: false
+          can_read_staff: false
+          can_view_orders: false
+          can_view_products: false

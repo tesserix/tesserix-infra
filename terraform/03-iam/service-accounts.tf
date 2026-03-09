@@ -186,7 +186,7 @@ locals {
       storage_apps     = []
     }
     "mp-payments" = {
-      secrets  = ["mp_payments-db-password", "stripe-secret-key", "stripe-webhook-secret"]
+      secrets  = ["mp_payments-db-password", "stripe-secret-key", "stripe-webhook-secret", "openfga-preshared-key"]
       has_db   = true
       invokes  = ["openfga"]
       publishes_events = true

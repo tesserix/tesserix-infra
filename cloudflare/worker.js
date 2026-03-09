@@ -56,11 +56,11 @@ export default {
 
         // Auth routes on admin subdomain → auth-bff
         if (url.pathname.startsWith("/auth") && !url.pathname.startsWith("/auth/error")) {
-          return proxyWithTenant(request, url, env.AUTH_BFF_URL, route.tenant_id, slug, host);
+          return proxyWithTenant(request, url, env.AUTH_BFF_URL, route.tenant_id, slug, host, "admin");
         }
 
         // Everything else → marketplace-admin (admin panel)
-        return proxyWithTenant(request, url, env.MARKETPLACE_ADMIN_URL, route.tenant_id, slug, host);
+        return proxyWithTenant(request, url, env.MARKETPLACE_ADMIN_URL, route.tenant_id, slug, host, "admin");
       }
 
       // Store subdomain: {slug}-store.mark8ly.com
@@ -73,10 +73,10 @@ export default {
 
         // Auth routes on store subdomain → auth-bff
         if (url.pathname.startsWith("/auth") && !url.pathname.startsWith("/auth/error")) {
-          return proxyWithTenant(request, url, env.AUTH_BFF_URL, route.tenant_id, slug, host);
+          return proxyWithTenant(request, url, env.AUTH_BFF_URL, route.tenant_id, slug, host, "storefront");
         }
 
-        return proxyWithTenant(request, url, env.STOREFRONT_URL, route.tenant_id, slug, host);
+        return proxyWithTenant(request, url, env.STOREFRONT_URL, route.tenant_id, slug, host, "storefront");
       }
 
       // API subdomain: {slug}-api.mark8ly.com
@@ -86,7 +86,7 @@ export default {
         if (!route) {
           return new Response("Tenant not found", { status: 404 });
         }
-        return proxyWithTenant(request, url, env.API_GATEWAY_URL || env.TESSERIX_HOME_URL, route.tenant_id, slug, host);
+        return proxyWithTenant(request, url, env.API_GATEWAY_URL || env.TESSERIX_HOME_URL, route.tenant_id, slug, host, "api");
       }
 
       // Bare subdomain: {slug}.mark8ly.com → storefront (alias)
@@ -95,7 +95,7 @@ export default {
       if (!route) {
         return new Response("Tenant not found", { status: 404 });
       }
-      return proxyWithTenant(request, url, env.STOREFRONT_URL, route.tenant_id, slug, host);
+      return proxyWithTenant(request, url, env.STOREFRONT_URL, route.tenant_id, slug, host, "storefront");
     }
 
     // --- Custom domains: KV lookup by domain ---
@@ -108,14 +108,14 @@ export default {
         if (route) {
           // Auth routes on custom domain → auth-bff
           if (url.pathname.startsWith("/auth") && !url.pathname.startsWith("/auth/error")) {
-            return proxyWithTenant(request, url, env.AUTH_BFF_URL, route.tenant_id, domainMapping.slug, host);
+            return proxyWithTenant(request, url, env.AUTH_BFF_URL, route.tenant_id, domainMapping.slug, host, domainMapping.target_type || "storefront");
           }
 
           // Route based on target type
           const targetUrl = domainMapping.target_type === "admin"
             ? env.MARKETPLACE_ADMIN_URL
             : env.STOREFRONT_URL;
-          return proxyWithTenant(request, url, targetUrl, route.tenant_id, domainMapping.slug, host);
+          return proxyWithTenant(request, url, targetUrl, route.tenant_id, domainMapping.slug, host, domainMapping.target_type || "storefront");
         }
       }
     }
@@ -147,7 +147,7 @@ function proxy(request, url, targetOrigin) {
 }
 
 // Proxy with tenant context headers
-function proxyWithTenant(request, url, targetOrigin, tenantId, slug, originalHost) {
+function proxyWithTenant(request, url, targetOrigin, tenantId, slug, originalHost, targetType) {
   const target = new URL(targetOrigin);
   const newUrl = new URL(url.pathname + url.search, target);
   const headers = new Headers(request.headers);
@@ -156,6 +156,9 @@ function proxyWithTenant(request, url, targetOrigin, tenantId, slug, originalHos
   headers.set("X-Tenant-ID", tenantId);
   headers.set("X-Tenant-Slug", slug);
   headers.set("X-Original-Host", originalHost);
+  if (targetType) {
+    headers.set("X-Target-Type", targetType);
+  }
   const newRequest = new Request(newUrl, {
     method: request.method,
     headers,

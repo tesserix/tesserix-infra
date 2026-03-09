@@ -21,3 +21,19 @@ output "public_assets_bucket" {
 output "backups_bucket" {
   value = google_storage_bucket.backups.name
 }
+
+# Identity Platform tenant IDs
+output "gip_tenant_platform" {
+  value = google_identity_platform_tenant.platform.name
+  # Actual value: Platform-e1vyf
+}
+
+output "gip_tenant_mp_internal" {
+  value = google_identity_platform_tenant.mp_internal.name
+  # Actual value: MP-Internal-uidfu
+}
+
+output "gip_tenant_mp_customer" {
+  value = google_identity_platform_tenant.mp_customer.name
+  # Actual value: MP-Customer-cgob2
+}

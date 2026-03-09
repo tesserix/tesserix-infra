@@ -108,49 +108,6 @@ resource "google_cloud_run_v2_service" "base" {
         }
       }
 
-      # -- tenant-service: notification-service URL (bespoke, base-to-base) --
-      # Cannot use service_urls (would move to dependent tier and break
-      # tickets-service / subscription-service refs). Safe cross-instance ref.
-      dynamic "env" {
-        for_each = each.key == "tenant-service" ? ["NOTIFICATION_SERVICE_URL"] : []
-        content {
-          name  = env.value
-          value = google_cloud_run_v2_service.base["notification-service"].uri
-        }
-      }
-
-      # -- Marketplace base services: inject cross-service URLs (bespoke) -----
-      # These services are base (no service_urls) but still need platform or
-      # peer-marketplace service references.
-      dynamic "env" {
-        for_each = contains(["mp-coupons", "mp-reviews", "mp-vendors", "mp-customers", "mp-products"], each.key) ? ["NOTIFICATION_SERVICE_URL"] : []
-        content {
-          name  = env.value
-          value = google_cloud_run_v2_service.base["notification-service"].uri
-        }
-      }
-      dynamic "env" {
-        for_each = contains(["mp-coupons", "mp-reviews", "mp-vendors", "mp-customers"], each.key) ? ["TENANT_SERVICE_URL"] : []
-        content {
-          name  = env.value
-          value = google_cloud_run_v2_service.base["tenant-service"].uri
-        }
-      }
-      dynamic "env" {
-        for_each = contains(["mp-staff", "mp-products", "mp-categories", "mp-vendors"], each.key) ? ["DOCUMENT_SERVICE_URL"] : []
-        content {
-          name  = env.value
-          value = google_cloud_run_v2_service.base["document-service"].uri
-        }
-      }
-      dynamic "env" {
-        for_each = contains(["mp-content", "mp-approvals", "mp-gift-cards", "mp-coupons", "mp-reviews", "mp-vendors", "mp-customers", "mp-inventory"], each.key) ? ["STAFF_SERVICE_URL"] : []
-        content {
-          name  = env.value
-          value = google_cloud_run_v2_service.base["mp-staff"].uri
-        }
-      }
-
       # -- notification-service: SendGrid sender config (bespoke) ------------
       dynamic "env" {
         for_each = each.key == "notification-service" ? { SENDGRID_FROM_EMAIL = "noreply@mark8ly.com", SENDGRID_FROM_NAME = "mark8ly" } : {}
