@@ -78,6 +78,13 @@ locals {
     "mp_vendors_db",
     "mp_customers_db",
     "mp_onboarding_db",
+    "mp_staff_db",
+    "mp_content_db",
+    "mp_approvals_db",
+    "mp_gift_cards_db",
+    "mp_marketing_db",
+    "mp_connector_db",
+    "mp_tax_db",
   ]
 
   all_databases = concat(local.platform_databases, local.marketplace_databases)
