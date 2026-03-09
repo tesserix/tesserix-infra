@@ -12,7 +12,7 @@
 //   {slug}.mark8ly.com/*                 → marketplace storefront (alias)
 //   {slug}-admin.mark8ly.com/*           → marketplace-admin (admin panel)
 //   {slug}-admin.mark8ly.com/auth/*      → auth-bff
-//   {slug}-api.mark8ly.com/*             → API gateway (backend services)
+//   {slug}-api.mark8ly.com/*             → marketplace-admin (BFF/API gateway)
 //   custom-domain.com/*                  → KV lookup → storefront or admin
 //   custom-domain.com/auth/*             → KV lookup → auth-bff
 // =============================================================================
@@ -79,14 +79,14 @@ export default {
         return proxyWithTenant(request, url, env.STOREFRONT_URL, route.tenant_id, slug, host, "storefront");
       }
 
-      // API subdomain: {slug}-api.mark8ly.com
+      // API subdomain: {slug}-api.mark8ly.com → marketplace-admin (BFF)
       if (subdomain.endsWith("-api")) {
         const slug = subdomain.replace(/-api$/, "");
         const route = await lookupRoute(env, slug);
         if (!route) {
           return new Response("Tenant not found", { status: 404 });
         }
-        return proxyWithTenant(request, url, env.API_GATEWAY_URL || env.TESSERIX_HOME_URL, route.tenant_id, slug, host, "api");
+        return proxyWithTenant(request, url, env.MARKETPLACE_ADMIN_URL, route.tenant_id, slug, host, "api");
       }
 
       // Bare subdomain: {slug}.mark8ly.com → storefront (alias)

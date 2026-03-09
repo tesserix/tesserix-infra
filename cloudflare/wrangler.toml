@@ -6,9 +6,9 @@ account_id = "6fe6e1aa18c221b529ce76c9631ba4e0"
 [vars]
 AUTH_BFF_URL = "https://auth-bff-e737nq7avq-el.a.run.app"
 TESSERIX_HOME_URL = "https://tesserix-home-e737nq7avq-el.a.run.app"
-STOREFRONT_URL = "PLACEHOLDER"
+STOREFRONT_URL = "https://UNSET-mp-storefront"
 MARKETPLACE_ONBOARDING_URL = "https://marketplace-onboarding-e737nq7avq-el.a.run.app"
-MARKETPLACE_ADMIN_URL = "PLACEHOLDER"
+MARKETPLACE_ADMIN_URL = "https://UNSET-marketplace-admin"
 BASE_DOMAIN = "mark8ly.com"
 
 [[kv_namespaces]]
