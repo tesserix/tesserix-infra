@@ -196,6 +196,288 @@ locals {
       }
     }
 
+    "settings-service" = {
+      image          = local.placeholder_image
+      db_name        = "settings_db"
+      db_user        = "settings_user"
+      db_ssl_key     = "DB_SSLMODE"
+      port           = 8080
+      max_instances  = 3
+      memory         = "256Mi"
+      env_project_id = false
+      env_app_env    = false
+      env_platform   = false
+      openfga_url    = false
+      service_urls   = {}
+      secrets = {
+        "DB_PASSWORD" = "settings-db-password"
+      }
+    }
+
+    # -----------------------------------------------------------------------
+    # MARKETPLACE GO BACKEND SERVICES
+    # -----------------------------------------------------------------------
+
+    "mp-products" = {
+      image          = local.placeholder_image
+      db_name        = "mp_products_db"
+      db_user        = "mp_products_user"
+      db_ssl_key     = "DB_SSLMODE"
+      port           = 8080
+      max_instances  = 5
+      memory         = "256Mi"
+      env_project_id = true
+      env_app_env    = false
+      env_platform   = false
+      openfga_url    = true
+      service_urls   = {}
+      secrets = {
+        "DB_PASSWORD"     = "mp_products-db-password"
+        "OPENFGA_API_KEY" = "openfga-preshared-key"
+      }
+    }
+
+    "mp-payments" = {
+      image          = local.placeholder_image
+      db_name        = "mp_payments_db"
+      db_user        = "mp_payments_user"
+      db_ssl_key     = "DB_SSLMODE"
+      port           = 8080
+      max_instances  = 5
+      memory         = "256Mi"
+      env_project_id = true
+      env_app_env    = false
+      env_platform   = false
+      openfga_url    = true
+      service_urls   = {}
+      secrets = {
+        "DB_PASSWORD"          = "mp_payments-db-password"
+        "STRIPE_SECRET_KEY"    = "stripe-secret-key"
+        "STRIPE_WEBHOOK_SECRET" = "stripe-webhook-secret"
+        "OPENFGA_API_KEY"      = "openfga-preshared-key"
+      }
+    }
+
+    "mp-inventory" = {
+      image          = local.placeholder_image
+      db_name        = "mp_inventory_db"
+      db_user        = "mp_inventory_user"
+      db_ssl_key     = "DB_SSLMODE"
+      port           = 8080
+      max_instances  = 5
+      memory         = "256Mi"
+      env_project_id = true
+      env_app_env    = false
+      env_platform   = false
+      openfga_url    = false
+      service_urls   = {}
+      secrets = {
+        "DB_PASSWORD" = "mp_inventory-db-password"
+      }
+    }
+
+    "mp-shipping" = {
+      image          = local.placeholder_image
+      db_name        = "mp_shipping_db"
+      db_user        = "mp_shipping_user"
+      db_ssl_key     = "DB_SSLMODE"
+      port           = 8080
+      max_instances  = 3
+      memory         = "256Mi"
+      env_project_id = true
+      env_app_env    = false
+      env_platform   = false
+      openfga_url    = false
+      service_urls   = {}
+      secrets = {
+        "DB_PASSWORD" = "mp_shipping-db-password"
+      }
+    }
+
+    "mp-categories" = {
+      image          = local.placeholder_image
+      db_name        = "mp_categories_db"
+      db_user        = "mp_categories_user"
+      db_ssl_key     = "DB_SSLMODE"
+      port           = 8080
+      max_instances  = 3
+      memory         = "256Mi"
+      env_project_id = true
+      env_app_env    = false
+      env_platform   = false
+      openfga_url    = false
+      service_urls   = {}
+      secrets = {
+        "DB_PASSWORD" = "mp_categories-db-password"
+      }
+    }
+
+    "mp-coupons" = {
+      image          = local.placeholder_image
+      db_name        = "mp_coupons_db"
+      db_user        = "mp_coupons_user"
+      db_ssl_key     = "DB_SSLMODE"
+      port           = 8080
+      max_instances  = 3
+      memory         = "256Mi"
+      env_project_id = true
+      env_app_env    = false
+      env_platform   = false
+      openfga_url    = false
+      service_urls   = {}
+      secrets = {
+        "DB_PASSWORD" = "mp_coupons-db-password"
+      }
+    }
+
+    "mp-reviews" = {
+      image          = local.placeholder_image
+      db_name        = "mp_reviews_db"
+      db_user        = "mp_reviews_user"
+      db_ssl_key     = "DB_SSLMODE"
+      port           = 8080
+      max_instances  = 3
+      memory         = "256Mi"
+      env_project_id = true
+      env_app_env    = false
+      env_platform   = false
+      openfga_url    = true
+      service_urls   = {}
+      secrets = {
+        "DB_PASSWORD"     = "mp_reviews-db-password"
+        "OPENFGA_API_KEY" = "openfga-preshared-key"
+      }
+    }
+
+    "mp-vendors" = {
+      image          = local.placeholder_image
+      db_name        = "mp_vendors_db"
+      db_user        = "mp_vendors_user"
+      db_ssl_key     = "DB_SSLMODE"
+      port           = 8080
+      max_instances  = 5
+      memory         = "256Mi"
+      env_project_id = true
+      env_app_env    = false
+      env_platform   = false
+      openfga_url    = true
+      service_urls   = {}
+      secrets = {
+        "DB_PASSWORD"     = "mp_vendors-db-password"
+        "OPENFGA_API_KEY" = "openfga-preshared-key"
+      }
+    }
+
+    "mp-customers" = {
+      image          = local.placeholder_image
+      db_name        = "mp_customers_db"
+      db_user        = "mp_customers_user"
+      db_ssl_key     = "DB_SSLMODE"
+      port           = 8080
+      max_instances  = 5
+      memory         = "256Mi"
+      env_project_id = true
+      env_app_env    = false
+      env_platform   = false
+      openfga_url    = true
+      service_urls   = {}
+      secrets = {
+        "DB_PASSWORD"     = "mp_customers-db-password"
+        "OPENFGA_API_KEY" = "openfga-preshared-key"
+      }
+    }
+
+    "mp-staff" = {
+      image          = local.placeholder_image
+      db_name        = "mp_staff_db"
+      db_user        = "mp_staff_user"
+      db_ssl_key     = "DB_SSLMODE"
+      port           = 8080
+      max_instances  = 5
+      memory         = "256Mi"
+      env_project_id = true
+      env_app_env    = false
+      env_platform   = false
+      openfga_url    = true
+      service_urls   = {}
+      secrets = {
+        "DB_PASSWORD"     = "mp_staff-db-password"
+        "OPENFGA_API_KEY" = "openfga-preshared-key"
+      }
+    }
+
+    "mp-content" = {
+      image          = local.placeholder_image
+      db_name        = "mp_content_db"
+      db_user        = "mp_content_user"
+      db_ssl_key     = "DB_SSLMODE"
+      port           = 8080
+      max_instances  = 3
+      memory         = "256Mi"
+      env_project_id = true
+      env_app_env    = false
+      env_platform   = false
+      openfga_url    = false
+      service_urls   = {}
+      secrets = {
+        "DB_PASSWORD" = "mp_content-db-password"
+      }
+    }
+
+    "mp-approvals" = {
+      image          = local.placeholder_image
+      db_name        = "mp_approvals_db"
+      db_user        = "mp_approvals_user"
+      db_ssl_key     = "DB_SSLMODE"
+      port           = 8080
+      max_instances  = 3
+      memory         = "256Mi"
+      env_project_id = true
+      env_app_env    = false
+      env_platform   = false
+      openfga_url    = false
+      service_urls   = {}
+      secrets = {
+        "DB_PASSWORD" = "mp_approvals-db-password"
+      }
+    }
+
+    "mp-gift-cards" = {
+      image          = local.placeholder_image
+      db_name        = "mp_gift_cards_db"
+      db_user        = "mp_gift_cards_user"
+      db_ssl_key     = "DB_SSLMODE"
+      port           = 8080
+      max_instances  = 3
+      memory         = "256Mi"
+      env_project_id = true
+      env_app_env    = false
+      env_platform   = false
+      openfga_url    = false
+      service_urls   = {}
+      secrets = {
+        "DB_PASSWORD" = "mp_gift-cards-db-password"
+      }
+    }
+
+    "mp-tax" = {
+      image          = local.placeholder_image
+      db_name        = "mp_tax_db"
+      db_user        = "mp_tax_user"
+      db_ssl_key     = "DB_SSLMODE"
+      port           = 8080
+      max_instances  = 3
+      memory         = "256Mi"
+      env_project_id = true
+      env_app_env    = false
+      env_platform   = false
+      openfga_url    = false
+      service_urls   = {}
+      secrets = {
+        "DB_PASSWORD" = "mp_tax-db-password"
+      }
+    }
+
     # analytics-service: non-standard port (8091) and DB_SSL_MODE key name
     "analytics-service" = {
       image          = ""
@@ -212,6 +494,74 @@ locals {
       service_urls   = {}
       secrets = {
         "DB_PASSWORD" = "analytics-db-password"
+      }
+    }
+
+    "mp-orders" = {
+      image          = local.placeholder_image
+      db_name        = "mp_orders_db"
+      db_user        = "mp_orders_user"
+      db_ssl_key     = "DB_SSLMODE"
+      port           = 8080
+      max_instances  = 5
+      memory         = "256Mi"
+      env_project_id = true
+      env_app_env    = false
+      env_platform   = false
+      openfga_url    = true
+      service_urls = {
+        "INVENTORY_SERVICE_URL"    = "mp-inventory"
+        "PAYMENT_SERVICE_URL"      = "mp-payments"
+        "PRODUCTS_SERVICE_URL"     = "mp-products"
+        "CUSTOMERS_SERVICE_URL"    = "mp-customers"
+        "SHIPPING_SERVICE_URL"     = "mp-shipping"
+        "NOTIFICATION_SERVICE_URL" = "notification-service"
+      }
+      secrets = {
+        "DB_PASSWORD"     = "mp_orders-db-password"
+        "OPENFGA_API_KEY" = "openfga-preshared-key"
+      }
+    }
+
+    "mp-marketing" = {
+      image          = local.placeholder_image
+      db_name        = "mp_marketing_db"
+      db_user        = "mp_marketing_user"
+      db_ssl_key     = "DB_SSLMODE"
+      port           = 8080
+      max_instances  = 3
+      memory         = "256Mi"
+      env_project_id = true
+      env_app_env    = false
+      env_platform   = false
+      openfga_url    = false
+      service_urls = {
+        "STAFF_SERVICE_URL"        = "mp-staff"
+        "NOTIFICATION_SERVICE_URL" = "notification-service"
+      }
+      secrets = {
+        "DB_PASSWORD" = "mp_marketing-db-password"
+      }
+    }
+
+    "mp-connector" = {
+      image          = local.placeholder_image
+      db_name        = "mp_connector_db"
+      db_user        = "mp_connector_user"
+      db_ssl_key     = "DB_SSLMODE"
+      port           = 8080
+      max_instances  = 3
+      memory         = "256Mi"
+      env_project_id = true
+      env_app_env    = false
+      env_platform   = false
+      openfga_url    = false
+      service_urls = {
+        "PRODUCTS_SERVICE_URL"  = "mp-products"
+        "INVENTORY_SERVICE_URL" = "mp-inventory"
+      }
+      secrets = {
+        "DB_PASSWORD" = "mp_connector-db-password"
       }
     }
 
@@ -288,6 +638,7 @@ locals {
     {
       "marketplace-onboarding" = "marketplace-onboarding"
       "marketplace-admin"      = "marketplace-admin"
+      "mp-storefront"          = "mp-storefront"
       "status-service"         = "status-service"
     }
   )

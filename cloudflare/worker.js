@@ -5,14 +5,16 @@
 // Cost: $0 (free tier: 100,000 requests/day)
 //
 // Routes:
-//   tesserix.app/auth/*                → auth-bff Cloud Run
-//   tesserix.app/*                     → tesserix-home Cloud Run
-//   {slug}.mark8ly.com/*               → marketplace storefront
-//   {slug}-admin.mark8ly.com/*         → marketplace-admin (admin panel)
-//   {slug}-admin.mark8ly.com/auth/*    → auth-bff
-//   {slug}-api.mark8ly.com/*           → API gateway
-//   custom-domain.com/*                → KV lookup → storefront
-//   custom-domain.com/auth/*           → KV lookup → auth-bff
+//   tesserix.app/auth/*                  → auth-bff Cloud Run
+//   tesserix.app/*                       → tesserix-home Cloud Run
+//   mark8ly.com                          → marketplace-onboarding
+//   {slug}-store.mark8ly.com/*           → marketplace storefront
+//   {slug}.mark8ly.com/*                 → marketplace storefront (alias)
+//   {slug}-admin.mark8ly.com/*           → marketplace-admin (admin panel)
+//   {slug}-admin.mark8ly.com/auth/*      → auth-bff
+//   {slug}-api.mark8ly.com/*             → API gateway (backend services)
+//   custom-domain.com/*                  → KV lookup → storefront or admin
+//   custom-domain.com/auth/*             → KV lookup → auth-bff
 // =============================================================================
 
 const RESERVED_SUBDOMAINS = ["www", "internal-idp", "api", "status", "mail", "smtp"];
@@ -61,6 +63,22 @@ export default {
         return proxyWithTenant(request, url, env.MARKETPLACE_ADMIN_URL, route.tenant_id, slug, host);
       }
 
+      // Store subdomain: {slug}-store.mark8ly.com
+      if (subdomain.endsWith("-store")) {
+        const slug = subdomain.replace(/-store$/, "");
+        const route = await lookupRoute(env, slug);
+        if (!route) {
+          return new Response("Tenant not found", { status: 404 });
+        }
+
+        // Auth routes on store subdomain → auth-bff
+        if (url.pathname.startsWith("/auth") && !url.pathname.startsWith("/auth/error")) {
+          return proxyWithTenant(request, url, env.AUTH_BFF_URL, route.tenant_id, slug, host);
+        }
+
+        return proxyWithTenant(request, url, env.STOREFRONT_URL, route.tenant_id, slug, host);
+      }
+
       // API subdomain: {slug}-api.mark8ly.com
       if (subdomain.endsWith("-api")) {
         const slug = subdomain.replace(/-api$/, "");
@@ -71,7 +89,7 @@ export default {
         return proxyWithTenant(request, url, env.API_GATEWAY_URL || env.TESSERIX_HOME_URL, route.tenant_id, slug, host);
       }
 
-      // Storefront subdomain: {slug}.mark8ly.com
+      // Bare subdomain: {slug}.mark8ly.com → storefront (alias)
       const slug = subdomain;
       const route = await lookupRoute(env, slug);
       if (!route) {
@@ -81,6 +99,8 @@ export default {
     }
 
     // --- Custom domains: KV lookup by domain ---
+    // KV schema: domain:{hostname} → { slug, target_type: "store" | "admin" }
+    // Tenants can point their own domain at their store or admin panel.
     if (env.TENANT_ROUTES) {
       const domainMapping = await env.TENANT_ROUTES.get(`domain:${host}`, "json");
       if (domainMapping) {
@@ -93,7 +113,7 @@ export default {
 
           // Route based on target type
           const targetUrl = domainMapping.target_type === "admin"
-            ? env.TESSERIX_HOME_URL
+            ? env.MARKETPLACE_ADMIN_URL
             : env.STOREFRONT_URL;
           return proxyWithTenant(request, url, targetUrl, route.tenant_id, domainMapping.slug, host);
         }

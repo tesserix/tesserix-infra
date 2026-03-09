@@ -527,3 +527,116 @@ services:
       - mp_customers-db-password
       - openfga-preshared-key
     storageApps: []
+
+  mp-staff:
+    displayName: Staff Service
+    type: backend
+    lang: go
+    appGroup: mark8ly
+    hasDb: true
+    migration: none
+    usesGoShared: true
+    sidecar: cloud-sql-proxy
+    invokes: [openfga, document-service]
+    publishesEvents: true
+    pubsubTopic: mp-staff-events
+    secrets:
+      - mp_staff-db-password
+      - openfga-preshared-key
+    storageApps: []
+
+  mp-content:
+    displayName: Content Service
+    type: backend
+    lang: go
+    appGroup: mark8ly
+    hasDb: true
+    migration: none
+    usesGoShared: true
+    sidecar: cloud-sql-proxy
+    invokes: [mp-staff]
+    publishesEvents: false
+    pubsubTopic: ""
+    secrets:
+      - mp_content-db-password
+    storageApps: []
+
+  mp-approvals:
+    displayName: Approvals Service
+    type: backend
+    lang: go
+    appGroup: mark8ly
+    hasDb: true
+    migration: none
+    usesGoShared: true
+    sidecar: cloud-sql-proxy
+    invokes: [mp-staff]
+    publishesEvents: true
+    pubsubTopic: mp-approval-events
+    secrets:
+      - mp_approvals-db-password
+    storageApps: []
+
+  mp-gift-cards:
+    displayName: Gift Cards Service
+    type: backend
+    lang: go
+    appGroup: mark8ly
+    hasDb: true
+    migration: none
+    usesGoShared: true
+    sidecar: cloud-sql-proxy
+    invokes: [mp-staff]
+    publishesEvents: true
+    pubsubTopic: mp-gift-card-events
+    secrets:
+      - mp_gift-cards-db-password
+    storageApps: []
+
+  mp-marketing:
+    displayName: Marketing Service
+    type: backend
+    lang: go
+    appGroup: mark8ly
+    hasDb: true
+    migration: none
+    usesGoShared: true
+    sidecar: cloud-sql-proxy
+    invokes: [mp-staff, notification-service]
+    publishesEvents: true
+    pubsubTopic: mp-marketing-events
+    secrets:
+      - mp_marketing-db-password
+    storageApps: []
+
+  mp-connector:
+    displayName: Marketplace Connector Service
+    type: backend
+    lang: go
+    appGroup: mark8ly
+    hasDb: true
+    migration: none
+    usesGoShared: true
+    sidecar: cloud-sql-proxy
+    invokes: [mp-products, mp-orders, mp-inventory]
+    publishesEvents: false
+    pubsubTopic: ""
+    secrets:
+      - mp_connector-db-password
+    storageApps: []
+
+  mp-tax:
+    displayName: Tax Service
+    type: backend
+    lang: go
+    appGroup: mark8ly
+    hasDb: true
+    migration: none
+    usesGoShared: true
+    sidecar: cloud-sql-proxy
+    invokes: []
+    publishesEvents: true
+    pubsubTopic: mp-tax-events
+    secrets:
+      - mp_tax-db-password
+    storageApps: []

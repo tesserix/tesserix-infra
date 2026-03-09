@@ -241,6 +241,55 @@ locals {
       publishes_events = false
       storage_apps     = []
     }
+    "mp-staff" = {
+      secrets  = ["mp_staff-db-password", "openfga-preshared-key"]
+      has_db   = true
+      invokes  = ["openfga", "document-service"]
+      publishes_events = true
+      storage_apps     = []
+    }
+    "mp-content" = {
+      secrets  = ["mp_content-db-password"]
+      has_db   = true
+      invokes  = ["mp-staff"]
+      publishes_events = false
+      storage_apps     = []
+    }
+    "mp-approvals" = {
+      secrets  = ["mp_approvals-db-password"]
+      has_db   = true
+      invokes  = ["mp-staff"]
+      publishes_events = true
+      storage_apps     = []
+    }
+    "mp-gift-cards" = {
+      secrets  = ["mp_gift-cards-db-password"]
+      has_db   = true
+      invokes  = ["mp-staff"]
+      publishes_events = true
+      storage_apps     = []
+    }
+    "mp-marketing" = {
+      secrets  = ["mp_marketing-db-password"]
+      has_db   = true
+      invokes  = ["mp-staff", "notification-service"]
+      publishes_events = true
+      storage_apps     = []
+    }
+    "mp-connector" = {
+      secrets  = ["mp_connector-db-password"]
+      has_db   = true
+      invokes  = ["mp-products", "mp-orders", "mp-inventory"]
+      publishes_events = false
+      storage_apps     = []
+    }
+    "mp-tax" = {
+      secrets  = ["mp_tax-db-password"]
+      has_db   = true
+      invokes  = []
+      publishes_events = true
+      storage_apps     = []
+    }
   }
 
   all_services = merge(local.platform_services, local.marketplace_services)

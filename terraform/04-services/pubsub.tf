@@ -84,3 +84,64 @@ resource "google_pubsub_topic" "subscription_events" {
   name                       = "tesserix-subscription-events"
   message_retention_duration = "604800s"
 }
+
+# =============================================================================
+# MARKETPLACE EVENT TOPICS
+# =============================================================================
+# Pattern: services publish fire-and-forget events via go-shared/messaging.
+# Push subscriptions can be added later when consumers are identified.
+# =============================================================================
+
+# --- Product Events ---
+resource "google_pubsub_topic" "mp_product_events" {
+  name                       = "mp-product-events"
+  message_retention_duration = "604800s"
+}
+
+# --- Order Events ---
+resource "google_pubsub_topic" "mp_order_events" {
+  name                       = "mp-order-events"
+  message_retention_duration = "604800s"
+}
+
+# --- Payment Events ---
+resource "google_pubsub_topic" "mp_payment_events" {
+  name                       = "mp-payment-events"
+  message_retention_duration = "604800s"
+}
+
+# --- Inventory Events ---
+resource "google_pubsub_topic" "mp_inventory_events" {
+  name                       = "mp-inventory-events"
+  message_retention_duration = "604800s"
+}
+
+# --- Staff Events ---
+resource "google_pubsub_topic" "mp_staff_events" {
+  name                       = "mp-staff-events"
+  message_retention_duration = "604800s"
+}
+
+# --- Approval Events ---
+resource "google_pubsub_topic" "mp_approval_events" {
+  name                       = "mp-approval-events"
+  message_retention_duration = "604800s"
+}
+
+# --- Gift Card Events ---
+resource "google_pubsub_topic" "mp_gift_card_events" {
+  name                       = "mp-gift-card-events"
+  message_retention_duration = "604800s"
+}
+
+# --- Marketing Events ---
+resource "google_pubsub_topic" "mp_marketing_events" {
+  name                       = "mp-marketing-events"
+  message_retention_duration = "604800s"
+}
+
+# --- Tax Events ---
+resource "google_pubsub_topic" "mp_tax_events" {
+  name                       = "mp-tax-events"
+  message_retention_duration = "604800s"
+}

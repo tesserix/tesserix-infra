@@ -544,6 +544,71 @@ resource "google_cloud_run_v2_service" "marketplace_admin" {
   }
 }
 
+# --- Marketplace Storefront (Next.js) -----------------------------------------
+resource "google_cloud_run_v2_service" "mp_storefront" {
+  name                = "mp-storefront"
+  location            = var.region
+  deletion_protection = false
+
+  lifecycle {
+    ignore_changes = [template[0].containers[0].image]
+  }
+
+  template {
+    service_account = local.sa_emails["mp-storefront"]
+
+    scaling {
+      min_instance_count = 0
+      max_instance_count = 5
+    }
+
+    containers {
+      name  = "mp-storefront"
+      image = "gcr.io/cloudrun/hello:latest"
+
+      ports {
+        container_port = 3000
+      }
+
+      resources {
+        limits   = { cpu = "1", memory = "512Mi" }
+        cpu_idle = true
+      }
+
+      env {
+        name  = "NODE_ENV"
+        value = "production"
+      }
+      env {
+        name  = "NEXT_TELEMETRY_DISABLED"
+        value = "1"
+      }
+      env {
+        name  = "NEXT_PUBLIC_BASE_DOMAIN"
+        value = "mark8ly.com"
+      }
+
+      # Cross-service URLs
+      env {
+        name  = "AUTH_BFF_URL"
+        value = google_cloud_run_v2_service.auth_bff.uri
+      }
+      env {
+        name  = "PRODUCTS_SERVICE_URL"
+        value = "${google_cloud_run_v2_service.base["mp-products"].uri}/api/v1"
+      }
+      env {
+        name  = "CATEGORIES_SERVICE_URL"
+        value = "${google_cloud_run_v2_service.base["mp-categories"].uri}/api/v1"
+      }
+      env {
+        name  = "REVIEWS_SERVICE_URL"
+        value = "${google_cloud_run_v2_service.base["mp-reviews"].uri}/api/v1"
+      }
+    }
+  }
+}
+
 # --- Status Service -----------------------------------------------------------
 resource "google_cloud_run_v2_service" "status_service" {
   name                = "status-service"
