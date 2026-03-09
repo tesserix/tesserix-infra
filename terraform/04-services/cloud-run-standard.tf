@@ -258,7 +258,13 @@ resource "google_cloud_run_v2_service" "dependent" {
 
       # -- tenant-router-service domain config (static, bespoke) -------------
       dynamic "env" {
-        for_each = each.key == "tenant-router-service" ? { PLATFORM_DOMAIN = "tesserix.app", BASE_DOMAIN = "mark8ly.com" } : {}
+        for_each = each.key == "tenant-router-service" ? {
+          PLATFORM_DOMAIN          = "tesserix.app"
+          BASE_DOMAIN              = "mark8ly.com"
+          CLOUDFLARE_ACCOUNT_ID    = "6fe6e1aa18c221b529ce76c9631ba4e0"
+          CLOUDFLARE_KV_NAMESPACE_ID = "1e14da3d238548fd8fa50982395d538d"
+          CLOUDFLARE_ZONE_ID       = var.cloudflare_zone_id
+        } : {}
         content {
           name  = env.key
           value = env.value

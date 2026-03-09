@@ -16,3 +16,8 @@ variable "identity_platform_api_key" {
   description = "Google Identity Platform Web API key"
   default     = ""
 }
+
+variable "cloudflare_zone_id" {
+  type        = string
+  description = "Cloudflare zone ID for mark8ly.com"
+}

@@ -374,7 +374,7 @@ resource "google_cloud_run_v2_service" "marketplace_onboarding" {
         value = google_cloud_run_v2_service.dependent["verification-service"].uri
       }
       env {
-        name  = "TENANT_ROUTER_URL"
+        name  = "TENANT_ROUTER_SERVICE_URL"
         value = google_cloud_run_v2_service.dependent["tenant-router-service"].uri
       }
 

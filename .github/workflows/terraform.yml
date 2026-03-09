@@ -17,6 +17,7 @@ env:
   TF_VAR_state_bucket: ${{ vars.TF_STATE_BUCKET }}
   TF_VAR_github_org: ${{ vars.TF_VAR_GITHUB_ORG }}
   TF_VAR_identity_platform_api_key: ${{ vars.TF_VAR_GIP_API_KEY }}
+  TF_VAR_cloudflare_zone_id: ${{ vars.TF_VAR_CLOUDFLARE_ZONE_ID }}
 
 permissions:
   contents: read
