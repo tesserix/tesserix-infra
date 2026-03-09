@@ -50,40 +50,38 @@ resource "google_project_iam_member" "pubsub_publisher" {
 }
 
 # --- Service-to-Service Invocation (Cloud Run → Cloud Run) ---
-# NOTE: Uncomment after deploying Cloud Run services (they must exist first)
-# locals {
-#   invocation_pairs = flatten([
-#     for caller, cfg in local.all_services : [
-#       for target in cfg.invokes : {
-#         key    = "${caller}->${target}"
-#         caller = caller
-#         target = target
-#       }
-#     ]
-#   ])
-# }
-#
-# resource "google_cloud_run_service_iam_member" "service_to_service" {
-#   for_each = { for pair in local.invocation_pairs : pair.key => pair }
-#   service  = each.value.target
-#   location = var.region
-#   role     = "roles/run.invoker"
-#   member   = "serviceAccount:${google_service_account.services[each.value.caller].email}"
-# }
+locals {
+  invocation_pairs = flatten([
+    for caller, cfg in local.all_services : [
+      for target in cfg.invokes : {
+        key    = "${caller}->${target}"
+        caller = caller
+        target = target
+      }
+    ]
+  ])
+}
+
+resource "google_cloud_run_service_iam_member" "service_to_service" {
+  for_each = { for pair in local.invocation_pairs : pair.key => pair }
+  service  = each.value.target
+  location = var.region
+  role     = "roles/run.invoker"
+  member   = "serviceAccount:${google_service_account.services[each.value.caller].email}"
+}
 
 # --- Pub/Sub Invoker → Cloud Run targets ---
-# NOTE: Uncomment after deploying Cloud Run services
-# locals {
-#   pubsub_targets = ["audit-service", "notification-service", "subscription-service"]
-# }
-#
-# resource "google_cloud_run_service_iam_member" "pubsub_invoker" {
-#   for_each = toset(local.pubsub_targets)
-#   service  = each.value
-#   location = var.region
-#   role     = "roles/run.invoker"
-#   member   = "serviceAccount:${google_service_account.pubsub_invoker.email}"
-# }
+locals {
+  pubsub_targets = ["audit-service", "notification-service", "subscription-service"]
+}
+
+resource "google_cloud_run_service_iam_member" "pubsub_invoker" {
+  for_each = toset(local.pubsub_targets)
+  service  = each.value
+  location = var.region
+  role     = "roles/run.invoker"
+  member   = "serviceAccount:${google_service_account.pubsub_invoker.email}"
+}
 
 # --- Blob Storage (per-app prefix isolation via IAM Conditions) ---
 resource "google_storage_bucket_iam_member" "service_storage" {

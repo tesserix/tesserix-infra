@@ -19,8 +19,55 @@
 
 const RESERVED_SUBDOMAINS = ["www", "internal-idp", "api", "status", "mail", "smtp"];
 
+// Headers that must never be forwarded from external clients
+const STRIPPED_HEADERS = [
+  "x-internal-service",
+  "x-user-id",
+  "x-user-email",
+  "x-user-role",
+  "x-staff-id",
+  "x-customer-id",
+  "x-vendor-id",
+  "x-user-name",
+  "x-platform-owner",
+];
+
+// Security headers added to every response
+function addSecurityHeaders(response, framePolicy = "DENY") {
+  const headers = new Headers(response.headers);
+  headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+  headers.set("X-Content-Type-Options", "nosniff");
+  headers.set("X-Frame-Options", framePolicy);
+  headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
+// Strip internal headers from inbound request
+function stripInternalHeaders(headers) {
+  for (const h of STRIPPED_HEADERS) {
+    headers.delete(h);
+  }
+}
+
 export default {
   async fetch(request, env) {
+    // --- CORS preflight ---
+    if (request.method === "OPTIONS") {
+      return new Response(null, {
+        status: 204,
+        headers: {
+          "Access-Control-Allow-Origin": request.headers.get("Origin") || "*",
+          "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Tenant-ID",
+          "Access-Control-Max-Age": "86400",
+        },
+      });
+    }
+
     const url = new URL(request.url);
     const host = url.hostname;
 
@@ -131,10 +178,11 @@ async function lookupRoute(env, slug) {
 }
 
 // Proxy request to target origin
-function proxy(request, url, targetOrigin) {
+async function proxy(request, url, targetOrigin) {
   const target = new URL(targetOrigin);
   const newUrl = new URL(url.pathname + url.search, target);
   const headers = new Headers(request.headers);
+  stripInternalHeaders(headers);
   headers.set("x-forwarded-host", url.hostname);
   headers.set("x-forwarded-proto", url.protocol.replace(":", ""));
   const newRequest = new Request(newUrl, {
@@ -143,14 +191,20 @@ function proxy(request, url, targetOrigin) {
     body: request.body,
     redirect: "manual",
   });
-  return fetch(newRequest);
+  try {
+    const response = await fetch(newRequest);
+    return addSecurityHeaders(response);
+  } catch (err) {
+    return new Response("Service temporarily unavailable", { status: 502 });
+  }
 }
 
 // Proxy with tenant context headers
-function proxyWithTenant(request, url, targetOrigin, tenantId, slug, originalHost, targetType) {
+async function proxyWithTenant(request, url, targetOrigin, tenantId, slug, originalHost, targetType) {
   const target = new URL(targetOrigin);
   const newUrl = new URL(url.pathname + url.search, target);
   const headers = new Headers(request.headers);
+  stripInternalHeaders(headers);
   headers.set("x-forwarded-host", originalHost);
   headers.set("x-forwarded-proto", url.protocol.replace(":", ""));
   headers.set("X-Tenant-ID", tenantId);
@@ -165,5 +219,12 @@ function proxyWithTenant(request, url, targetOrigin, tenantId, slug, originalHos
     body: request.body,
     redirect: "manual",
   });
-  return fetch(newRequest);
+  // Storefronts may be embedded; use SAMEORIGIN instead of DENY
+  const framePolicy = targetType === "storefront" ? "SAMEORIGIN" : "DENY";
+  try {
+    const response = await fetch(newRequest);
+    return addSecurityHeaders(response, framePolicy);
+  } catch (err) {
+    return new Response("Service temporarily unavailable", { status: 502 });
+  }
 }

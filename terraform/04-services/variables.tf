@@ -21,3 +21,8 @@ variable "cloudflare_zone_id" {
   type        = string
   description = "Cloudflare zone ID for mark8ly.com"
 }
+
+variable "cloudflare_account_id" {
+  type        = string
+  description = "Cloudflare account ID"
+}

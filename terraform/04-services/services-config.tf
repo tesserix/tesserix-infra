@@ -654,18 +654,14 @@ locals {
   # Public-access IAM: services that allow allUsers at the Cloud Run layer.
   # App-level GIP JWT auth handles actual security for backend services.
   # ---------------------------------------------------------------------------
-  public_services = merge(
-    # All standard DB services are publicly reachable
-    { for k, _ in local.base_db_services : k => k },
-    { for k, _ in local.dependent_db_services : k => k },
-    # Simple services
-    { for k, _ in local.simple_services : k => k },
-    # Selected special services
-    {
-      "marketplace-onboarding" = "marketplace-onboarding"
-      "marketplace-admin"      = "marketplace-admin"
-      "mp-storefront"          = "mp-storefront"
-      "status-service"         = "status-service"
-    }
-  )
+  # Only publicly reachable services — backend Go services are NOT public.
+  # App-level GIP JWT auth + Cloud Run IAM handle security for internal services.
+  public_services = {
+    "auth-bff"               = "auth-bff"
+    "marketplace-onboarding" = "marketplace-onboarding"
+    "marketplace-admin"      = "marketplace-admin"
+    "mp-storefront"          = "mp-storefront"
+    "status-service"         = "status-service"
+    "tesserix-home"          = "tesserix-home"
+  }
 }

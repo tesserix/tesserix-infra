@@ -84,7 +84,7 @@ resource "google_pubsub_subscription" "subscription_service_tenant_push" {
   topic = google_pubsub_topic.tenant_events.id
 
   push_config {
-    push_endpoint = "${google_cloud_run_v2_service.base["subscription-service"].uri}/events/push"
+    push_endpoint = "${google_cloud_run_v2_service.dependent["subscription-service"].uri}/events/push"
     oidc_token {
       service_account_email = data.terraform_remote_state.iam.outputs.service_account_emails["subscription-service"]
     }

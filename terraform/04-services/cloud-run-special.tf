@@ -18,6 +18,10 @@ resource "google_cloud_run_v2_service" "openfga" {
   location            = var.region
   deletion_protection = false
 
+  lifecycle {
+    ignore_changes = [template[0].containers[0].image]
+  }
+
   template {
     service_account = local.sa_emails["openfga"]
 
@@ -28,7 +32,7 @@ resource "google_cloud_run_v2_service" "openfga" {
 
     containers {
       name  = "openfga"
-      image = "openfga/openfga:latest"
+      image = "openfga/openfga:v1.8.2"
       args  = ["run"]
 
       ports {
@@ -130,11 +134,10 @@ resource "google_cloud_run_v2_service" "auth_bff" {
         name  = "OPENFGA_URL"
         value = google_cloud_run_v2_service.openfga.uri
       }
-      # TODO: uncomment after deploying tenant-service
-      # env {
-      #   name  = "TENANT_SERVICE_URL"
-      #   value = google_cloud_run_v2_service.base["tenant-service"].uri
-      # }
+      env {
+        name  = "TENANT_SERVICE_URL"
+        value = google_cloud_run_v2_service.base["tenant-service"].uri
+      }
 
       env {
         name = "COOKIE_ENCRYPTION_KEY"
