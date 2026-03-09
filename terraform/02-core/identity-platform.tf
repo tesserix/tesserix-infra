@@ -16,6 +16,14 @@ resource "google_identity_platform_config" "default" {
   # Authorized domains apply to ALL tenants in the project.
   # Wildcard subdomains are not supported here — GIP auto-allows
   # subdomains of listed domains for OAuth redirects.
+  #
+  # NOTE: Custom tenant domains (e.g., shop.example.com) are NOT subdomains
+  # of mark8ly.com. Currently safe because:
+  # - Admin auth uses {slug}-admin.mark8ly.com (covered by mark8ly.com)
+  # - Customer auth uses {slug}.mark8ly.com (covered by mark8ly.com)
+  # - Custom domains serve storefront content only, no GIP OAuth redirects
+  # If custom domains ever need GIP OAuth (e.g., social login on custom domain),
+  # add dynamic authorized_domain registration in tenant-router-service.
   authorized_domains = [
     "tesserix.app",
     "mark8ly.com",

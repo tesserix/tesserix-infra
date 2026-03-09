@@ -11,6 +11,7 @@ output "service_urls" {
       "marketplace-onboarding" = google_cloud_run_v2_service.marketplace_onboarding.uri
       "marketplace-admin"      = google_cloud_run_v2_service.marketplace_admin.uri
       "status-service"         = google_cloud_run_v2_service.status_service.uri
+      "mp-storefront"          = google_cloud_run_v2_service.mp_storefront.uri
     }
   )
 }
