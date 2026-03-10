@@ -15,6 +15,8 @@ resource "google_sql_database_instance" "main" {
 
   settings {
     tier              = "db-f1-micro"
+    # ZONAL: no automatic failover. A zone outage takes down all services.
+    # Upgrade to REGIONAL (+$7-10/mo) when first paying customers are onboarded.
     availability_type = "ZONAL"
     disk_size         = 10
     disk_type         = "PD_SSD"
@@ -32,7 +34,7 @@ resource "google_sql_database_instance" "main" {
       start_time                     = "03:00"
       transaction_log_retention_days = 7
       backup_retention_settings {
-        retained_backups = 7
+        retained_backups = 14
       }
     }
 
@@ -42,6 +44,10 @@ resource "google_sql_database_instance" "main" {
       update_track = "stable"
     }
 
+    # db-f1-micro has 0.6GB RAM; practical limit is ~60-70 connections.
+    # Each Go service should SetMaxOpenConns(5). With 30+ services at max 3 instances
+    # each, worst case is ~150 instances but not all will be active simultaneously.
+    # Monitor via Cloud SQL connection count metric and alert at 80.
     database_flags {
       name  = "max_connections"
       value = "100"

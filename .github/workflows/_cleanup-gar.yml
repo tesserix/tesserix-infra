@@ -37,12 +37,17 @@ jobs:
 
       - name: Delete old images (keep latest ${{ inputs.keep_count }})
         run: |
+          KEEP="${{ inputs.keep_count }}"
+          if ! [[ "$KEEP" =~ ^[0-9]+$ ]]; then
+            echo "::error::Invalid keep_count: $KEEP"
+            exit 1
+          fi
           IMAGE="${{ env.GAR_REGISTRY }}/${{ env.GCP_PROJECT_ID }}/${{ env.GAR_REPOSITORY }}/${{ inputs.service_name }}"
           DIGESTS=$(gcloud artifacts docker images list "$IMAGE" \
             --format="get(version)" \
             --sort-by="~UPDATE_TIME" \
             --filter="tags:*" \
-            --project="${{ env.GCP_PROJECT_ID }}" 2>/dev/null | tail -n +$((inputs.keep_count + 1)))
+            --project="${{ env.GCP_PROJECT_ID }}" 2>/dev/null | tail -n +$(( KEEP + 1 )))
 
           if [[ -z "$DIGESTS" ]]; then
             echo "No images to clean up"

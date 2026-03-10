@@ -26,3 +26,8 @@ variable "cloudflare_account_id" {
   type        = string
   description = "Cloudflare account ID"
 }
+
+variable "cloudflare_kv_namespace_id" {
+  type        = string
+  description = "Cloudflare KV namespace ID for tenant routing"
+}

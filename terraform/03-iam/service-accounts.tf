@@ -160,14 +160,14 @@ locals {
     "marketplace-admin" = {
       secrets  = ["shared-internal-service-key"]
       has_db   = false
-      invokes  = ["auth-bff", "tenant-service", "mp-products", "mp-orders", "mp-vendors", "mp-customers"]
+      invokes  = ["auth-bff", "tenant-service", "tenant-router-service", "mp-products", "mp-orders", "mp-vendors", "mp-customers", "mp-categories", "mp-coupons", "mp-reviews", "mp-shipping", "settings-service", "subscription-service", "tickets-service", "notification-service", "feature-flags-service", "document-service", "location-service"]
       publishes_events = false
       storage_apps     = []
     }
     "mp-storefront" = {
       secrets  = []
       has_db   = false
-      invokes  = ["mp-products", "mp-categories", "mp-reviews", "auth-bff"]
+      invokes  = ["mp-products", "mp-categories", "mp-reviews", "auth-bff", "tenant-service", "tenant-router-service", "settings-service", "notification-service"]
       publishes_events = false
       storage_apps     = []
     }
@@ -209,7 +209,7 @@ locals {
     "mp-categories" = {
       secrets  = ["mp_categories-db-password", "openfga-preshared-key", "openfga-marketplace-store-id"]
       has_db   = true
-      invokes  = ["openfga"]
+      invokes  = ["openfga", "mp-approvals"]
       publishes_events = false
       storage_apps     = []
     }

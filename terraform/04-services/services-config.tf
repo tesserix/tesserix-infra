@@ -267,7 +267,7 @@ locals {
       db_name        = "mp_inventory_db"
       db_user        = "mp_inventory_user"
       db_ssl_key     = "DB_SSLMODE"
-      port           = 8080
+      port           = 8088
       max_instances  = 5
       memory         = "256Mi"
       env_project_id = true
@@ -314,7 +314,9 @@ locals {
       env_app_env    = false
       env_platform   = false
       openfga_url    = true
-      service_urls   = {}
+      service_urls = {
+        "APPROVAL_SERVICE_URL" = "mp-approvals"
+      }
       secrets = {
         "DB_PASSWORD"                  = "mp_categories-db-password"
         "OPENFGA_API_KEY"              = "openfga-preshared-key"
@@ -447,7 +449,7 @@ locals {
       db_name        = "mp_approvals_db"
       db_user        = "mp_approvals_user"
       db_ssl_key     = "DB_SSLMODE"
-      port           = 8080
+      port           = 8099
       max_instances  = 3
       memory         = "256Mi"
       env_project_id = true
@@ -594,7 +596,7 @@ locals {
     # tenant-router-service: non-standard port (8089), custom domain envs,
     # GCP_PROJECT_ID only (no ENVIRONMENT flag), references two peer services
     "tenant-router-service" = {
-      image          = local.placeholder_image
+      image          = ""
       db_name        = "tenant_router_db"
       db_user        = "tenant_router_user"
       db_ssl_key     = "DB_SSLMODE"

@@ -52,11 +52,21 @@ jobs:
             git diff go.mod
           fi
 
-      - name: Commit and push
+      - name: Create PR for go-shared update
         if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GO_PRIVATE_TOKEN }}
         run: |
+          BRANCH="deps/go-shared-${{ inputs.version }}"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
           git add go.mod go.sum
           git commit -m "deps: update go-shared to ${{ inputs.version }}"
-          git push
+          git push -u origin "$BRANCH"
+          gh pr create \
+            --title "deps: update go-shared to ${{ inputs.version }}" \
+            --body "Automated dependency update from go-shared release ${{ inputs.version }}." \
+            --base main \
+            --head "$BRANCH"
+          gh pr merge "$BRANCH" --auto --squash

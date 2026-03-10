@@ -81,9 +81,9 @@ jobs:
           ./cloud-sql-proxy "${{ inputs.instance_connection_name }}" \
             --port 5432 \
             --quiet &
-          # Wait for proxy to be ready
+          # Wait for proxy to be ready (use nc instead of pg_isready for portability)
           for i in $(seq 1 10); do
-            if pg_isready -h 127.0.0.1 -p 5432 2>/dev/null; then
+            if nc -z 127.0.0.1 5432 2>/dev/null; then
               echo "Cloud SQL proxy is ready"
               break
             fi
@@ -95,18 +95,22 @@ jobs:
           done
 
       - name: Run migrations
+        env:
+          DATABASE_URL: "postgres://${{ inputs.db_user }}:${{ steps.db_password.outputs.password }}@127.0.0.1:5432/${{ inputs.db_name }}?sslmode=disable"
         run: |
           echo "Running migrations for ${{ inputs.service_name }} on ${{ inputs.db_name }}..."
           ./migrate \
             -path "${{ inputs.migrations_path }}" \
-            -database "postgres://${{ inputs.db_user }}:${{ steps.db_password.outputs.password }}@127.0.0.1:5432/${{ inputs.db_name }}?sslmode=disable" \
+            -database "$DATABASE_URL" \
             up
           echo "Migrations completed successfully"
 
       - name: Show migration version
         if: always()
+        env:
+          DATABASE_URL: "postgres://${{ inputs.db_user }}:${{ steps.db_password.outputs.password }}@127.0.0.1:5432/${{ inputs.db_name }}?sslmode=disable"
         run: |
           ./migrate \
             -path "${{ inputs.migrations_path }}" \
-            -database "postgres://${{ inputs.db_user }}:${{ steps.db_password.outputs.password }}@127.0.0.1:5432/${{ inputs.db_name }}?sslmode=disable" \
+            -database "$DATABASE_URL" \
             version 2>&1 || true

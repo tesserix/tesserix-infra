@@ -96,7 +96,7 @@ resource "google_cloud_run_v2_service" "base" {
       }
       env {
         name  = each.value.db_ssl_key
-        value = "disable"
+        value = "disable" # Cloud SQL Auth Proxy sidecar provides transport encryption
       }
 
       # -- Optional: OPENFGA_URL (resolved via special service URIs) ----------
@@ -129,6 +129,15 @@ resource "google_cloud_run_v2_service" "base" {
             }
           }
         }
+      }
+
+      startup_probe {
+        http_get {
+          path = "/health"
+        }
+        initial_delay_seconds = 2
+        period_seconds        = 5
+        failure_threshold     = 10
       }
     }
 
@@ -244,7 +253,7 @@ resource "google_cloud_run_v2_service" "dependent" {
       }
       env {
         name  = each.value.db_ssl_key
-        value = "disable"
+        value = "disable" # Cloud SQL Auth Proxy sidecar provides transport encryption
       }
 
       # -- Optional: OPENFGA_URL ---------------------------------------------
@@ -262,7 +271,7 @@ resource "google_cloud_run_v2_service" "dependent" {
           PLATFORM_DOMAIN          = "tesserix.app"
           BASE_DOMAIN              = "mark8ly.com"
           CLOUDFLARE_ACCOUNT_ID    = var.cloudflare_account_id
-          CLOUDFLARE_KV_NAMESPACE_ID = "1e14da3d238548fd8fa50982395d538d"
+          CLOUDFLARE_KV_NAMESPACE_ID = var.cloudflare_kv_namespace_id
           CLOUDFLARE_ZONE_ID       = var.cloudflare_zone_id
         } : {}
         content {
@@ -292,6 +301,15 @@ resource "google_cloud_run_v2_service" "dependent" {
             }
           }
         }
+      }
+
+      startup_probe {
+        http_get {
+          path = "/health"
+        }
+        initial_delay_seconds = 2
+        period_seconds        = 5
+        failure_threshold     = 10
       }
     }
 

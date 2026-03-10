@@ -57,6 +57,17 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
+      - name: Capture current revision before deploy
+        id: pre_deploy
+        run: |
+          set -euo pipefail
+          CURRENT=$(gcloud run services describe "${{ inputs.service_name }}" \
+            --region="${{ inputs.region }}" \
+            --project="${{ inputs.project }}" \
+            --format="value(status.traffic[0].revisionName)" 2>/dev/null || echo "")
+          echo "revision=${CURRENT}" >> "$GITHUB_OUTPUT"
+          echo "Current active revision: ${CURRENT:-none}"
+
       - name: Deploy to Cloud Run
         run: |
           set -euo pipefail
@@ -117,23 +128,16 @@ jobs:
         run: |
           set -euo pipefail
           echo "Smoke test failed, rolling back..."
-          # Roll back to the second-most-recent revision (the one before the deploy)
-          PREVIOUS=$(gcloud run revisions list \
-            --service=${{ inputs.service_name }} \
-            --region=${{ inputs.region }} \
-            --project=${{ inputs.project }} \
-            --sort-by=~createTime \
-            --limit=2 \
-            --format="value(name)" | tail -1)
+          PREVIOUS="${{ steps.pre_deploy.outputs.revision }}"
 
           if [[ -n "$PREVIOUS" ]]; then
             gcloud run services update-traffic ${{ inputs.service_name }} \
               --region=${{ inputs.region }} \
               --project=${{ inputs.project }} \
               --to-revisions="${PREVIOUS}=100"
-            echo "Rolled back to revision: ${PREVIOUS}"
+            echo "::warning::Rolled back to revision: ${PREVIOUS}"
           else
-            echo "No previous revision found, cannot rollback"
+            echo "::error::No previous revision found, cannot rollback"
           fi
 
       - name: Trigger Cloudflare Worker update

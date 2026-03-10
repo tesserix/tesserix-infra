@@ -51,7 +51,11 @@ jobs:
         with:
           node-version: ${{ inputs.node_version }}
           cache: npm
+          registry-url: https://npm.pkg.github.com
+          scope: '@tesserix'
       - run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PKG_READ_TOKEN }}
       - run: npx eslint . --max-warnings 0
 
   release:

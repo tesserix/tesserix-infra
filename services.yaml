@@ -339,7 +339,7 @@ services:
     migration: none
     usesGoShared: false
     sidecar: none
-    invokes: [auth-bff, tenant-service, mp-products, mp-orders, mp-vendors, mp-customers, mp-categories, mp-coupons, mp-reviews, mp-shipping, settings-service, subscription-service, tickets-service, notification-service, feature-flags-service, document-service, location-service]
+    invokes: [auth-bff, tenant-service, tenant-router-service, mp-products, mp-orders, mp-vendors, mp-customers, mp-categories, mp-coupons, mp-reviews, mp-shipping, settings-service, subscription-service, tickets-service, notification-service, feature-flags-service, document-service, location-service]
     publishesEvents: false
     pubsubTopic: ""
     secrets:
@@ -355,7 +355,7 @@ services:
     migration: none
     usesGoShared: false
     sidecar: none
-    invokes: [mp-products, mp-categories, mp-reviews, auth-bff]
+    invokes: [mp-products, mp-categories, mp-reviews, auth-bff, tenant-service, tenant-router-service, settings-service, notification-service]
     publishesEvents: false
     pubsubTopic: ""
     secrets: []
@@ -451,14 +451,15 @@ services:
     lang: go
     appGroup: mark8ly
     hasDb: true
-    migration: none
+    migration: golang-migrate
     usesGoShared: true
     sidecar: cloud-sql-proxy
-    invokes: []
+    invokes: [openfga, mp-approvals]
     publishesEvents: false
     pubsubTopic: ""
     secrets:
       - mp_categories-db-password
+      - openfga-preshared-key
     storageApps: []
 
   mp-coupons:

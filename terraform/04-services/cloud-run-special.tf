@@ -70,6 +70,15 @@ resource "google_cloud_run_v2_service" "openfga" {
           }
         }
       }
+
+      startup_probe {
+        http_get {
+          path = "/health"
+        }
+        initial_delay_seconds = 2
+        period_seconds        = 5
+        failure_threshold     = 10
+      }
     }
 
     containers {
@@ -115,7 +124,7 @@ resource "google_cloud_run_v2_service" "auth_bff" {
       }
 
       env {
-        name  = "APP_ENV"
+        name  = "ENVIRONMENT"
         value = "production"
       }
       env {
@@ -400,7 +409,7 @@ resource "google_cloud_run_v2_service" "marketplace_onboarding" {
       }
       env {
         name  = "CONTENT_DB_SSLMODE"
-        value = "disable"
+        value = "disable" # Cloud SQL Auth Proxy sidecar provides transport encryption
       }
 
       env {
@@ -420,6 +429,15 @@ resource "google_cloud_run_v2_service" "marketplace_onboarding" {
             version = "latest"
           }
         }
+      }
+
+      startup_probe {
+        http_get {
+          path = "/api/health"
+        }
+        initial_delay_seconds = 2
+        period_seconds        = 5
+        failure_threshold     = 10
       }
     }
 
@@ -478,6 +496,10 @@ resource "google_cloud_run_v2_service" "marketplace_admin" {
         value = var.project_id
       }
       env {
+        name  = "NEXT_PUBLIC_SITE_URL"
+        value = "https://admin.mark8ly.com"
+      }
+      env {
         name  = "NEXT_PUBLIC_BASE_DOMAIN"
         value = "mark8ly.com"
       }
@@ -496,8 +518,12 @@ resource "google_cloud_run_v2_service" "marketplace_admin" {
         value = google_cloud_run_v2_service.base["tenant-service"].uri
       }
       env {
+        name  = "TENANT_ROUTER_SERVICE_URL"
+        value = google_cloud_run_v2_service.dependent["tenant-router-service"].uri
+      }
+      env {
         name  = "CATEGORIES_SERVICE_URL"
-        value = "${google_cloud_run_v2_service.base["mp-categories"].uri}/api/v1"
+        value = "${google_cloud_run_v2_service.dependent["mp-categories"].uri}/api/v1"
       }
       env {
         name  = "PRODUCTS_SERVICE_URL"
@@ -609,7 +635,23 @@ resource "google_cloud_run_v2_service" "mp_storefront" {
         value = "1"
       }
       env {
+        name  = "NEXT_PUBLIC_SITE_URL"
+        value = "https://mark8ly.com"
+      }
+      env {
         name  = "NEXT_PUBLIC_BASE_DOMAIN"
+        value = "mark8ly.com"
+      }
+      env {
+        name  = "BASE_DOMAIN"
+        value = "mark8ly.com"
+      }
+      env {
+        name  = "GCP_PROJECT_ID"
+        value = var.project_id
+      }
+      env {
+        name  = "CSRF_ALLOWED_DOMAINS"
         value = "mark8ly.com"
       }
 
@@ -619,16 +661,41 @@ resource "google_cloud_run_v2_service" "mp_storefront" {
         value = google_cloud_run_v2_service.auth_bff.uri
       }
       env {
+        name  = "TENANT_SERVICE_URL"
+        value = google_cloud_run_v2_service.base["tenant-service"].uri
+      }
+      env {
+        name  = "TENANT_ROUTER_SERVICE_URL"
+        value = google_cloud_run_v2_service.dependent["tenant-router-service"].uri
+      }
+      env {
         name  = "PRODUCTS_SERVICE_URL"
         value = "${google_cloud_run_v2_service.base["mp-products"].uri}/api/v1"
       }
       env {
         name  = "CATEGORIES_SERVICE_URL"
-        value = "${google_cloud_run_v2_service.base["mp-categories"].uri}/api/v1"
+        value = "${google_cloud_run_v2_service.dependent["mp-categories"].uri}/api/v1"
       }
       env {
         name  = "REVIEWS_SERVICE_URL"
         value = "${google_cloud_run_v2_service.base["mp-reviews"].uri}/api/v1"
+      }
+      env {
+        name  = "SETTINGS_SERVICE_URL"
+        value = google_cloud_run_v2_service.base["settings-service"].uri
+      }
+      env {
+        name  = "NOTIFICATION_SERVICE_URL"
+        value = "${google_cloud_run_v2_service.base["notification-service"].uri}/api/v1"
+      }
+
+      startup_probe {
+        http_get {
+          path = "/api/health"
+        }
+        initial_delay_seconds = 2
+        period_seconds        = 5
+        failure_threshold     = 10
       }
     }
   }

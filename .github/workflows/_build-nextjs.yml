@@ -128,6 +128,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           platforms: ${{ inputs.platforms }}
+          build-args: NODE_ENV=production
           secrets: |
             NODE_AUTH_TOKEN=${{ secrets.PKG_READ_TOKEN }}
           cache-from: type=gha
