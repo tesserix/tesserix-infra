@@ -527,11 +527,11 @@ resource "google_cloud_run_v2_service" "marketplace_admin" {
       }
       env {
         name  = "PRODUCTS_SERVICE_URL"
-        value = "${google_cloud_run_v2_service.base["mp-products"].uri}/api/v1"
+        value = "${google_cloud_run_v2_service.dependent["mp-products"].uri}/api/v1"
       }
       env {
         name  = "ORDERS_SERVICE_URL"
-        value = "${google_cloud_run_v2_service.dependent["mp-orders"].uri}/api/v1"
+        value = "${google_cloud_run_v2_service.tier3["mp-orders"].uri}/api/v1"
       }
       env {
         name  = "VENDORS_SERVICE_URL"
@@ -539,7 +539,7 @@ resource "google_cloud_run_v2_service" "marketplace_admin" {
       }
       env {
         name  = "CUSTOMERS_SERVICE_URL"
-        value = "${google_cloud_run_v2_service.base["mp-customers"].uri}/api/v1"
+        value = "${google_cloud_run_v2_service.dependent["mp-customers"].uri}/api/v1"
       }
       env {
         name  = "REVIEWS_SERVICE_URL"
@@ -670,7 +670,7 @@ resource "google_cloud_run_v2_service" "mp_storefront" {
       }
       env {
         name  = "PRODUCTS_SERVICE_URL"
-        value = "${google_cloud_run_v2_service.base["mp-products"].uri}/api/v1"
+        value = "${google_cloud_run_v2_service.dependent["mp-products"].uri}/api/v1"
       }
       env {
         name  = "CATEGORIES_SERVICE_URL"

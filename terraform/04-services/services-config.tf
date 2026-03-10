@@ -238,8 +238,8 @@ locals {
         "VENDOR_SERVICE_URL"    = "mp-vendors"
         "APPROVAL_SERVICE_URL"  = "mp-approvals"
       }
-      # NOTE: CATEGORIES_SERVICE_URL needs manual Cloud Run env var —
-      # mp-categories is a dependent service (can't reference from service_urls)
+      # CATEGORIES_SERVICE_URL: mp-categories is also dependent (has service_urls),
+      # so it can't be resolved here. Will be empty — add Pub/Sub or set manually.
       secrets = {
         "DB_PASSWORD"                  = "mp_products-db-password"
         "OPENFGA_API_KEY"              = "openfga-preshared-key"
@@ -264,6 +264,8 @@ locals {
         "TENANT_SERVICE_URL"       = "tenant-service"
         "APPROVAL_SERVICE_URL"     = "mp-approvals"
       }
+      # ORDERS_SERVICE_URL: mp-orders is tier3 (can't reference from dependent).
+      # Payment→orders notifications should use Pub/Sub events instead.
       secrets = {
         "DB_PASSWORD"                  = "mp_payments-db-password"
         "STRIPE_SECRET_KEY"            = "stripe-secret-key"
@@ -551,9 +553,6 @@ locals {
       openfga_url    = true
       service_urls = {
         "INVENTORY_SERVICE_URL"    = "mp-inventory"
-        "PAYMENT_SERVICE_URL"      = "mp-payments"
-        "PRODUCTS_SERVICE_URL"     = "mp-products"
-        "CUSTOMERS_SERVICE_URL"    = "mp-customers"
         "SHIPPING_SERVICE_URL"     = "mp-shipping"
         "NOTIFICATION_SERVICE_URL" = "notification-service"
         "TAX_SERVICE_URL"          = "mp-tax"
@@ -561,6 +560,11 @@ locals {
         "APPROVAL_SERVICE_URL"     = "mp-approvals"
         "TENANT_SERVICE_URL"       = "tenant-service"
         "SETTINGS_SERVICE_URL"     = "settings-service"
+      }
+      cross_dependent_urls = {
+        "PAYMENT_SERVICE_URL"   = "mp-payments"
+        "PRODUCTS_SERVICE_URL"  = "mp-products"
+        "CUSTOMERS_SERVICE_URL" = "mp-customers"
       }
       secrets = {
         "DB_PASSWORD"                  = "mp_orders-db-password"
@@ -604,8 +608,10 @@ locals {
       env_platform   = false
       openfga_url    = false
       service_urls = {
-        "PRODUCTS_SERVICE_URL"  = "mp-products"
         "INVENTORY_SERVICE_URL" = "mp-inventory"
+      }
+      cross_dependent_urls = {
+        "PRODUCTS_SERVICE_URL" = "mp-products"
       }
       secrets = {
         "DB_PASSWORD" = "mp_connector-db-password"
@@ -664,12 +670,14 @@ locals {
   }
 
   # ---------------------------------------------------------------------------
-  # Two-tier split: base services have no cross-standard-service refs,
-  # dependent services reference only base services. This avoids the Terraform
-  # for_each self-referencing cycle.
+  # Three-tier split to avoid Terraform for_each self-referencing cycles.
+  #   base:      no service_urls, no cross_dependent_urls
+  #   dependent: service_urls (→ base), no cross_dependent_urls
+  #   tier3:     service_urls (→ base) + cross_dependent_urls (→ dependent)
   # ---------------------------------------------------------------------------
   base_db_services      = { for k, v in local.standard_db_services : k => v if length(v.service_urls) == 0 }
-  dependent_db_services = { for k, v in local.standard_db_services : k => v if length(v.service_urls) > 0 }
+  dependent_db_services = { for k, v in local.standard_db_services : k => v if length(v.service_urls) > 0 && length(lookup(v, "cross_dependent_urls", {})) == 0 }
+  tier3_db_services     = { for k, v in local.standard_db_services : k => v if length(lookup(v, "cross_dependent_urls", {})) > 0 }
 
   # ---------------------------------------------------------------------------
   # Public-access IAM: services that allow allUsers at the Cloud Run layer.
