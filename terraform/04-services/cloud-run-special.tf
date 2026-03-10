@@ -202,6 +202,15 @@ resource "google_cloud_run_v2_service" "auth_bff" {
           }
         }
       }
+      env {
+        name = "INTERNAL_SERVICE_KEY"
+        value_source {
+          secret_key_ref {
+            secret  = "shared-internal-service-key"
+            version = "latest"
+          }
+        }
+      }
     }
   }
 }
