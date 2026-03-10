@@ -118,12 +118,12 @@ services:
     lang: go
     appGroup: platform
     hasDb: true
-    migration: none
-    usesGoShared: false
+    migration: golang-migrate
+    usesGoShared: true
     sidecar: cloud-sql-proxy
     invokes: []
-    publishesEvents: false
-    pubsubTopic: ""
+    publishesEvents: true
+    pubsubTopic: tesserix-settings-events
     secrets:
       - settings-db-password
     storageApps: []
