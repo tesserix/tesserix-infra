@@ -57,6 +57,14 @@ resource "google_project_iam_member" "service_usage_consumer" {
   member   = "serviceAccount:${google_service_account.services[each.key].email}"
 }
 
+# --- Token Creator (custom token signing for social auth flow) ---
+resource "google_project_iam_member" "token_creator" {
+  for_each = toset(["tenant-service"])
+  project  = var.project_id
+  role     = "roles/iam.serviceAccountTokenCreator"
+  member   = "serviceAccount:${google_service_account.services[each.key].email}"
+}
+
 # --- Pub/Sub Publisher ---
 resource "google_project_iam_member" "pubsub_publisher" {
   for_each = { for name, cfg in local.all_services : name => cfg if cfg.publishes_events }
