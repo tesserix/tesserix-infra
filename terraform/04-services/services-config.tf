@@ -206,8 +206,8 @@ locals {
       port           = 8080
       max_instances  = 3
       memory         = "256Mi"
-      env_project_id = false
-      env_app_env    = false
+      env_project_id = true
+      env_app_env    = true
       env_platform   = false
       openfga_url    = false
       service_urls   = {}

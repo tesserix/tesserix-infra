@@ -165,6 +165,16 @@ resource "google_pubsub_subscription" "audit_subscription_push" {
   }
 }
 
+# --- Settings Events ---
+resource "google_pubsub_topic" "settings_events" {
+  name                       = "tesserix-settings-events"
+  message_retention_duration = "604800s" # 7 days
+}
+
+resource "google_pubsub_topic" "settings_events_dlq" {
+  name = "tesserix-settings-events-dlq"
+}
+
 # --- Verification Events ---
 resource "google_pubsub_topic" "verification_events" {
   name                       = "tesserix-verification-events"

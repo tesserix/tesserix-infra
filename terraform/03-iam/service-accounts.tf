@@ -66,7 +66,7 @@ locals {
       secrets  = ["settings-db-password"]
       has_db   = true
       invokes  = []
-      publishes_events = false
+      publishes_events = true
       storage_apps     = []
     }
     "subscription-service" = {
