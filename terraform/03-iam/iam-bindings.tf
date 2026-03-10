@@ -49,6 +49,14 @@ resource "google_project_iam_member" "firebaseauth_admin" {
   member   = "serviceAccount:${google_service_account.services[each.key].email}"
 }
 
+# --- Service Usage Consumer (required for Identity Toolkit API calls) ---
+resource "google_project_iam_member" "service_usage_consumer" {
+  for_each = toset(["tenant-service"])
+  project  = var.project_id
+  role     = "roles/serviceusage.serviceUsageConsumer"
+  member   = "serviceAccount:${google_service_account.services[each.key].email}"
+}
+
 # --- Pub/Sub Publisher ---
 resource "google_project_iam_member" "pubsub_publisher" {
   for_each = { for name, cfg in local.all_services : name => cfg if cfg.publishes_events }
