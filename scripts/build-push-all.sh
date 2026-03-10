@@ -48,50 +48,48 @@ run_cmd() {
 }
 
 # ---------------------------------------------------------------------------
-# Service → directory mappings
+# Service → directory mappings (name:dir pairs, colon-separated)
 # ---------------------------------------------------------------------------
-# Go services: service_name → directory_name (relative to BASE_DIR)
-declare -A GO_SERVICES=(
-  ["audit-service"]="audit-service"
-  ["tenant-service"]="tenant-service"
-  ["notification-service"]="notification-service"
-  ["document-service"]="document-service"
-  ["location-service"]="location-service"
-  ["settings-service"]="settings-service"
-  ["subscription-service"]="subscription-service"
-  ["verification-service"]="verification-service"
-  ["tickets-service"]="tickets-service"
-  ["analytics-service"]="analytics-service"
-  ["feature-flags-service"]="feature-flags-service"
-  ["qr-service"]="qr-service"
-  ["status-service"]="status-service"
-  ["tenant-router-service"]="tenant-router-service"
-  ["auth-bff"]="auth-bff"
-  ["mp-products"]="marketplace-products-service"
-  ["mp-orders"]="marketplace-orders-service"
-  ["mp-payments"]="marketplace-payment-service"
-  ["mp-inventory"]="marketplace-inventory-service"
-  ["mp-shipping"]="marketplace-shipping-service"
-  ["mp-categories"]="marketplace-categories-service"
-  ["mp-coupons"]="marketplace-coupons-service"
-  ["mp-reviews"]="marketplace-reviews-service"
-  ["mp-vendors"]="marketplace-vendor-service"
-  ["mp-customers"]="marketplace-customers-service"
-  ["mp-staff"]="marketplace-staff-service"
-  ["mp-content"]="marketplace-content-service"
-  ["mp-approvals"]="marketplace-approval-service"
-  ["mp-gift-cards"]="marketplace-gift-cards-service"
-  ["mp-marketing"]="marketplace-marketing-service"
-  ["mp-connector"]="marketplace-marketplace-connector-service"
-  ["mp-tax"]="marketplace-tax-service"
+GO_SERVICES=(
+  "audit-service:audit-service"
+  "tenant-service:tenant-service"
+  "notification-service:notification-service"
+  "document-service:document-service"
+  "location-service:location-service"
+  "settings-service:settings-service"
+  "subscription-service:subscription-service"
+  "verification-service:verification-service"
+  "tickets-service:tickets-service"
+  "analytics-service:analytics-service"
+  "feature-flags-service:feature-flags-service"
+  "qr-service:qr-service"
+  "status-service:status-service"
+  "tenant-router-service:tenant-router-service"
+  "auth-bff:auth-bff"
+  "mp-products:marketplace-products-service"
+  "mp-orders:marketplace-orders-service"
+  "mp-payments:marketplace-payment-service"
+  "mp-inventory:marketplace-inventory-service"
+  "mp-shipping:marketplace-shipping-service"
+  "mp-categories:marketplace-categories-service"
+  "mp-coupons:marketplace-coupons-service"
+  "mp-reviews:marketplace-reviews-service"
+  "mp-vendors:marketplace-vendor-service"
+  "mp-customers:marketplace-customers-service"
+  "mp-staff:marketplace-staff-service"
+  "mp-content:marketplace-content-service"
+  "mp-approvals:marketplace-approval-service"
+  "mp-gift-cards:marketplace-gift-cards-service"
+  "mp-marketing:marketplace-marketing-service"
+  "mp-connector:marketplace-marketplace-connector-service"
+  "mp-tax:marketplace-tax-service"
 )
 
-# Next.js services: service_name → directory_name
-declare -A NEXTJS_SERVICES=(
-  ["tesserix-home"]="tesserix-home"
-  ["marketplace-onboarding"]="marketplace-onboarding"
-  ["marketplace-admin"]="marketplace-admin"
-  ["mp-storefront"]="marketplace-storefront"
+NEXTJS_SERVICES=(
+  "tesserix-home:tesserix-home"
+  "marketplace-onboarding:marketplace-onboarding"
+  "marketplace-admin:marketplace-admin"
+  "mp-storefront:marketplace-storefront"
 )
 
 # ---------------------------------------------------------------------------
@@ -191,8 +189,8 @@ build_go_parallel() {
     DOCKER_BUILDKIT=1 docker build \
       --secret id=github_token,env=GITHUB_TOKEN \
       --platform linux/amd64 \
-      -t "$image" . &>> "$logfile" && \
-    docker push "$image" &>> "$logfile" && \
+      -t "$image" . >> "$logfile" 2>&1 && \
+    docker push "$image" >> "$logfile" 2>&1 && \
     echo "OK" >> "$logfile" || echo "FAIL" >> "$logfile"
   ) &
 }
@@ -233,8 +231,10 @@ build_all_go() {
   echo "--- Go Services (${#GO_SERVICES[@]}) ---"
   if $PARALLEL && ! $DRY_RUN; then
     local pids=()
-    for name in $(echo "${!GO_SERVICES[@]}" | tr ' ' '\n' | sort); do
-      build_go_parallel "$name" "${GO_SERVICES[$name]}"
+    for entry in "${GO_SERVICES[@]}"; do
+      local name="${entry%%:*}"
+      local dir="${entry#*:}"
+      build_go_parallel "$name" "$dir"
       pids+=($!)
     done
 
@@ -245,7 +245,8 @@ build_all_go() {
     done
 
     # Check results
-    for name in $(echo "${!GO_SERVICES[@]}" | tr ' ' '\n' | sort); do
+    for entry in "${GO_SERVICES[@]}"; do
+      local name="${entry%%:*}"
       local logfile="/tmp/build-$name.log"
       if [[ -f "$logfile" ]]; then
         if grep -q "^OK$" "$logfile" 2>/dev/null; then
@@ -260,8 +261,10 @@ build_all_go() {
       fi
     done
   else
-    for name in $(echo "${!GO_SERVICES[@]}" | tr ' ' '\n' | sort); do
-      build_go "$name" "${GO_SERVICES[$name]}"
+    for entry in "${GO_SERVICES[@]}"; do
+      local name="${entry%%:*}"
+      local dir="${entry#*:}"
+      build_go "$name" "$dir"
     done
   fi
 }
@@ -269,8 +272,10 @@ build_all_go() {
 build_all_nextjs() {
   echo ""
   echo "--- Next.js Services (${#NEXTJS_SERVICES[@]}) ---"
-  for name in $(echo "${!NEXTJS_SERVICES[@]}" | tr ' ' '\n' | sort); do
-    build_nextjs "$name" "${NEXTJS_SERVICES[$name]}"
+  for entry in "${NEXTJS_SERVICES[@]}"; do
+    local name="${entry%%:*}"
+    local dir="${entry#*:}"
+    build_nextjs "$name" "$dir"
   done
 }
 
