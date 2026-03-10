@@ -41,6 +41,14 @@ resource "google_secret_manager_secret_iam_member" "service_secrets" {
   member    = "serviceAccount:${google_service_account.services[each.value.svc].email}"
 }
 
+# --- Identity Platform Admin (user management) ---
+resource "google_project_iam_member" "firebaseauth_admin" {
+  for_each = toset(["tenant-service"])
+  project  = var.project_id
+  role     = "roles/firebaseauth.admin"
+  member   = "serviceAccount:${google_service_account.services[each.key].email}"
+}
+
 # --- Pub/Sub Publisher ---
 resource "google_project_iam_member" "pubsub_publisher" {
   for_each = { for name, cfg in local.all_services : name => cfg if cfg.publishes_events }

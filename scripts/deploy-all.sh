@@ -158,6 +158,10 @@ deploy_simple() {
     --region '$REGION' \
     --project '$PROJECT' \
     --quiet"
+  run_cmd "gcloud run services update-traffic '$name' \
+    --to-latest \
+    --region '$REGION' \
+    --project '$PROJECT'"
   ok "Deployed $name"
 }
 
@@ -172,6 +176,10 @@ deploy_with_sidecar() {
     --region '$REGION' \
     --project '$PROJECT' \
     --quiet"
+  run_cmd "gcloud run services update-traffic '$name' \
+    --to-latest \
+    --region '$REGION' \
+    --project '$PROJECT'"
   ok "Deployed $name"
 }
 
@@ -185,6 +193,10 @@ deploy_nextjs_simple() {
     --region '$REGION' \
     --project '$PROJECT' \
     --quiet"
+  run_cmd "gcloud run services update-traffic '$name' \
+    --to-latest \
+    --region '$REGION' \
+    --project '$PROJECT'"
   ok "Deployed $name"
 }
 
@@ -199,6 +211,10 @@ deploy_nextjs_sidecar() {
     --region '$REGION' \
     --project '$PROJECT' \
     --quiet"
+  run_cmd "gcloud run services update-traffic '$name' \
+    --to-latest \
+    --region '$REGION' \
+    --project '$PROJECT'"
   ok "Deployed $name"
 }
 

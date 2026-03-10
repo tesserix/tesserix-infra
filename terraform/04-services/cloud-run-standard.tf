@@ -117,6 +117,26 @@ resource "google_cloud_run_v2_service" "base" {
         }
       }
 
+      # -- tenant-service: onboarding, domain & GIP config (bespoke) ----------
+      # NOTE: tenant-service must stay in the base tier because many dependent
+      # services reference it. Service-to-service URLs cannot use Terraform
+      # resource refs here (would create a for_each self-reference cycle), so
+      # they are set via gcloud/CI.
+      dynamic "env" {
+        for_each = each.key == "tenant-service" ? {
+          ONBOARDING_APP_URL  = "https://mark8ly.com"
+          BASE_DOMAIN         = "mark8ly.com"
+          VERIFICATION_METHOD = "link"
+          GCP_PROJECT_ID      = var.project_id
+          GIP_TENANT_ID       = "MP-Internal-uidfu"
+          GIP_WEB_API_KEY     = "AIzaSyBOxbm7WSu2f8_v2iv4CxJTktCRGhShmu4"
+        } : {}
+        content {
+          name  = env.key
+          value = env.value
+        }
+      }
+
       # -- Secrets -----------------------------------------------------------
       dynamic "env" {
         for_each = each.value.secrets

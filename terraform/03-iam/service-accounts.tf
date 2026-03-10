@@ -56,9 +56,9 @@ locals {
       storage_apps     = []
     }
     "tenant-service" = {
-      secrets  = ["tenants-db-password", "openfga-preshared-key"]
+      secrets  = ["tenants-db-password", "openfga-preshared-key", "shared-internal-service-key"]
       has_db   = true
-      invokes  = ["openfga"]
+      invokes  = ["openfga", "notification-service", "verification-service", "mp-staff", "mp-vendors", "tenant-router-service"]
       publishes_events = false
       storage_apps     = []
     }

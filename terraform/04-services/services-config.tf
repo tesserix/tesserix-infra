@@ -71,9 +71,13 @@ locals {
       env_platform   = false
       openfga_url    = true
       service_urls   = {}
+      # Service URLs (NOTIFICATION_SERVICE_URL, VERIFICATION_SERVICE_URL, etc.)
+      # are set via gcloud/CI — cannot use Terraform refs from base tier.
       secrets = {
-        "DB_PASSWORD"     = "tenants-db-password"
-        "OPENFGA_API_KEY" = "openfga-preshared-key"
+        "DB_PASSWORD"          = "tenants-db-password"
+        "OPENFGA_API_KEY"      = "openfga-preshared-key"
+        "NOTIFICATION_API_KEY" = "shared-internal-service-key"
+        "VERIFICATION_API_KEY" = "shared-internal-service-key"
       }
     }
 

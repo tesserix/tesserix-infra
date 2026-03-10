@@ -7,7 +7,8 @@
 // Routes:
 //   tesserix.app/auth/*                  → auth-bff Cloud Run
 //   tesserix.app/*                       → tesserix-home Cloud Run
-//   mark8ly.com                          → marketplace-onboarding
+//   mark8ly.com/auth/*                   → auth-bff (onboarding OAuth)
+//   mark8ly.com/*                        → marketplace-onboarding
 //   {slug}-store.mark8ly.com/*           → marketplace storefront
 //   {slug}.mark8ly.com/*                 → marketplace storefront (alias)
 //   {slug}-admin.mark8ly.com/*           → marketplace-admin (admin panel)
@@ -82,6 +83,10 @@ export default {
     // --- Marketplace onboarding: mark8ly.com (root) ---
     const baseDomain = env.BASE_DOMAIN || "mark8ly.com";
     if (host === baseDomain || host === `www.${baseDomain}`) {
+      // Auth routes on onboarding domain → auth-bff (for Google OAuth during onboarding)
+      if (url.pathname.startsWith("/auth") && !url.pathname.startsWith("/auth/error")) {
+        return proxy(request, url, env.AUTH_BFF_URL);
+      }
       return proxy(request, url, env.MARKETPLACE_ONBOARDING_URL);
     }
 
