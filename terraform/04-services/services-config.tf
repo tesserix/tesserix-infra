@@ -232,7 +232,14 @@ locals {
       env_app_env    = false
       env_platform   = false
       openfga_url    = true
-      service_urls   = {}
+      service_urls = {
+        "DOCUMENT_SERVICE_URL"  = "document-service"
+        "INVENTORY_SERVICE_URL" = "mp-inventory"
+        "VENDOR_SERVICE_URL"    = "mp-vendors"
+        "APPROVAL_SERVICE_URL"  = "mp-approvals"
+      }
+      # NOTE: CATEGORIES_SERVICE_URL needs manual Cloud Run env var —
+      # mp-categories is a dependent service (can't reference from service_urls)
       secrets = {
         "DB_PASSWORD"                  = "mp_products-db-password"
         "OPENFGA_API_KEY"              = "openfga-preshared-key"
@@ -252,7 +259,11 @@ locals {
       env_app_env    = false
       env_platform   = false
       openfga_url    = true
-      service_urls   = {}
+      service_urls = {
+        "NOTIFICATION_SERVICE_URL" = "notification-service"
+        "TENANT_SERVICE_URL"       = "tenant-service"
+        "APPROVAL_SERVICE_URL"     = "mp-approvals"
+      }
       secrets = {
         "DB_PASSWORD"                  = "mp_payments-db-password"
         "STRIPE_SECRET_KEY"            = "stripe-secret-key"
@@ -396,7 +407,10 @@ locals {
       env_app_env    = false
       env_platform   = false
       openfga_url    = true
-      service_urls   = {}
+      service_urls = {
+        "NOTIFICATION_SERVICE_URL" = "notification-service"
+        "TENANT_SERVICE_URL"       = "tenant-service"
+      }
       secrets = {
         "DB_PASSWORD"                  = "mp_customers-db-password"
         "OPENFGA_API_KEY"              = "openfga-preshared-key"
@@ -542,6 +556,11 @@ locals {
         "CUSTOMERS_SERVICE_URL"    = "mp-customers"
         "SHIPPING_SERVICE_URL"     = "mp-shipping"
         "NOTIFICATION_SERVICE_URL" = "notification-service"
+        "TAX_SERVICE_URL"          = "mp-tax"
+        "DOCUMENT_SERVICE_URL"     = "document-service"
+        "APPROVAL_SERVICE_URL"     = "mp-approvals"
+        "TENANT_SERVICE_URL"       = "tenant-service"
+        "SETTINGS_SERVICE_URL"     = "settings-service"
       }
       secrets = {
         "DB_PASSWORD"                  = "mp_orders-db-password"
