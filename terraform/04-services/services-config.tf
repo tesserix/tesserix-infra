@@ -209,10 +209,12 @@ locals {
       env_project_id = true
       env_app_env    = true
       env_platform   = false
-      openfga_url    = false
+      openfga_url    = true
       service_urls   = {}
       secrets = {
-        "DB_PASSWORD" = "settings-db-password"
+        "DB_PASSWORD"              = "settings-db-password"
+        "OPENFGA_API_KEY"          = "openfga-preshared-key"
+        "OPENFGA_PLATFORM_STORE_ID" = "openfga-platform-store-id"
       }
     }
 

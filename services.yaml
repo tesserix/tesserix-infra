@@ -121,11 +121,13 @@ services:
     migration: golang-migrate
     usesGoShared: true
     sidecar: cloud-sql-proxy
-    invokes: []
+    invokes: [openfga]
     publishesEvents: true
     pubsubTopic: tesserix-settings-events
     secrets:
       - settings-db-password
+      - openfga-preshared-key
+      - openfga-platform-store-id
     storageApps: []
 
   subscription-service:

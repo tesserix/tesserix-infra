@@ -63,9 +63,9 @@ locals {
       storage_apps     = []
     }
     "settings-service" = {
-      secrets  = ["settings-db-password"]
+      secrets  = ["settings-db-password", "openfga-preshared-key", "openfga-platform-store-id"]
       has_db   = true
-      invokes  = []
+      invokes  = ["openfga"]
       publishes_events = true
       storage_apps     = []
     }
