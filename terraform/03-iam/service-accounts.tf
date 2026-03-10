@@ -70,7 +70,7 @@ locals {
       storage_apps     = []
     }
     "subscription-service" = {
-      secrets  = ["subscriptions-db-password", "stripe-secret-key"]
+      secrets  = ["subscriptions-db-password", "stripe-secret-key", "stripe-webhook-secret"]
       has_db   = true
       invokes  = []
       publishes_events = true

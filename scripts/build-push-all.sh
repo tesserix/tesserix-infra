@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # =============================================================================
 # Build & push all Docker images to GAR
-# Usage: ./build-push-all.sh [go|nextjs|all] [--dry-run] [--parallel]
+# Usage: ./build-push-all.sh [go|nextjs|all] [--dry-run] [--parallel] [--only=svc1,svc2,...]
 #
 # After images are in GAR, run:
 #   cd terraform/04-services && terraform apply -var-file=../terraform.tfvars
@@ -19,16 +19,26 @@ NODE_AUTH_TOKEN="${NODE_AUTH_TOKEN:-}"
 
 DRY_RUN=false
 PARALLEL=false
+ONLY_FILTER=""
 TARGET="${1:-all}"
 FAILED=()
 SUCCEEDED=()
 
 for arg in "$@"; do
   case "$arg" in
-    --dry-run)  DRY_RUN=true ;;
-    --parallel) PARALLEL=true ;;
+    --dry-run)   DRY_RUN=true ;;
+    --parallel)  PARALLEL=true ;;
+    --only=*)    ONLY_FILTER="${arg#--only=}" ;;
   esac
 done
+
+# Returns 0 (true) if the service should be built
+should_build() {
+  local name="$1"
+  [[ -z "$ONLY_FILTER" ]] && return 0
+  echo ",$ONLY_FILTER," | grep -q ",$name," && return 0
+  return 1
+}
 
 # ---------------------------------------------------------------------------
 # Colors & helpers
@@ -221,6 +231,7 @@ preflight() {
 
   if $DRY_RUN; then warn "DRY RUN — no builds will execute"; fi
   if $PARALLEL; then warn "PARALLEL mode — builds run concurrently"; fi
+  if [[ -n "$ONLY_FILTER" ]]; then warn "ONLY building: $ONLY_FILTER"; fi
   echo ""
 }
 
@@ -234,6 +245,7 @@ build_all_go() {
     for entry in "${GO_SERVICES[@]}"; do
       local name="${entry%%:*}"
       local dir="${entry#*:}"
+      should_build "$name" || continue
       build_go_parallel "$name" "$dir"
       pids+=($!)
     done
@@ -247,6 +259,7 @@ build_all_go() {
     # Check results
     for entry in "${GO_SERVICES[@]}"; do
       local name="${entry%%:*}"
+      should_build "$name" || continue
       local logfile="/tmp/build-$name.log"
       if [[ -f "$logfile" ]]; then
         if grep -q "^OK$" "$logfile" 2>/dev/null; then
@@ -264,6 +277,7 @@ build_all_go() {
     for entry in "${GO_SERVICES[@]}"; do
       local name="${entry%%:*}"
       local dir="${entry#*:}"
+      should_build "$name" || continue
       build_go "$name" "$dir"
     done
   fi
@@ -275,6 +289,7 @@ build_all_nextjs() {
   for entry in "${NEXTJS_SERVICES[@]}"; do
     local name="${entry%%:*}"
     local dir="${entry#*:}"
+    should_build "$name" || continue
     build_nextjs "$name" "$dir"
   done
 }

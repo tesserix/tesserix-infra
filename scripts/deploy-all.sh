@@ -11,7 +11,7 @@ set -euo pipefail
 PROJECT="tesserix"
 REGION="asia-south1"
 REGISTRY="asia-south1-docker.pkg.dev/tesserix/services"
-TAG="manual-$(date +%Y%m%d-%H%M%S)"
+TAG="${IMAGE_TAG:-manual-$(date +%Y%m%d-%H%M%S)}"
 BASE_DIR="$(cd "$(dirname "$0")/../.." && pwd)"  # tesserix-new/
 SQL_INSTANCE="tesserix:asia-south1:tesserix-main"
 
@@ -166,7 +166,7 @@ deploy_with_sidecar() {
   local image="$REGISTRY/$name:$TAG"
 
   log "Deploying $name (with sidecar) ..."
-  run_cmd "gcloud run services update '$name' \
+  run_cmd "gcloud beta run services update '$name' \
     --container '$name' \
     --image '$image' \
     --region '$REGION' \
@@ -193,7 +193,7 @@ deploy_nextjs_sidecar() {
   local image="$REGISTRY/$name:$TAG"
 
   log "Deploying $name (Next.js, with sidecar) ..."
-  run_cmd "gcloud run services update '$name' \
+  run_cmd "gcloud beta run services update '$name' \
     --container '$name' \
     --image '$image' \
     --region '$REGION' \

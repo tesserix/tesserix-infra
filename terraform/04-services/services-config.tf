@@ -133,8 +133,9 @@ locals {
         "TENANT_SERVICE_URL" = "tenant-service"
       }
       secrets = {
-        "DB_PASSWORD"       = "subscriptions-db-password"
-        "STRIPE_SECRET_KEY" = "stripe-secret-key"
+        "DB_PASSWORD"           = "subscriptions-db-password"
+        "STRIPE_SECRET_KEY"     = "stripe-secret-key"
+        "STRIPE_WEBHOOK_SECRET" = "stripe-webhook-secret"
       }
     }
 
