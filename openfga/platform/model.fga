@@ -24,6 +24,8 @@ type tenant
     define can_manage_members: admin
     define can_manage_billing: billing_admin
     define can_view_audit: admin
+    define can_manage_settings: admin
+    define can_view_settings: member
 
 # Which products a tenant has access to
 type product
