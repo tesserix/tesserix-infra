@@ -49,7 +49,9 @@ locals {
       env_app_env    = false
       env_platform   = false
       openfga_url    = true
-      service_urls   = {}
+      service_urls = {
+        "TENANT_REGISTRY_URL" = "tenant-service"
+      }
       secrets = {
         "DB_PASSWORD"     = "audit-db-password"
         "OPENFGA_API_KEY" = "openfga-preshared-key"
