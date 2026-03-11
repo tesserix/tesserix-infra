@@ -600,6 +600,15 @@ resource "google_cloud_run_v2_service" "marketplace_admin" {
           }
         }
       }
+      env {
+        name = "CSRF_SECRET"
+        value_source {
+          secret_key_ref {
+            secret  = "marketplace-admin-csrf-secret"
+            version = "latest"
+          }
+        }
+      }
     }
   }
 }

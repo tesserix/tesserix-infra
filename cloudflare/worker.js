@@ -106,12 +106,7 @@ export default {
           return new Response("Tenant not found", { status: 404 });
         }
 
-        // Auth routes on admin subdomain → auth-bff
-        if (url.pathname.startsWith("/auth") && !url.pathname.startsWith("/auth/error")) {
-          return proxyWithTenant(request, url, env.AUTH_BFF_URL, route.tenant_id, slug, host, "admin");
-        }
-
-        // Everything else → marketplace-admin (admin panel)
+        // All traffic → marketplace-admin (it proxies /auth/* to auth-bff internally)
         return proxyWithTenant(request, url, env.MARKETPLACE_ADMIN_URL, route.tenant_id, slug, host, "admin");
       }
 

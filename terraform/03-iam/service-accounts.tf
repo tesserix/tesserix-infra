@@ -158,7 +158,7 @@ locals {
       storage_apps     = []
     }
     "marketplace-admin" = {
-      secrets  = ["shared-internal-service-key"]
+      secrets  = ["shared-internal-service-key", "marketplace-admin-csrf-secret"]
       has_db   = false
       invokes  = ["auth-bff", "tenant-service", "tenant-router-service", "mp-products", "mp-orders", "mp-vendors", "mp-customers", "mp-categories", "mp-coupons", "mp-reviews", "mp-shipping", "settings-service", "subscription-service", "tickets-service", "notification-service", "feature-flags-service", "document-service", "location-service"]
       publishes_events = false
