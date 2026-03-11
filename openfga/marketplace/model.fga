@@ -240,6 +240,13 @@ type store
     define can_view_ads_placements: manager
     define can_manage_ads_placements: admin
 
+    # --- Marketplace Connectors ---
+    define can_read_connectors: manager
+    define can_create_connectors: admin
+    define can_update_connectors: admin
+    define can_delete_connectors: owner
+    define can_manage_connectors: admin
+
     # --- Content ---
     define can_view_content: viewer
     define can_create_content: staff
