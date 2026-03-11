@@ -120,28 +120,22 @@ else
 
   run_sql <<SQL
 BEGIN;
--- Find session IDs linked to these slugs via business_informations
-DELETE FROM application_configurations WHERE onboarding_session_id IN (
-  SELECT onboarding_session_id FROM business_informations WHERE business_name IN (${SQL_IN})
-);
-DELETE FROM business_addresses WHERE onboarding_session_id IN (
-  SELECT onboarding_session_id FROM business_informations WHERE business_name IN (${SQL_IN})
-);
-DELETE FROM contact_informations WHERE onboarding_session_id IN (
-  SELECT onboarding_session_id FROM business_informations WHERE business_name IN (${SQL_IN})
-);
-DELETE FROM onboarding_tasks WHERE onboarding_session_id IN (
-  SELECT onboarding_session_id FROM business_informations WHERE business_name IN (${SQL_IN})
-);
-DELETE FROM verification_tokens WHERE session_id IN (
-  SELECT onboarding_session_id FROM business_informations WHERE business_name IN (${SQL_IN})
-);
-DELETE FROM onboarding_sessions WHERE id IN (
-  SELECT onboarding_session_id FROM business_informations WHERE business_name IN (${SQL_IN})
-);
+-- Collect session IDs first, then delete children before parents
+CREATE TEMP TABLE _sessions AS
+  SELECT onboarding_session_id AS id FROM business_informations WHERE business_name IN (${SQL_IN});
+
+DELETE FROM application_configurations WHERE onboarding_session_id IN (SELECT id FROM _sessions);
+DELETE FROM business_addresses WHERE onboarding_session_id IN (SELECT id FROM _sessions);
+DELETE FROM contact_informations WHERE onboarding_session_id IN (SELECT id FROM _sessions);
+DELETE FROM onboarding_tasks WHERE onboarding_session_id IN (SELECT id FROM _sessions);
+DELETE FROM verification_tokens WHERE session_id IN (SELECT id FROM _sessions);
+DELETE FROM onboarding_notifications WHERE onboarding_session_id IN (SELECT id FROM _sessions);
 DELETE FROM business_informations WHERE business_name IN (${SQL_IN});
+DELETE FROM onboarding_sessions WHERE id IN (SELECT id FROM _sessions);
 DELETE FROM tenant_slug_reservations WHERE slug IN (${SQL_IN});
 DELETE FROM tenants WHERE slug IN (${SQL_IN});
+
+DROP TABLE _sessions;
 COMMIT;
 SQL
 fi
