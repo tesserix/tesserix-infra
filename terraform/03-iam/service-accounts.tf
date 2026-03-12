@@ -277,9 +277,9 @@ locals {
       storage_apps     = []
     }
     "mp-connector" = {
-      secrets  = ["mp_connector-db-password"]
+      secrets  = ["mp_connector-db-password", "openfga-preshared-key", "openfga-marketplace-store-id"]
       has_db   = true
-      invokes  = ["mp-products", "mp-orders", "mp-inventory"]
+      invokes  = ["openfga", "mp-products", "mp-orders", "mp-inventory"]
       publishes_events = false
       storage_apps     = []
     }

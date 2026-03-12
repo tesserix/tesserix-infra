@@ -615,7 +615,7 @@ locals {
       env_project_id = true
       env_app_env    = false
       env_platform   = false
-      openfga_url    = false
+      openfga_url    = true
       service_urls = {
         "INVENTORY_SERVICE_URL" = "mp-inventory"
       }
@@ -623,7 +623,9 @@ locals {
         "PRODUCTS_SERVICE_URL" = "mp-products"
       }
       secrets = {
-        "DB_PASSWORD" = "mp_connector-db-password"
+        "DB_PASSWORD"                  = "mp_connector-db-password"
+        "OPENFGA_API_KEY"              = "openfga-preshared-key"
+        "OPENFGA_MARKETPLACE_STORE_ID" = "openfga-marketplace-store-id"
       }
     }
 
