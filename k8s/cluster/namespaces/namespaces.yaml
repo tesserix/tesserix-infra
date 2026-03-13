@@ -24,7 +24,7 @@ kind: Namespace
 metadata:
   name: ingress
   labels:
-    istio-injection: enabled
+    istio-injection: disabled
 ---
 apiVersion: v1
 kind: Namespace
