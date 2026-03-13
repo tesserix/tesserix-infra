@@ -20,5 +20,6 @@ variable "master_authorized_cidrs" {
   type = map(string)
   default = {
     "cloudshell" = "35.235.240.0/20"
+    "mahesh"     = "104.30.167.39/32"
   }
 }

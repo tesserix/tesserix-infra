@@ -1,5 +1,5 @@
-PROJECT_ID   := tesserix
-STATE_BUCKET := tesserix-tf-state
+PROJECT_ID   := tesserix-app
+STATE_BUCKET := tesserix-app-tf-state
 REGION       := asia-south1
 
 # Bootstrap: create state bucket (run once, manually)

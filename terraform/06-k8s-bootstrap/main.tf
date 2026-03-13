@@ -76,25 +76,14 @@ resource "helm_release" "istiod" {
       }
     }
     cni = {
-      enabled = true # Required for GKE Autopilot
+      enabled = false # CNI not compatible with GKE Autopilot
     }
   })]
 }
 
-resource "helm_release" "istio_cni" {
-  name       = "istio-cni"
-  repository = "https://istio-release.storage.googleapis.com/charts"
-  chart      = "cni"
-  version    = "1.24.2"
-  namespace  = "istio-system"
-
-  depends_on = [helm_release.istio_base]
-
-  set {
-    name  = "cni.cniBinDir"
-    value = "/home/kubernetes/bin"
-  }
-}
+# Istio CNI removed — not compatible with GKE Autopilot (requires NET_ADMIN,
+# SYS_ADMIN capabilities and hostPath write mounts which Autopilot blocks).
+# Sidecar injection works without CNI on Autopilot.
 
 resource "helm_release" "istio_ingress" {
   name       = "istio-ingressgateway"
@@ -182,10 +171,23 @@ resource "helm_release" "cert_manager" {
   version          = "1.17.1"
   namespace        = "cert-manager"
   create_namespace = true
+  timeout          = 600
 
   set {
     name  = "crds.enabled"
     value = "true"
+  }
+
+  # GKE Autopilot blocks kube-system access — use cert-manager namespace for leader election
+  set {
+    name  = "global.leaderElection.namespace"
+    value = "cert-manager"
+  }
+
+  # Disable startup API check — it times out on Autopilot while nodes provision
+  set {
+    name  = "startupapicheck.enabled"
+    value = "false"
   }
 }
 
@@ -300,11 +302,18 @@ resource "helm_release" "kargo" {
   values = [yamlencode({
     api = {
       service = { type = "ClusterIP" }
+      adminAccount = {
+        passwordHash    = var.kargo_admin_password_hash
+        tokenSigningKey = var.kargo_token_signing_key
+      }
     }
     controller = {
       argocd = {
         integrationEnabled = true
         namespace          = "argocd"
+      }
+      argoRollouts = {
+        integrationEnabled = false
       }
     }
   })]

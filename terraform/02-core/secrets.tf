@@ -65,6 +65,7 @@ resource "google_secret_manager_secret" "manual" {
     "openfga-marketplace-store-id",
     "openfga-platform-store-id",
     "verification-encryption-key",
+    "marketplace-admin-csrf-secret",
   ])
 
   secret_id = each.key

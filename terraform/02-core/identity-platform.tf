@@ -30,6 +30,10 @@ resource "google_identity_platform_config" "default" {
     "localhost",
   ]
 
+  multi_tenant {
+    allow_tenants = true
+  }
+
   sign_in {
     allow_duplicate_emails = false
 
@@ -59,7 +63,7 @@ resource "google_identity_platform_tenant" "platform" {
 # terraform import google_identity_platform_tenant.mp_internal projects/<project_id>/tenants/MP-Internal-uidfu
 resource "google_identity_platform_tenant" "mp_internal" {
   project      = var.project_id
-  display_name = "Marketplace Internal"
+  display_name = "MP-Internal"
 
   allow_password_signup = true
 
@@ -72,7 +76,7 @@ resource "google_identity_platform_tenant" "mp_internal" {
 # terraform import google_identity_platform_tenant.mp_customer projects/<project_id>/tenants/MP-Customer-cgob2
 resource "google_identity_platform_tenant" "mp_customer" {
   project      = var.project_id
-  display_name = "Marketplace Customer"
+  display_name = "MP-Customer"
 
   allow_password_signup = true
 
