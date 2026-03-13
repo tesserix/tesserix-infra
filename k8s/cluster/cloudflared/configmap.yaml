@@ -13,9 +13,7 @@ data:
     ingress:
       # Cluster tools (direct to service, bypasses Istio)
       - hostname: argocd.tesserix.app
-        service: https://argocd-server.argocd.svc.cluster.local:443
-        originRequest:
-          noTLSVerify: true
+        service: http://argocd-server.argocd.svc.cluster.local:80
       - hostname: kargo.tesserix.app
         service: https://kargo-api.kargo.svc.cluster.local:443
         originRequest:
