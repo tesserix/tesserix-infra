@@ -1,1 +1,2 @@
-# terraform init -backend-config="bucket=tesserix-tf-state" -backend-config="prefix=03-iam"
+# Backend configuration is in main.tf (prefix = "03-iam")
+# Run: terraform init -backend-config="bucket=tesserix-tf-state"

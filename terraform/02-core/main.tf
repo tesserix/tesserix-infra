@@ -4,7 +4,9 @@ terraform {
     google   = { source = "hashicorp/google", version = "~> 6.0" }
     random   = { source = "hashicorp/random", version = "~> 3.6" }
   }
-  backend "gcs" {}
+  backend "gcs" {
+    prefix = "02-core"
+  }
 }
 
 provider "google" {

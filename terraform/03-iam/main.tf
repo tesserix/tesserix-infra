@@ -3,7 +3,9 @@ terraform {
   required_providers {
     google = { source = "hashicorp/google", version = "~> 6.0" }
   }
-  backend "gcs" {}
+  backend "gcs" {
+    prefix = "03-iam"
+  }
 }
 
 provider "google" {
