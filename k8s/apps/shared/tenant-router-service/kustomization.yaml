@@ -1,0 +1,48 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: shared
+
+resources:
+  - ../../../bases/go-service
+  - external-secret.yaml
+  - configmap.yaml
+
+patches:
+  - target:
+      kind: Service
+      name: SERVICE_NAME
+    patch: |
+      - op: replace
+        path: /metadata/name
+        value: tenant-router-service
+      - op: replace
+        path: /spec/template/spec/serviceAccountName
+        value: tenant-router-service
+      - op: replace
+        path: /spec/template/spec/containers/0/envFrom/0/configMapRef/name
+        value: tenant-router-service-config
+      - op: replace
+        path: /spec/template/spec/containers/0/envFrom/1/secretRef/name
+        value: tenant-router-service-secrets
+  - target:
+      kind: ServiceAccount
+      name: SERVICE_NAME
+    patch: |
+      - op: replace
+        path: /metadata/name
+        value: tenant-router-service
+      - op: replace
+        path: /metadata/annotations/iam.gke.io~1gcp-service-account
+        value: sa-tenant-router-service@tesserix.iam.gserviceaccount.com
+  - target:
+      kind: Service
+      name: tenant-router-service
+    patch: |
+      - op: replace
+        path: /spec/template/spec/containers/0/ports/0/containerPort
+        value: 8089
+
+images:
+  - name: PLACEHOLDER
+    newName: asia-south1-docker.pkg.dev/tesserix/services/tenant-router-service
+    newTag: latest

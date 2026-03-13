@@ -1,0 +1,125 @@
+# =============================================================================
+# REUSABLE WORKFLOW: Build Go service → Push to GAR → Kargo auto-promotes
+# =============================================================================
+# Replaces _build-go.yml + _deploy-cloudrun.yml
+# No deploy step needed — Kargo watches GAR for new tags and promotes via ArgoCD.
+# =============================================================================
+name: Build & Push Go Service
+
+on:
+  workflow_call:
+    inputs:
+      service_name:
+        required: true
+        type: string
+      go_version:
+        required: false
+        type: string
+        default: "1.26"
+      run_tests:
+        required: false
+        type: boolean
+        default: true
+
+env:
+  GAR_REGISTRY: asia-south1-docker.pkg.dev
+  GAR_REPOSITORY: tesserix/services
+  IMAGE_NAME: ${{ inputs.service_name }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      security-events: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        if: inputs.run_tests
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ inputs.go_version }}
+
+      - name: Run tests
+        if: inputs.run_tests
+        env:
+          GOPRIVATE: github.com/tesserix/*
+        run: |
+          go vet ./...
+          go test -race -coverprofile=coverage.out ./...
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
+          service_account: ${{ vars.CI_SERVICE_ACCOUNT }}
+
+      - name: Configure Docker for GAR
+        run: gcloud auth configure-docker ${{ env.GAR_REGISTRY }} --quiet
+
+      - name: Extract metadata
+        id: meta
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=main-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and push
+        run: |
+          docker build \
+            --secret id=github_token,env=GITHUB_TOKEN \
+            --platform linux/amd64 \
+            -t ${{ env.GAR_REGISTRY }}/${{ env.GAR_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }} \
+            -t ${{ env.GAR_REGISTRY }}/${{ env.GAR_REPOSITORY }}/${{ env.IMAGE_NAME }}:latest \
+            .
+          docker push --all-tags ${{ env.GAR_REGISTRY }}/${{ env.GAR_REPOSITORY }}/${{ env.IMAGE_NAME }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GO_PRIVATE_TOKEN }}
+
+      - name: Security scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.GAR_REGISTRY }}/${{ env.GAR_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
+          format: sarif
+          output: trivy-results.sarif
+          severity: CRITICAL,HIGH
+          exit-code: "0"
+
+      - name: Upload scan results
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results.sarif
+
+      # Kargo auto-detects the new tag in GAR and promotes through stages.
+      # No kubectl apply, no gcloud run deploy — fully GitOps.
+
+  cleanup:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
+          service_account: ${{ vars.CI_SERVICE_ACCOUNT }}
+
+      - name: Keep only 5 recent images
+        run: |
+          gcloud artifacts docker images list \
+            ${{ env.GAR_REGISTRY }}/${{ env.GAR_REPOSITORY }}/${{ env.IMAGE_NAME }} \
+            --sort-by=~CREATE_TIME \
+            --format='value(VERSION)' \
+            | tail -n +6 \
+            | xargs -I{} gcloud artifacts docker images delete \
+                ${{ env.GAR_REGISTRY }}/${{ env.GAR_REPOSITORY }}/${{ env.IMAGE_NAME }}@{} \
+                --quiet --delete-tags 2>/dev/null || true

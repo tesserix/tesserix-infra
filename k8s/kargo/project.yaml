@@ -1,0 +1,10 @@
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Project
+metadata:
+  name: tesserix
+spec:
+  promotionPolicies:
+    - stage: staging
+      autoPromotionEnabled: true
+    - stage: production
+      autoPromotionEnabled: false

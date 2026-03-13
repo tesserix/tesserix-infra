@@ -1,0 +1,17 @@
+# =============================================================================
+# KARGO WAREHOUSE — watches Artifact Registry for new images
+# =============================================================================
+# When CI pushes a new tagged image, Kargo creates a Freight and auto-promotes
+# it to the staging stage. Production requires manual approval.
+# =============================================================================
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Warehouse
+metadata:
+  name: gar-services
+  namespace: tesserix
+spec:
+  subscriptions:
+    - image:
+        repoURL: asia-south1-docker.pkg.dev/tesserix/services
+        semverConstraint: ">=0.1.0"
+        discoveryLimit: 5

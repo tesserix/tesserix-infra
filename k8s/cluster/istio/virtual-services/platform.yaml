@@ -1,0 +1,185 @@
+# =============================================================================
+# PLATFORM ROUTING: tesserix.app
+# =============================================================================
+# Cloudflare Tunnel → istio-ingressgateway → VirtualService → Knative Service
+# All services use Knative internal URLs (svc.ns.svc.cluster.local)
+# =============================================================================
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: platform-routes
+  namespace: platform
+spec:
+  hosts:
+    - "tesserix.app"
+    - "app.tesserix.app"
+  gateways:
+    - istio-system/tesserix-gateway
+  http:
+    # tesserix-home (admin portal)
+    - match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: tesserix-home.platform.svc.cluster.local
+            port:
+              number: 80
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: auth-routes
+  namespace: platform
+spec:
+  hosts:
+    - "auth.tesserix.app"
+  gateways:
+    - istio-system/tesserix-gateway
+  http:
+    - match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: auth-bff.platform.svc.cluster.local
+            port:
+              number: 80
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: api-routes
+  namespace: shared
+spec:
+  hosts:
+    - "api.tesserix.app"
+  gateways:
+    - istio-system/tesserix-gateway
+  http:
+    # Tickets
+    - match:
+        - uri:
+            prefix: /api/v1/tickets
+      route:
+        - destination:
+            host: tickets-service.shared.svc.cluster.local
+            port:
+              number: 80
+    # Tenants
+    - match:
+        - uri:
+            prefix: /api/v1/tenants
+      route:
+        - destination:
+            host: tenant-service.shared.svc.cluster.local
+            port:
+              number: 80
+    # Notifications
+    - match:
+        - uri:
+            prefix: /api/v1/notifications
+      route:
+        - destination:
+            host: notification-service.shared.svc.cluster.local
+            port:
+              number: 80
+    # Settings
+    - match:
+        - uri:
+            prefix: /api/v1/settings
+      route:
+        - destination:
+            host: settings-service.shared.svc.cluster.local
+            port:
+              number: 80
+    # Subscriptions
+    - match:
+        - uri:
+            prefix: /api/v1/subscriptions
+      route:
+        - destination:
+            host: subscription-service.shared.svc.cluster.local
+            port:
+              number: 80
+    # Documents
+    - match:
+        - uri:
+            prefix: /api/v1/documents
+      route:
+        - destination:
+            host: document-service.shared.svc.cluster.local
+            port:
+              number: 80
+    # Locations
+    - match:
+        - uri:
+            prefix: /api/v1/locations
+      route:
+        - destination:
+            host: location-service.shared.svc.cluster.local
+            port:
+              number: 80
+    # Verification
+    - match:
+        - uri:
+            prefix: /api/v1/verifications
+      route:
+        - destination:
+            host: verification-service.shared.svc.cluster.local
+            port:
+              number: 80
+    # Analytics
+    - match:
+        - uri:
+            prefix: /api/v1/analytics
+      route:
+        - destination:
+            host: analytics-service.shared.svc.cluster.local
+            port:
+              number: 80
+    # Audit
+    - match:
+        - uri:
+            prefix: /api/v1/audit
+      route:
+        - destination:
+            host: audit-service.shared.svc.cluster.local
+            port:
+              number: 80
+    # Tenant Router
+    - match:
+        - uri:
+            prefix: /api/v1/tenant-router
+      route:
+        - destination:
+            host: tenant-router-service.shared.svc.cluster.local
+            port:
+              number: 80
+    # Feature Flags
+    - match:
+        - uri:
+            prefix: /api/v1/feature-flags
+      route:
+        - destination:
+            host: feature-flags-service.shared.svc.cluster.local
+            port:
+              number: 80
+    # QR
+    - match:
+        - uri:
+            prefix: /api/v1/qr
+      route:
+        - destination:
+            host: qr-service.shared.svc.cluster.local
+            port:
+              number: 80
+    # Status
+    - match:
+        - uri:
+            prefix: /api/v1/status
+      route:
+        - destination:
+            host: status-service.shared.svc.cluster.local
+            port:
+              number: 80

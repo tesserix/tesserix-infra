@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mp-orders-config
+data:
+  ENVIRONMENT: "production"
+  GCP_PROJECT_ID: "tesserix"
+  DB_HOST: "10.0.0.3"
+  DB_PORT: "5432"
+  DB_NAME: "mp_orders_db"
+  DB_USER: "mp_orders_user"
+  DB_SSLMODE: "require"
+  SERVICE_AUTH_MODE: "mesh"
+  OPENFGA_URL: "http://openfga.shared.svc.cluster.local"
+  INVENTORY_SERVICE_URL: "http://mp-inventory.marketplace.svc.cluster.local"
+  PAYMENTS_SERVICE_URL: "http://mp-payments.marketplace.svc.cluster.local"
+  NOTIFICATION_SERVICE_URL: "http://notification-service.shared.svc.cluster.local"

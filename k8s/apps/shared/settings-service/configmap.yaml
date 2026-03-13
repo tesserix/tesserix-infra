@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: settings-service-config
+data:
+  ENVIRONMENT: "production"
+  GCP_PROJECT_ID: "tesserix"
+  DB_HOST: "10.0.0.3"
+  DB_PORT: "5432"
+  DB_NAME: "settings_db"
+  DB_USER: "settings_user"
+  DB_SSLMODE: "require"
+  SERVICE_AUTH_MODE: "mesh"
+  OPENFGA_AUTH_MODE: "mesh"
+  OPENFGA_URL: "http://openfga.shared.svc.cluster.local"

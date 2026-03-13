@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auth-bff-config
+data:
+  ENVIRONMENT: "production"
+  GCP_PROJECT_ID: "tesserix"
+  SERVICE_AUTH_MODE: "mesh"
+  OPENFGA_AUTH_MODE: "mesh"
+  OPENFGA_URL: "http://openfga.shared.svc.cluster.local"
+  TENANT_SERVICE_URL: "http://tenant-service.shared.svc.cluster.local"

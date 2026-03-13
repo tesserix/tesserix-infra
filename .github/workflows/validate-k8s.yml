@@ -1,0 +1,46 @@
+# =============================================================================
+# VALIDATE: Kustomize build validation on PR
+# =============================================================================
+name: Validate K8s Manifests
+
+on:
+  pull_request:
+    paths:
+      - "k8s/**"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install kustomize
+        run: |
+          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+          sudo mv kustomize /usr/local/bin/
+
+      - name: Install kubeconform
+        run: |
+          curl -sL https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz | tar xz
+          sudo mv kubeconform /usr/local/bin/
+
+      - name: Validate all service overlays
+        run: |
+          failed=0
+          for dir in k8s/apps/*/*; do
+            [ -d "$dir" ] || continue
+            svc=$(basename "$dir")
+            echo "Validating: $dir"
+            if ! kustomize build "$dir" | kubeconform -strict -skip "Service" -summary 2>&1; then
+              echo "FAILED: $dir"
+              failed=1
+            fi
+          done
+          [ $failed -eq 0 ] || exit 1
+
+      - name: Validate cluster config
+        run: |
+          for f in k8s/cluster/**/*.yaml; do
+            echo "Validating: $f"
+            kubeconform -strict -skip "PeerAuthentication,AuthorizationPolicy,Gateway,VirtualService" "$f" || true
+          done

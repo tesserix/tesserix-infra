@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mp-staff-config
+data:
+  ENVIRONMENT: "production"
+  GCP_PROJECT_ID: "tesserix"
+  DB_HOST: "10.0.0.3"
+  DB_PORT: "5432"
+  DB_NAME: "mp_staff_db"
+  DB_USER: "mp_staff_user"
+  DB_SSLMODE: "require"
+  SERVICE_AUTH_MODE: "mesh"
+  OPENFGA_AUTH_MODE: "mesh"
+  OPENFGA_URL: "http://openfga.shared.svc.cluster.local"
+  DOCUMENT_SERVICE_URL: "http://document-service.shared.svc.cluster.local"

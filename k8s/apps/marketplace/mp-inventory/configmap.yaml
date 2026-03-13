@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mp-inventory-config
+data:
+  ENVIRONMENT: "production"
+  GCP_PROJECT_ID: "tesserix"
+  DB_HOST: "10.0.0.3"
+  DB_PORT: "5432"
+  DB_NAME: "mp_inventory_db"
+  DB_USER: "mp_inventory_user"
+  DB_SSLMODE: "require"
+  SERVICE_AUTH_MODE: "mesh"

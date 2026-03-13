@@ -41,7 +41,10 @@ resource "google_project_service" "apis" {
     # Storage
     "storage.googleapis.com",
 
-    # Networking (minimal — Cloud SQL private IP)
+    # Kubernetes
+    "container.googleapis.com",
+
+    # Networking
     "compute.googleapis.com",
     "servicenetworking.googleapis.com",
     "vpcaccess.googleapis.com",

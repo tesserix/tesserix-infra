@@ -36,12 +36,13 @@ endef
 $(eval $(call STACK_COMMANDS,01-foundation))
 $(eval $(call STACK_COMMANDS,02-core))
 $(eval $(call STACK_COMMANDS,03-iam))
-$(eval $(call STACK_COMMANDS,04-services))
+$(eval $(call STACK_COMMANDS,05-gke))
+$(eval $(call STACK_COMMANDS,06-k8s-bootstrap))
 
 # Deploy all stacks in order
-all: apply-01-foundation apply-02-core apply-03-iam apply-04-services
+all: apply-01-foundation apply-02-core apply-03-iam apply-05-gke apply-06-k8s-bootstrap
 
 # Init all stacks
-init-all: init-01-foundation init-02-core init-03-iam init-04-services
+init-all: init-01-foundation init-02-core init-03-iam init-05-gke init-06-k8s-bootstrap
 
 .PHONY: bootstrap all init-all

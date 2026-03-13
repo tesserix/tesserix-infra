@@ -1,16 +1,15 @@
 # =============================================================================
 # NETWORKING
 # =============================================================================
-# Minimal VPC — only for Cloud SQL private IP.
-# Cloud Run uses Google-managed networking (no VPC needed for apps).
+# Shared VPC for Cloud SQL private IP and GKE Autopilot cluster.
 #
-# Traffic patterns:
-#   Browser → Cloudflare → CF Worker → Cloud Run (HTTPS, public)
-#   Cloud Run → Cloud Run: direct HTTPS + OIDC token (Google network)
-#   Cloud Run → Cloud SQL: Auth Proxy sidecar (IAM tunnel, no VPC)
-#   Cloud Run → Pub/Sub/GCS/Secret Mgr: Google APIs (no VPC)
+# Traffic patterns (GKE):
+#   Browser → Cloudflare Tunnel → cloudflared → istio-ingressgateway → Knative
+#   Pod → Pod: Istio sidecar (mTLS, service mesh)
+#   Pod → Cloud SQL: Private IP (VPC peering, no Auth Proxy needed)
+#   Pod → Pub/Sub/GCS/Secret Mgr: Google APIs (private Google access)
 #
-# NO: VPC connector, NAT, load balancer, static IPs, firewall rules for apps
+# GKE subnet is in terraform/05-gke/ (separate lifecycle).
 # =============================================================================
 
 resource "google_compute_network" "main" {

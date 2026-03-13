@@ -1,0 +1,47 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: SERVICE_NAME
+  annotations:
+    autoscaling.knative.dev/class: kpa.autoscaling.knative.dev
+    autoscaling.knative.dev/metric: concurrency
+    autoscaling.knative.dev/target: "50"
+    autoscaling.knative.dev/minScale: "1"
+    autoscaling.knative.dev/maxScale: "5"
+spec:
+  template:
+    spec:
+      serviceAccountName: SERVICE_NAME
+      containerConcurrency: 50
+      timeoutSeconds: 300
+      containers:
+        - name: app
+          image: PLACEHOLDER
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "1"
+              memory: "512Mi"
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: NEXT_TELEMETRY_DISABLED
+              value: "1"
+          envFrom:
+            - configMapRef:
+                name: SERVICE_NAME-config
+                optional: true
+            - secretRef:
+                name: SERVICE_NAME-secrets
+                optional: true
+          startupProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 15
