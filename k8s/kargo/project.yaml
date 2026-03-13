@@ -4,7 +4,5 @@ metadata:
   name: tesserix
 spec:
   promotionPolicies:
-    - stage: staging
+    - stage: main
       autoPromotionEnabled: true
-    - stage: production
-      autoPromotionEnabled: false

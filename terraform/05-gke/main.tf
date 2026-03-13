@@ -2,7 +2,8 @@
 # GKE AUTOPILOT CLUSTER
 # =============================================================================
 # Autopilot: no node pool management, pay-per-pod, auto-security hardening.
-# Knative Serving handles scale-to-zero for all 39 services.
+# Knative Serving handles scale-to-zero for all services.
+# Single cluster, single main branch.
 # =============================================================================
 
 data "terraform_remote_state" "core" {
@@ -14,21 +15,21 @@ data "terraform_remote_state" "core" {
 }
 
 # ---------------------------------------------------------------------------
-# GKE subnet (separate from Cloud SQL subnet)
+# GKE subnet
 # ---------------------------------------------------------------------------
 resource "google_compute_subnetwork" "gke" {
-  name          = "tesserix-gke-subnet"
+  name          = "tesserix-gke"
   network       = data.terraform_remote_state.core.outputs.vpc_id
   region        = var.region
   ip_cidr_range = "10.1.0.0/20"
 
   secondary_ip_range {
-    range_name    = "gke-pods"
+    range_name    = "tesserix-gke-pods"
     ip_cidr_range = "10.4.0.0/14"
   }
 
   secondary_ip_range {
-    range_name    = "gke-services"
+    range_name    = "tesserix-gke-services"
     ip_cidr_range = "10.8.0.0/20"
   }
 
@@ -39,7 +40,7 @@ resource "google_compute_subnetwork" "gke" {
 # GKE Autopilot cluster
 # ---------------------------------------------------------------------------
 resource "google_container_cluster" "main" {
-  name     = var.cluster_name
+  name     = "tesserix"
   location = var.region
 
   enable_autopilot = true
@@ -48,8 +49,8 @@ resource "google_container_cluster" "main" {
   subnetwork = google_compute_subnetwork.gke.id
 
   ip_allocation_policy {
-    cluster_secondary_range_name  = "gke-pods"
-    services_secondary_range_name = "gke-services"
+    cluster_secondary_range_name  = "tesserix-gke-pods"
+    services_secondary_range_name = "tesserix-gke-services"
   }
 
   private_cluster_config {
@@ -88,9 +89,8 @@ resource "google_container_cluster" "main" {
   deletion_protection = true
 
   resource_labels = {
-    environment = "production"
-    managed-by  = "terraform"
-    platform    = "tesserix"
+    managed-by = "terraform"
+    platform   = "tesserix"
   }
 }
 

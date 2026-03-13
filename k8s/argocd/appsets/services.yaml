@@ -1,9 +1,13 @@
 # =============================================================================
-# APPLICATIONSET — auto-discovers services from k8s/apps/ directories
+# APPLICATIONSETS — auto-discovers services from k8s/apps/ directories
 # =============================================================================
+# Single set per namespace group, all watching main branch.
 # Adding a new service = adding a directory in k8s/apps/<namespace>/<service>.
-# No ArgoCD config changes needed.
 # =============================================================================
+
+# ---------------------------------------------------------------------------
+# Platform services
+# ---------------------------------------------------------------------------
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -36,6 +40,9 @@ spec:
         syncOptions:
           - ServerSideApply=true
 ---
+# ---------------------------------------------------------------------------
+# Shared services
+# ---------------------------------------------------------------------------
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -73,6 +80,9 @@ spec:
         syncOptions:
           - ServerSideApply=true
 ---
+# ---------------------------------------------------------------------------
+# Marketplace services
+# ---------------------------------------------------------------------------
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:

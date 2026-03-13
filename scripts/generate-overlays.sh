@@ -60,20 +60,13 @@ base_for() {
 db_config() {
   local svc="$1"
   local db_name db_user
+  # Consistent naming: {prefix}_db / {prefix}_user (underscores only)
   case "$svc" in
-    audit-service) db_name="audit_db"; db_user="audit_user" ;;
-    tenant-service) db_name="tenants_db"; db_user="tenants_user" ;;
-    notification-service) db_name="notifications_db"; db_user="notifications_user" ;;
-    tickets-service) db_name="tickets_db"; db_user="tickets_user" ;;
-    subscription-service) db_name="subscriptions_db"; db_user="subscriptions_user" ;;
-    document-service) db_name="documents_db"; db_user="documents_user" ;;
-    location-service) db_name="location_db"; db_user="location_user" ;;
-    verification-service) db_name="verifications_db"; db_user="verifications_user" ;;
-    settings-service) db_name="settings_db"; db_user="settings_user" ;;
     tenant-router-service) db_name="tenant_router_db"; db_user="tenant_router_user" ;;
-    analytics-service) db_name="analytics_db"; db_user="analytics_user" ;;
     marketplace-onboarding) db_name="mp_onboarding_db"; db_user="mp_onboarding_user" ;;
+    mp-gift-cards) db_name="mp_gift_cards_db"; db_user="mp_gift_cards_user" ;;
     mp-*) db_name="mp_${svc#mp-}_db"; db_user="mp_${svc#mp-}_user" ;;
+    *-service) local prefix="${svc%-service}"; prefix="${prefix//-/_}"; db_name="${prefix}_db"; db_user="${prefix}_user" ;;
     *) db_name="${svc//-/_}_db"; db_user="${svc//-/_}_user" ;;
   esac
   echo "$db_name|$db_user"

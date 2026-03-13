@@ -11,19 +11,8 @@ variable "region" {
   default = "asia-south1"
 }
 
-variable "cluster_name" {
-  type    = string
-  default = "tesserix-prod"
-}
-
 variable "state_bucket" {
   type = string
-}
-
-# VPC reference (from 02-core remote state)
-variable "vpc_name" {
-  type    = string
-  default = "tesserix-vpc"
 }
 
 # Master authorized networks (CI + developer access)

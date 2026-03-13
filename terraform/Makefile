@@ -15,8 +15,7 @@ bootstrap:
 define STACK_COMMANDS
 init-$(1):
 	cd $(1) && terraform init \
-		-backend-config="bucket=$(STATE_BUCKET)" \
-		-backend-config="prefix=$(1)"
+		-backend-config="bucket=$(STATE_BUCKET)"
 
 plan-$(1):
 	cd $(1) && terraform plan \

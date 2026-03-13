@@ -67,7 +67,7 @@ services:
     lang: go
     appGroup: platform
     hasDb: true
-    migration: gorm-auto
+    migration: golang-migrate
     usesGoShared: true
     sidecar: cloud-sql-proxy
     invokes: [openfga]
@@ -84,14 +84,14 @@ services:
     lang: go
     appGroup: platform
     hasDb: true
-    migration: none
+    migration: golang-migrate
     usesGoShared: true
     sidecar: cloud-sql-proxy
     invokes: [openfga]
     publishesEvents: false
     pubsubTopic: ""
     secrets:
-      - tenants-db-password
+      - tenant-db-password
       - openfga-preshared-key
     storageApps: []
 
@@ -101,14 +101,14 @@ services:
     lang: go
     appGroup: platform
     hasDb: true
-    migration: none
+    migration: golang-migrate
     usesGoShared: true
     sidecar: cloud-sql-proxy
     invokes: []
     publishesEvents: false
     pubsubTopic: ""
     secrets:
-      - notifications-db-password
+      - notification-db-password
       - sendgrid-api-key
     storageApps: []
 
@@ -143,7 +143,7 @@ services:
     publishesEvents: true
     pubsubTopic: tesserix-subscription-events
     secrets:
-      - subscriptions-db-password
+      - subscription-db-password
       - stripe-secret-key
       - stripe-webhook-secret
     storageApps: []
@@ -187,14 +187,14 @@ services:
     lang: go
     appGroup: platform
     hasDb: true
-    migration: none
+    migration: golang-migrate
     usesGoShared: true
     sidecar: cloud-sql-proxy
     invokes: []
     publishesEvents: false
     pubsubTopic: ""
     secrets:
-      - documents-db-password
+      - document-db-password
     storageApps: [platform]
 
   location-service:
@@ -203,7 +203,7 @@ services:
     lang: go
     appGroup: platform
     hasDb: true
-    migration: gorm-auto
+    migration: golang-migrate
     usesGoShared: true
     sidecar: cloud-sql-proxy
     invokes: [openfga]
@@ -220,14 +220,14 @@ services:
     lang: go
     appGroup: platform
     hasDb: true
-    migration: none
+    migration: golang-migrate
     usesGoShared: true
     sidecar: cloud-sql-proxy
     invokes: [notification-service]
     publishesEvents: true
     pubsubTopic: tesserix-notification-events
     secrets:
-      - verifications-db-password
+      - verification-db-password
       - shared-internal-service-key
       - verification-encryption-key
     storageApps: []
@@ -238,7 +238,7 @@ services:
     lang: go
     appGroup: platform
     hasDb: true
-    migration: none
+    migration: none  # Uses FDW to query other DBs, no owned tables
     usesGoShared: true
     sidecar: cloud-sql-proxy
     invokes: []
@@ -300,14 +300,14 @@ services:
     lang: go
     appGroup: platform
     hasDb: true
-    migration: gorm-auto
+    migration: golang-migrate
     usesGoShared: false
     sidecar: cloud-sql-proxy
     invokes: [notification-service, audit-service]
     publishesEvents: true
     pubsubTopic: ""
     secrets:
-      - tenant_router-db-password
+      - tenant-router-db-password
       - shared-internal-service-key
       - cloudflare-api-token
     storageApps: []
@@ -318,11 +318,12 @@ services:
 
   marketplace-onboarding:
     displayName: Marketplace Onboarding
+    repo: marketplace-onboarding
     type: frontend
     lang: nextjs
     appGroup: mark8ly
     hasDb: true
-    migration: none
+    migration: drizzle
     usesGoShared: false
     sidecar: cloud-sql-proxy
     invokes: [auth-bff, tenant-service, location-service, verification-service, tenant-router-service]
@@ -335,6 +336,7 @@ services:
 
   marketplace-admin:
     displayName: Marketplace Admin
+    repo: marketplace-admin
     type: frontend
     lang: nextjs
     appGroup: mark8ly
@@ -351,6 +353,7 @@ services:
 
   mp-storefront:
     displayName: Marketplace Storefront
+    repo: marketplace-storefront
     type: frontend
     lang: nextjs
     appGroup: mark8ly
@@ -366,11 +369,12 @@ services:
 
   mp-products:
     displayName: Products Service
+    repo: marketplace-products-service
     type: backend
     lang: go
     appGroup: mark8ly
     hasDb: true
-    migration: none
+    migration: golang-migrate
     usesGoShared: true
     sidecar: cloud-sql-proxy
     invokes: [openfga]
@@ -383,11 +387,12 @@ services:
 
   mp-orders:
     displayName: Orders Service
+    repo: marketplace-orders-service
     type: backend
     lang: go
     appGroup: mark8ly
     hasDb: true
-    migration: none
+    migration: golang-migrate
     usesGoShared: true
     sidecar: cloud-sql-proxy
     invokes: [openfga, mp-inventory, mp-payments, notification-service]
@@ -400,11 +405,12 @@ services:
 
   mp-payments:
     displayName: Payments Service
+    repo: marketplace-payment-service
     type: backend
     lang: go
     appGroup: mark8ly
     hasDb: true
-    migration: none
+    migration: golang-migrate
     usesGoShared: true
     sidecar: cloud-sql-proxy
     invokes: [openfga]
@@ -418,11 +424,12 @@ services:
 
   mp-inventory:
     displayName: Inventory Service
+    repo: marketplace-inventory-service
     type: backend
     lang: go
     appGroup: mark8ly
     hasDb: true
-    migration: none
+    migration: golang-migrate
     usesGoShared: true
     sidecar: cloud-sql-proxy
     invokes: []
@@ -434,11 +441,12 @@ services:
 
   mp-shipping:
     displayName: Shipping Service
+    repo: marketplace-shipping-service
     type: backend
     lang: go
     appGroup: mark8ly
     hasDb: true
-    migration: none
+    migration: golang-migrate
     usesGoShared: true
     sidecar: cloud-sql-proxy
     invokes: []
@@ -450,6 +458,7 @@ services:
 
   mp-categories:
     displayName: Categories Service
+    repo: marketplace-categories-service
     type: backend
     lang: go
     appGroup: mark8ly
@@ -467,11 +476,12 @@ services:
 
   mp-coupons:
     displayName: Coupons Service
+    repo: marketplace-coupons-service
     type: backend
     lang: go
     appGroup: mark8ly
     hasDb: true
-    migration: none
+    migration: golang-migrate
     usesGoShared: true
     sidecar: cloud-sql-proxy
     invokes: []
@@ -483,11 +493,12 @@ services:
 
   mp-reviews:
     displayName: Reviews Service
+    repo: marketplace-reviews-service
     type: backend
     lang: go
     appGroup: mark8ly
     hasDb: true
-    migration: none
+    migration: golang-migrate
     usesGoShared: true
     sidecar: cloud-sql-proxy
     invokes: [openfga]
@@ -500,11 +511,12 @@ services:
 
   mp-vendors:
     displayName: Vendors Service
+    repo: marketplace-vendor-service
     type: backend
     lang: go
     appGroup: mark8ly
     hasDb: true
-    migration: none
+    migration: golang-migrate
     usesGoShared: true
     sidecar: cloud-sql-proxy
     invokes: [openfga]
@@ -517,11 +529,12 @@ services:
 
   mp-customers:
     displayName: Customers Service
+    repo: marketplace-customers-service
     type: backend
     lang: go
     appGroup: mark8ly
     hasDb: true
-    migration: none
+    migration: golang-migrate
     usesGoShared: true
     sidecar: cloud-sql-proxy
     invokes: [openfga]
@@ -534,11 +547,12 @@ services:
 
   mp-staff:
     displayName: Staff Service
+    repo: marketplace-staff-service
     type: backend
     lang: go
     appGroup: mark8ly
     hasDb: true
-    migration: none
+    migration: golang-migrate
     usesGoShared: true
     sidecar: cloud-sql-proxy
     invokes: [openfga, document-service]
@@ -551,11 +565,12 @@ services:
 
   mp-content:
     displayName: Content Service
+    repo: marketplace-content-service
     type: backend
     lang: go
     appGroup: mark8ly
     hasDb: true
-    migration: none
+    migration: golang-migrate
     usesGoShared: true
     sidecar: cloud-sql-proxy
     invokes: [mp-staff]
@@ -567,11 +582,12 @@ services:
 
   mp-approvals:
     displayName: Approvals Service
+    repo: marketplace-approval-service
     type: backend
     lang: go
     appGroup: mark8ly
     hasDb: true
-    migration: none
+    migration: golang-migrate
     usesGoShared: true
     sidecar: cloud-sql-proxy
     invokes: [mp-staff]
@@ -583,27 +599,29 @@ services:
 
   mp-gift-cards:
     displayName: Gift Cards Service
+    repo: marketplace-gift-cards-service
     type: backend
     lang: go
     appGroup: mark8ly
     hasDb: true
-    migration: none
+    migration: golang-migrate
     usesGoShared: true
     sidecar: cloud-sql-proxy
     invokes: [mp-staff]
     publishesEvents: true
     pubsubTopic: mp-gift-card-events
     secrets:
-      - mp_gift-cards-db-password
+      - mp_gift_cards-db-password
     storageApps: []
 
   mp-marketing:
     displayName: Marketing Service
+    repo: marketplace-marketing-service
     type: backend
     lang: go
     appGroup: mark8ly
     hasDb: true
-    migration: none
+    migration: golang-migrate
     usesGoShared: true
     sidecar: cloud-sql-proxy
     invokes: [mp-staff, notification-service]
@@ -615,11 +633,12 @@ services:
 
   mp-connector:
     displayName: Marketplace Connector Service
+    repo: marketplace-marketplace-connector-service
     type: backend
     lang: go
     appGroup: mark8ly
     hasDb: true
-    migration: none
+    migration: golang-migrate
     usesGoShared: true
     sidecar: cloud-sql-proxy
     invokes: [mp-products, mp-orders, mp-inventory]
@@ -631,11 +650,12 @@ services:
 
   mp-tax:
     displayName: Tax Service
+    repo: marketplace-tax-service
     type: backend
     lang: go
     appGroup: mark8ly
     hasDb: true
-    migration: none
+    migration: golang-migrate
     usesGoShared: true
     sidecar: cloud-sql-proxy
     invokes: []
