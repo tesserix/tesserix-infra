@@ -1,7 +1,7 @@
 # =============================================================================
 # K8S BOOTSTRAP — Install cluster addons via Helm
 # =============================================================================
-# Order: Istio base → Istiod → Knative → cert-manager → ESO → ArgoCD → Kargo
+# Order: Istio base → Istiod → Knative → cert-manager → ESO → ArgoCD
 # After this stack runs, ArgoCD takes over GitOps for all app workloads.
 # =============================================================================
 
@@ -11,7 +11,7 @@
 resource "kubectl_manifest" "namespaces" {
   for_each = toset([
     "platform", "shared", "marketplace", "ingress", "monitoring",
-    "knative-serving", "external-secrets", "kargo",
+    "knative-serving", "external-secrets",
   ])
 
   yaml_body = yamlencode({
@@ -185,7 +185,7 @@ resource "kubectl_manifest" "knative_serving" {
 }
 
 # ---------------------------------------------------------------------------
-# 3. cert-manager (Kargo dependency + TLS)
+# 3. cert-manager (TLS)
 # ---------------------------------------------------------------------------
 resource "helm_release" "cert_manager" {
   name             = "cert-manager"
@@ -373,60 +373,7 @@ resource "helm_release" "argocd" {
 }
 
 # ---------------------------------------------------------------------------
-# 6. Kargo
+# 6. Kargo — REMOVED (not configured, freeing cluster resources)
 # ---------------------------------------------------------------------------
-resource "helm_release" "kargo" {
-  name             = "kargo"
-  repository       = "oci://ghcr.io/akuity/kargo-charts"
-  chart            = "kargo"
-  version          = "1.3.1"
-  namespace        = "kargo"
-  create_namespace = false
-
-  depends_on = [kubectl_manifest.namespaces, helm_release.cert_manager]
-
-  values = [yamlencode({
-    api = {
-      service = { type = "ClusterIP" }
-      adminAccount = {
-        passwordHash    = var.kargo_admin_password_hash
-        tokenSigningKey = var.kargo_token_signing_key
-      }
-      resources = {
-        requests = { cpu = "25m", memory = "64Mi" }
-        limits   = { memory = "256Mi" }
-      }
-    }
-    controller = {
-      argocd = {
-        integrationEnabled = true
-        namespace          = "argocd"
-      }
-      argoRollouts = {
-        integrationEnabled = false
-      }
-      resources = {
-        requests = { cpu = "25m", memory = "64Mi" }
-        limits   = { memory = "256Mi" }
-      }
-    }
-    managementController = {
-      resources = {
-        requests = { cpu = "10m", memory = "32Mi" }
-        limits   = { memory = "128Mi" }
-      }
-    }
-    webhooksServer = {
-      resources = {
-        requests = { cpu = "10m", memory = "32Mi" }
-        limits   = { memory = "128Mi" }
-      }
-    }
-    garbageCollector = {
-      resources = {
-        requests = { cpu = "10m", memory = "32Mi" }
-        limits   = { memory = "128Mi" }
-      }
-    }
-  })]
-}
+# Re-add when Kargo promotion pipeline is ready to configure.
+# Requires: kargo_admin_password_hash, kargo_token_signing_key variables.
