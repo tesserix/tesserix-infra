@@ -24,6 +24,9 @@ patches:
       - op: replace
         path: /spec/template/spec/containers/0/envFrom/1/secretRef/name
         value: auth-bff-secrets
+      - op: replace
+        path: /spec/template/metadata/annotations/autoscaling.knative.dev~1minScale
+        value: "2"
   - target:
       kind: ServiceAccount
       name: SERVICE_NAME

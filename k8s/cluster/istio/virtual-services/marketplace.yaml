@@ -268,7 +268,7 @@ metadata:
   namespace: marketplace
 spec:
   hosts:
-    - "admin.mark8ly.com"
+    - "*-admin.mark8ly.com"
   gateways:
     - istio-system/tesserix-gateway
   http:

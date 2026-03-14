@@ -16,3 +16,4 @@ spec:
         - "*.tesserix.app"
         - "mark8ly.com"
         - "*.mark8ly.com"
+        - "*-admin.mark8ly.com"
