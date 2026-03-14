@@ -2,14 +2,15 @@ apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
   name: SERVICE_NAME
-  annotations:
-    autoscaling.knative.dev/class: kpa.autoscaling.knative.dev
-    autoscaling.knative.dev/metric: concurrency
-    autoscaling.knative.dev/target: "50"
-    autoscaling.knative.dev/minScale: "1"
-    autoscaling.knative.dev/maxScale: "5"
 spec:
   template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/class: kpa.autoscaling.knative.dev
+        autoscaling.knative.dev/metric: concurrency
+        autoscaling.knative.dev/target: "50"
+        autoscaling.knative.dev/minScale: "1"
+        autoscaling.knative.dev/maxScale: "5"
     spec:
       serviceAccountName: SERVICE_NAME
       containerConcurrency: 50
