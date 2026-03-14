@@ -275,6 +275,7 @@ spec:
     - match:
         - uri:
             prefix: /
+      timeout: 30s
       route:
         - destination:
             host: marketplace-admin.marketplace.svc.cluster.local
@@ -295,6 +296,7 @@ spec:
     - match:
         - uri:
             prefix: /
+      timeout: 30s
       route:
         - destination:
             host: marketplace-onboarding.marketplace.svc.cluster.local

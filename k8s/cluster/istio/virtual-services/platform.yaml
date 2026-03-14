@@ -20,6 +20,7 @@ spec:
     - match:
         - uri:
             prefix: /
+      timeout: 30s
       route:
         - destination:
             host: tesserix-home.platform.svc.cluster.local
@@ -40,6 +41,11 @@ spec:
     - match:
         - uri:
             prefix: /
+      timeout: 15s
+      retries:
+        attempts: 2
+        perTryTimeout: 5s
+        retryOn: reset,connect-failure
       route:
         - destination:
             host: auth-bff.platform.svc.cluster.local
@@ -61,6 +67,11 @@ spec:
     - match:
         - uri:
             prefix: /api/v1/tickets
+      timeout: 15s
+      retries:
+        attempts: 3
+        perTryTimeout: 5s
+        retryOn: 5xx,reset,connect-failure
       route:
         - destination:
             host: tickets-service.shared.svc.cluster.local
@@ -70,6 +81,11 @@ spec:
     - match:
         - uri:
             prefix: /api/v1/tenants
+      timeout: 15s
+      retries:
+        attempts: 3
+        perTryTimeout: 5s
+        retryOn: 5xx,reset,connect-failure
       route:
         - destination:
             host: tenant-service.shared.svc.cluster.local
@@ -79,6 +95,11 @@ spec:
     - match:
         - uri:
             prefix: /api/v1/notifications
+      timeout: 15s
+      retries:
+        attempts: 3
+        perTryTimeout: 5s
+        retryOn: 5xx,reset,connect-failure
       route:
         - destination:
             host: notification-service.shared.svc.cluster.local
@@ -88,6 +109,11 @@ spec:
     - match:
         - uri:
             prefix: /api/v1/settings
+      timeout: 15s
+      retries:
+        attempts: 3
+        perTryTimeout: 5s
+        retryOn: 5xx,reset,connect-failure
       route:
         - destination:
             host: settings-service.shared.svc.cluster.local
@@ -97,6 +123,11 @@ spec:
     - match:
         - uri:
             prefix: /api/v1/subscriptions
+      timeout: 15s
+      retries:
+        attempts: 3
+        perTryTimeout: 5s
+        retryOn: 5xx,reset,connect-failure
       route:
         - destination:
             host: subscription-service.shared.svc.cluster.local
@@ -106,6 +137,11 @@ spec:
     - match:
         - uri:
             prefix: /api/v1/documents
+      timeout: 15s
+      retries:
+        attempts: 3
+        perTryTimeout: 5s
+        retryOn: 5xx,reset,connect-failure
       route:
         - destination:
             host: document-service.shared.svc.cluster.local
@@ -115,6 +151,11 @@ spec:
     - match:
         - uri:
             prefix: /api/v1/locations
+      timeout: 15s
+      retries:
+        attempts: 3
+        perTryTimeout: 5s
+        retryOn: 5xx,reset,connect-failure
       route:
         - destination:
             host: location-service.shared.svc.cluster.local
@@ -124,6 +165,11 @@ spec:
     - match:
         - uri:
             prefix: /api/v1/verifications
+      timeout: 15s
+      retries:
+        attempts: 3
+        perTryTimeout: 5s
+        retryOn: 5xx,reset,connect-failure
       route:
         - destination:
             host: verification-service.shared.svc.cluster.local
@@ -133,6 +179,11 @@ spec:
     - match:
         - uri:
             prefix: /api/v1/analytics
+      timeout: 15s
+      retries:
+        attempts: 3
+        perTryTimeout: 5s
+        retryOn: 5xx,reset,connect-failure
       route:
         - destination:
             host: analytics-service.shared.svc.cluster.local
@@ -142,6 +193,11 @@ spec:
     - match:
         - uri:
             prefix: /api/v1/audit
+      timeout: 15s
+      retries:
+        attempts: 3
+        perTryTimeout: 5s
+        retryOn: 5xx,reset,connect-failure
       route:
         - destination:
             host: audit-service.shared.svc.cluster.local
@@ -151,6 +207,11 @@ spec:
     - match:
         - uri:
             prefix: /api/v1/tenant-router
+      timeout: 15s
+      retries:
+        attempts: 3
+        perTryTimeout: 5s
+        retryOn: 5xx,reset,connect-failure
       route:
         - destination:
             host: tenant-router-service.shared.svc.cluster.local
@@ -160,6 +221,11 @@ spec:
     - match:
         - uri:
             prefix: /api/v1/feature-flags
+      timeout: 15s
+      retries:
+        attempts: 3
+        perTryTimeout: 5s
+        retryOn: 5xx,reset,connect-failure
       route:
         - destination:
             host: feature-flags-service.shared.svc.cluster.local
@@ -169,6 +235,11 @@ spec:
     - match:
         - uri:
             prefix: /api/v1/qr
+      timeout: 15s
+      retries:
+        attempts: 3
+        perTryTimeout: 5s
+        retryOn: 5xx,reset,connect-failure
       route:
         - destination:
             host: qr-service.shared.svc.cluster.local
@@ -178,6 +249,11 @@ spec:
     - match:
         - uri:
             prefix: /api/v1/status
+      timeout: 15s
+      retries:
+        attempts: 3
+        perTryTimeout: 5s
+        retryOn: 5xx,reset,connect-failure
       route:
         - destination:
             host: status-service.shared.svc.cluster.local
