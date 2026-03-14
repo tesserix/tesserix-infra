@@ -142,7 +142,8 @@ resource "kubectl_manifest" "knative_serving" {
       }
       deployments = [
         {
-          name = "activator"
+          name     = "activator"
+          replicas = 2
           resources = [
             {
               container = "activator"
@@ -150,10 +151,6 @@ resource "kubectl_manifest" "knative_serving" {
               limits    = { memory = "256Mi" }
             }
           ]
-          replicas = {
-            min = 1
-            max = 3
-          }
         }
       ]
       config = {
