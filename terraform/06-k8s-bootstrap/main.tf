@@ -140,6 +140,22 @@ resource "kubectl_manifest" "knative_serving" {
       ingress = {
         istio = { enabled = true }
       }
+      deployments = [
+        {
+          name = "activator"
+          resources = [
+            {
+              container = "activator"
+              requests  = { cpu = "100m", memory = "128Mi" }
+              limits    = { memory = "256Mi" }
+            }
+          ]
+          replicas = {
+            min = 1
+            max = 3
+          }
+        }
+      ]
       config = {
         network = {
           "ingress-class" = "istio.ingress.networking.knative.dev"
