@@ -33,9 +33,9 @@ patches:
         value: tenant-service
       - op: replace
         path: /metadata/annotations/iam.gke.io~1gcp-service-account
-        value: sa-tenant-service@tesserix.iam.gserviceaccount.com
+        value: sa-tenant-service@tesserix-app.iam.gserviceaccount.com
 
 images:
   - name: PLACEHOLDER
-    newName: asia-south1-docker.pkg.dev/tesserix/services/tenant-service
+    newName: asia-south1-docker.pkg.dev/tesserix-app/services/tenant-service
     newTag: latest

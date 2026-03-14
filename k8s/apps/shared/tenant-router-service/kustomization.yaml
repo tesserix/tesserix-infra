@@ -33,7 +33,7 @@ patches:
         value: tenant-router-service
       - op: replace
         path: /metadata/annotations/iam.gke.io~1gcp-service-account
-        value: sa-tenant-router-service@tesserix.iam.gserviceaccount.com
+        value: sa-tenant-router-service@tesserix-app.iam.gserviceaccount.com
   - target:
       kind: Service
       name: tenant-router-service
@@ -44,5 +44,5 @@ patches:
 
 images:
   - name: PLACEHOLDER
-    newName: asia-south1-docker.pkg.dev/tesserix/services/tenant-router-service
+    newName: asia-south1-docker.pkg.dev/tesserix-app/services/tenant-router-service
     newTag: latest

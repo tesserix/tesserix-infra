@@ -33,9 +33,9 @@ patches:
         value: mp-gift-cards
       - op: replace
         path: /metadata/annotations/iam.gke.io~1gcp-service-account
-        value: sa-mp-gift-cards@tesserix.iam.gserviceaccount.com
+        value: sa-mp-gift-cards@tesserix-app.iam.gserviceaccount.com
 
 images:
   - name: PLACEHOLDER
-    newName: asia-south1-docker.pkg.dev/tesserix/services/mp-gift-cards
+    newName: asia-south1-docker.pkg.dev/tesserix-app/services/mp-gift-cards
     newTag: latest

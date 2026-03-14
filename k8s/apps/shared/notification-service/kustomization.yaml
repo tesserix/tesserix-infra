@@ -33,9 +33,9 @@ patches:
         value: notification-service
       - op: replace
         path: /metadata/annotations/iam.gke.io~1gcp-service-account
-        value: sa-notification-service@tesserix.iam.gserviceaccount.com
+        value: sa-notification-service@tesserix-app.iam.gserviceaccount.com
 
 images:
   - name: PLACEHOLDER
-    newName: asia-south1-docker.pkg.dev/tesserix/services/notification-service
+    newName: asia-south1-docker.pkg.dev/tesserix-app/services/notification-service
     newTag: latest

@@ -33,9 +33,9 @@ patches:
         value: mp-marketing
       - op: replace
         path: /metadata/annotations/iam.gke.io~1gcp-service-account
-        value: sa-mp-marketing@tesserix.iam.gserviceaccount.com
+        value: sa-mp-marketing@tesserix-app.iam.gserviceaccount.com
 
 images:
   - name: PLACEHOLDER
-    newName: asia-south1-docker.pkg.dev/tesserix/services/mp-marketing
+    newName: asia-south1-docker.pkg.dev/tesserix-app/services/mp-marketing
     newTag: latest

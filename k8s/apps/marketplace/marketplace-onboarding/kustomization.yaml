@@ -33,9 +33,9 @@ patches:
         value: marketplace-onboarding
       - op: replace
         path: /metadata/annotations/iam.gke.io~1gcp-service-account
-        value: sa-marketplace-onboarding@tesserix.iam.gserviceaccount.com
+        value: sa-marketplace-onboarding@tesserix-app.iam.gserviceaccount.com
 
 images:
   - name: PLACEHOLDER
-    newName: asia-south1-docker.pkg.dev/tesserix/services/marketplace-onboarding
+    newName: asia-south1-docker.pkg.dev/tesserix-app/services/marketplace-onboarding
     newTag: latest

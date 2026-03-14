@@ -33,9 +33,9 @@ patches:
         value: audit-service
       - op: replace
         path: /metadata/annotations/iam.gke.io~1gcp-service-account
-        value: sa-audit-service@tesserix.iam.gserviceaccount.com
+        value: sa-audit-service@tesserix-app.iam.gserviceaccount.com
 
 images:
   - name: PLACEHOLDER
-    newName: asia-south1-docker.pkg.dev/tesserix/services/audit-service
+    newName: asia-south1-docker.pkg.dev/tesserix-app/services/audit-service
     newTag: latest

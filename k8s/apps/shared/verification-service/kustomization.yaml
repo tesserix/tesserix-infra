@@ -33,9 +33,9 @@ patches:
         value: verification-service
       - op: replace
         path: /metadata/annotations/iam.gke.io~1gcp-service-account
-        value: sa-verification-service@tesserix.iam.gserviceaccount.com
+        value: sa-verification-service@tesserix-app.iam.gserviceaccount.com
 
 images:
   - name: PLACEHOLDER
-    newName: asia-south1-docker.pkg.dev/tesserix/services/verification-service
+    newName: asia-south1-docker.pkg.dev/tesserix-app/services/verification-service
     newTag: latest

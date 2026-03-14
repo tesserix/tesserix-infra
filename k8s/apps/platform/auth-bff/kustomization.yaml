@@ -33,9 +33,9 @@ patches:
         value: auth-bff
       - op: replace
         path: /metadata/annotations/iam.gke.io~1gcp-service-account
-        value: sa-auth-bff@tesserix.iam.gserviceaccount.com
+        value: sa-auth-bff@tesserix-app.iam.gserviceaccount.com
 
 images:
   - name: PLACEHOLDER
-    newName: asia-south1-docker.pkg.dev/tesserix/services/auth-bff
+    newName: asia-south1-docker.pkg.dev/tesserix-app/services/auth-bff
     newTag: latest

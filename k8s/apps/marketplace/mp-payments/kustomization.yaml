@@ -33,9 +33,9 @@ patches:
         value: mp-payments
       - op: replace
         path: /metadata/annotations/iam.gke.io~1gcp-service-account
-        value: sa-mp-payments@tesserix.iam.gserviceaccount.com
+        value: sa-mp-payments@tesserix-app.iam.gserviceaccount.com
 
 images:
   - name: PLACEHOLDER
-    newName: asia-south1-docker.pkg.dev/tesserix/services/mp-payments
+    newName: asia-south1-docker.pkg.dev/tesserix-app/services/mp-payments
     newTag: latest

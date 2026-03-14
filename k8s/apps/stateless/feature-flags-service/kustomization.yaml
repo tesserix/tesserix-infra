@@ -33,9 +33,9 @@ patches:
         value: feature-flags-service
       - op: replace
         path: /metadata/annotations/iam.gke.io~1gcp-service-account
-        value: sa-feature-flags-service@tesserix.iam.gserviceaccount.com
+        value: sa-feature-flags-service@tesserix-app.iam.gserviceaccount.com
 
 images:
   - name: PLACEHOLDER
-    newName: asia-south1-docker.pkg.dev/tesserix/services/feature-flags-service
+    newName: asia-south1-docker.pkg.dev/tesserix-app/services/feature-flags-service
     newTag: latest

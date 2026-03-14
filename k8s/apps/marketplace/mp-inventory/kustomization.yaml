@@ -33,7 +33,7 @@ patches:
         value: mp-inventory
       - op: replace
         path: /metadata/annotations/iam.gke.io~1gcp-service-account
-        value: sa-mp-inventory@tesserix.iam.gserviceaccount.com
+        value: sa-mp-inventory@tesserix-app.iam.gserviceaccount.com
   - target:
       kind: Service
       name: mp-inventory
@@ -44,5 +44,5 @@ patches:
 
 images:
   - name: PLACEHOLDER
-    newName: asia-south1-docker.pkg.dev/tesserix/services/mp-inventory
+    newName: asia-south1-docker.pkg.dev/tesserix-app/services/mp-inventory
     newTag: latest

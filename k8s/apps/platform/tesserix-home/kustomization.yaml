@@ -33,9 +33,9 @@ patches:
         value: tesserix-home
       - op: replace
         path: /metadata/annotations/iam.gke.io~1gcp-service-account
-        value: sa-tesserix-home@tesserix.iam.gserviceaccount.com
+        value: sa-tesserix-home@tesserix-app.iam.gserviceaccount.com
 
 images:
   - name: PLACEHOLDER
-    newName: asia-south1-docker.pkg.dev/tesserix/services/tesserix-home
+    newName: asia-south1-docker.pkg.dev/tesserix-app/services/tesserix-home
     newTag: latest

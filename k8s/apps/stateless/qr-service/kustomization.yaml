@@ -32,9 +32,9 @@ patches:
         value: qr-service
       - op: replace
         path: /metadata/annotations/iam.gke.io~1gcp-service-account
-        value: sa-qr-service@tesserix.iam.gserviceaccount.com
+        value: sa-qr-service@tesserix-app.iam.gserviceaccount.com
 
 images:
   - name: PLACEHOLDER
-    newName: asia-south1-docker.pkg.dev/tesserix/services/qr-service
+    newName: asia-south1-docker.pkg.dev/tesserix-app/services/qr-service
     newTag: latest

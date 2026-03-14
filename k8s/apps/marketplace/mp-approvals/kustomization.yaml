@@ -33,7 +33,7 @@ patches:
         value: mp-approvals
       - op: replace
         path: /metadata/annotations/iam.gke.io~1gcp-service-account
-        value: sa-mp-approvals@tesserix.iam.gserviceaccount.com
+        value: sa-mp-approvals@tesserix-app.iam.gserviceaccount.com
   - target:
       kind: Service
       name: mp-approvals
@@ -44,5 +44,5 @@ patches:
 
 images:
   - name: PLACEHOLDER
-    newName: asia-south1-docker.pkg.dev/tesserix/services/mp-approvals
+    newName: asia-south1-docker.pkg.dev/tesserix-app/services/mp-approvals
     newTag: latest

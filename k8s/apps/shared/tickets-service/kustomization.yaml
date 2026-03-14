@@ -33,9 +33,9 @@ patches:
         value: tickets-service
       - op: replace
         path: /metadata/annotations/iam.gke.io~1gcp-service-account
-        value: sa-tickets-service@tesserix.iam.gserviceaccount.com
+        value: sa-tickets-service@tesserix-app.iam.gserviceaccount.com
 
 images:
   - name: PLACEHOLDER
-    newName: asia-south1-docker.pkg.dev/tesserix/services/tickets-service
+    newName: asia-south1-docker.pkg.dev/tesserix-app/services/tickets-service
     newTag: latest

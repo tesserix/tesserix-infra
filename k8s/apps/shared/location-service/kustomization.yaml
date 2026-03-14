@@ -33,9 +33,9 @@ patches:
         value: location-service
       - op: replace
         path: /metadata/annotations/iam.gke.io~1gcp-service-account
-        value: sa-location-service@tesserix.iam.gserviceaccount.com
+        value: sa-location-service@tesserix-app.iam.gserviceaccount.com
 
 images:
   - name: PLACEHOLDER
-    newName: asia-south1-docker.pkg.dev/tesserix/services/location-service
+    newName: asia-south1-docker.pkg.dev/tesserix-app/services/location-service
     newTag: latest

@@ -8,10 +8,27 @@ resource "google_project_iam_member" "github_ci" {
     "roles/artifactregistry.writer",
     "roles/run.developer",
     "roles/iam.serviceAccountUser",
+    "roles/cloudsql.client",
   ])
   project = var.project_id
   role    = each.value
   member  = "serviceAccount:${google_service_account.github_ci.email}"
+}
+
+# --- CI/CD Secret Access (DB passwords for migrations) ---
+resource "google_secret_manager_secret_iam_member" "ci_migration_secrets" {
+  for_each = toset([
+    for pair in flatten([
+      for svc_name, cfg in local.all_services : [
+        for secret_name in cfg.secrets : secret_name
+        if length(regexall("db-password", secret_name)) > 0
+      ]
+    ]) : pair
+  ])
+
+  secret_id = each.value
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.github_ci.email}"
 }
 
 # --- Cloud SQL Client (services with databases) ---

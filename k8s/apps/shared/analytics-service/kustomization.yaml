@@ -33,7 +33,7 @@ patches:
         value: analytics-service
       - op: replace
         path: /metadata/annotations/iam.gke.io~1gcp-service-account
-        value: sa-analytics-service@tesserix.iam.gserviceaccount.com
+        value: sa-analytics-service@tesserix-app.iam.gserviceaccount.com
   - target:
       kind: Service
       name: analytics-service
@@ -44,5 +44,5 @@ patches:
 
 images:
   - name: PLACEHOLDER
-    newName: asia-south1-docker.pkg.dev/tesserix/services/analytics-service
+    newName: asia-south1-docker.pkg.dev/tesserix-app/services/analytics-service
     newTag: latest

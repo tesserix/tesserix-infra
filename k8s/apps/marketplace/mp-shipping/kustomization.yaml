@@ -33,9 +33,9 @@ patches:
         value: mp-shipping
       - op: replace
         path: /metadata/annotations/iam.gke.io~1gcp-service-account
-        value: sa-mp-shipping@tesserix.iam.gserviceaccount.com
+        value: sa-mp-shipping@tesserix-app.iam.gserviceaccount.com
 
 images:
   - name: PLACEHOLDER
-    newName: asia-south1-docker.pkg.dev/tesserix/services/mp-shipping
+    newName: asia-south1-docker.pkg.dev/tesserix-app/services/mp-shipping
     newTag: latest

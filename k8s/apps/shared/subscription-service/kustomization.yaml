@@ -33,9 +33,9 @@ patches:
         value: subscription-service
       - op: replace
         path: /metadata/annotations/iam.gke.io~1gcp-service-account
-        value: sa-subscription-service@tesserix.iam.gserviceaccount.com
+        value: sa-subscription-service@tesserix-app.iam.gserviceaccount.com
 
 images:
   - name: PLACEHOLDER
-    newName: asia-south1-docker.pkg.dev/tesserix/services/subscription-service
+    newName: asia-south1-docker.pkg.dev/tesserix-app/services/subscription-service
     newTag: latest

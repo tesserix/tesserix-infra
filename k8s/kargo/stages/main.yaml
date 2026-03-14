@@ -18,5 +18,5 @@ spec:
         writeBranch: main
         kustomize:
           images:
-            - image: asia-south1-docker.pkg.dev/tesserix/services
+            - image: asia-south1-docker.pkg.dev/tesserix-app/services
               path: k8s/apps

@@ -33,9 +33,9 @@ patches:
         value: mp-tax
       - op: replace
         path: /metadata/annotations/iam.gke.io~1gcp-service-account
-        value: sa-mp-tax@tesserix.iam.gserviceaccount.com
+        value: sa-mp-tax@tesserix-app.iam.gserviceaccount.com
 
 images:
   - name: PLACEHOLDER
-    newName: asia-south1-docker.pkg.dev/tesserix/services/mp-tax
+    newName: asia-south1-docker.pkg.dev/tesserix-app/services/mp-tax
     newTag: latest

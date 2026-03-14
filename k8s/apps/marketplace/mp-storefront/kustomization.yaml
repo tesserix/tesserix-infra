@@ -32,9 +32,9 @@ patches:
         value: mp-storefront
       - op: replace
         path: /metadata/annotations/iam.gke.io~1gcp-service-account
-        value: sa-mp-storefront@tesserix.iam.gserviceaccount.com
+        value: sa-mp-storefront@tesserix-app.iam.gserviceaccount.com
 
 images:
   - name: PLACEHOLDER
-    newName: asia-south1-docker.pkg.dev/tesserix/services/mp-storefront
+    newName: asia-south1-docker.pkg.dev/tesserix-app/services/mp-storefront
     newTag: latest

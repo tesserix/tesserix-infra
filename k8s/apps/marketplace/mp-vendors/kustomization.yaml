@@ -33,9 +33,9 @@ patches:
         value: mp-vendors
       - op: replace
         path: /metadata/annotations/iam.gke.io~1gcp-service-account
-        value: sa-mp-vendors@tesserix.iam.gserviceaccount.com
+        value: sa-mp-vendors@tesserix-app.iam.gserviceaccount.com
 
 images:
   - name: PLACEHOLDER
-    newName: asia-south1-docker.pkg.dev/tesserix/services/mp-vendors
+    newName: asia-south1-docker.pkg.dev/tesserix-app/services/mp-vendors
     newTag: latest

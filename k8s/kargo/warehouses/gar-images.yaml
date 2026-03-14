@@ -12,6 +12,6 @@ metadata:
 spec:
   subscriptions:
     - image:
-        repoURL: asia-south1-docker.pkg.dev/tesserix/services
+        repoURL: asia-south1-docker.pkg.dev/tesserix-app/services
         semverConstraint: ">=0.1.0"
         discoveryLimit: 5

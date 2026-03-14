@@ -33,9 +33,9 @@ patches:
         value: mp-categories
       - op: replace
         path: /metadata/annotations/iam.gke.io~1gcp-service-account
-        value: sa-mp-categories@tesserix.iam.gserviceaccount.com
+        value: sa-mp-categories@tesserix-app.iam.gserviceaccount.com
 
 images:
   - name: PLACEHOLDER
-    newName: asia-south1-docker.pkg.dev/tesserix/services/mp-categories
+    newName: asia-south1-docker.pkg.dev/tesserix-app/services/mp-categories
     newTag: latest

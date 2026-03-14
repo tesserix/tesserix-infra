@@ -33,9 +33,9 @@ patches:
         value: settings-service
       - op: replace
         path: /metadata/annotations/iam.gke.io~1gcp-service-account
-        value: sa-settings-service@tesserix.iam.gserviceaccount.com
+        value: sa-settings-service@tesserix-app.iam.gserviceaccount.com
 
 images:
   - name: PLACEHOLDER
-    newName: asia-south1-docker.pkg.dev/tesserix/services/settings-service
+    newName: asia-south1-docker.pkg.dev/tesserix-app/services/settings-service
     newTag: latest
