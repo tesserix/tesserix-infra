@@ -147,7 +147,7 @@ resource "kubectl_manifest" "knative_serving" {
           resources = [
             {
               container = "activator"
-              requests  = { cpu = "100m", memory = "128Mi" }
+              requests  = { cpu = "500m", memory = "128Mi" }
               limits    = { memory = "256Mi" }
             }
           ]
