@@ -152,7 +152,13 @@ resource "kubectl_manifest" "knative_serving" {
           "max-revision-timeout" = "600s"
         }
         deployment = {
-          "progress-deadline" = "120s"
+          "progress-deadline"                      = "600s"
+          "queue-sidecar-cpu-request"               = "25m"
+          "queue-sidecar-cpu-limit"                  = "200m"
+          "queue-sidecar-memory-request"             = "50Mi"
+          "queue-sidecar-memory-limit"               = "200Mi"
+          "queue-sidecar-ephemeral-storage-request"  = "50Mi"
+          "queue-sidecar-ephemeral-storage-limit"    = "200Mi"
         }
       }
     }
