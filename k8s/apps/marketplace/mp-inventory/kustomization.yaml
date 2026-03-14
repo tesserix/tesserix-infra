@@ -41,6 +41,15 @@ patches:
       - op: replace
         path: /spec/template/spec/containers/0/ports/0/containerPort
         value: 8088
+      - op: replace
+        path: /spec/template/spec/containers/0/startupProbe/httpGet/port
+        value: 8088
+      - op: replace
+        path: /spec/template/spec/containers/0/readinessProbe/httpGet/port
+        value: 8088
+      - op: replace
+        path: /spec/template/spec/containers/0/livenessProbe/httpGet/port
+        value: 8088
 
 images:
   - name: PLACEHOLDER
