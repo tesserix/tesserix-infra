@@ -21,11 +21,11 @@ spec:
             - containerPort: 8080
           resources:
             requests:
-              cpu: "250m"
-              memory: "512Mi"
+              cpu: "100m"
+              memory: "256Mi"
             limits:
-              cpu: "1"
-              memory: "1Gi"
+              cpu: "500m"
+              memory: "512Mi"
           env:
             - name: OPENFGA_DATASTORE_ENGINE
               value: "postgres"
