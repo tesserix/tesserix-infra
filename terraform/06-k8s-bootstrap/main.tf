@@ -58,6 +58,10 @@ resource "helm_release" "istiod" {
       env = {
         PILOT_ENABLE_WORKLOAD_ENTRY_AUTOREGISTRATION = "true"
       }
+      resources = {
+        requests = { cpu = "100m", memory = "256Mi" }
+        limits   = { memory = "512Mi" }
+      }
     }
     meshConfig = {
       accessLogFile = "/dev/stdout"
@@ -195,6 +199,25 @@ resource "helm_release" "cert_manager" {
     name  = "startupapicheck.enabled"
     value = "false"
   }
+
+  values = [yamlencode({
+    resources = {
+      requests = { cpu = "25m", memory = "64Mi" }
+      limits   = { memory = "256Mi" }
+    }
+    cainjector = {
+      resources = {
+        requests = { cpu = "10m", memory = "32Mi" }
+        limits   = { memory = "128Mi" }
+      }
+    }
+    webhook = {
+      resources = {
+        requests = { cpu = "10m", memory = "32Mi" }
+        limits   = { memory = "128Mi" }
+      }
+    }
+  })]
 }
 
 # ---------------------------------------------------------------------------
@@ -214,6 +237,22 @@ resource "helm_release" "external_secrets" {
     serviceAccount = {
       annotations = {
         "iam.gke.io/gcp-service-account" = "sa-eso-controller@${var.project_id}.iam.gserviceaccount.com"
+      }
+    }
+    resources = {
+      requests = { cpu = "25m", memory = "64Mi" }
+      limits   = { memory = "256Mi" }
+    }
+    webhook = {
+      resources = {
+        requests = { cpu = "25m", memory = "64Mi" }
+        limits   = { memory = "256Mi" }
+      }
+    }
+    certController = {
+      resources = {
+        requests = { cpu = "10m", memory = "32Mi" }
+        limits   = { memory = "128Mi" }
       }
     }
   })]
@@ -263,6 +302,10 @@ resource "helm_release" "argocd" {
   values = [yamlencode({
     server = {
       service = { type = "ClusterIP" }
+      resources = {
+        requests = { cpu = "25m", memory = "64Mi" }
+        limits   = { memory = "256Mi" }
+      }
     }
     configs = {
       params = {
@@ -279,13 +322,37 @@ resource "helm_release" "argocd" {
     }
     controller = {
       resources = {
-        requests = { cpu = "100m", memory = "256Mi" }
+        requests = { cpu = "50m", memory = "256Mi" }
         limits   = { memory = "512Mi" }
       }
     }
     repoServer = {
       resources = {
-        requests = { cpu = "50m", memory = "128Mi" }
+        requests = { cpu = "25m", memory = "64Mi" }
+        limits   = { memory = "256Mi" }
+      }
+    }
+    dex = {
+      resources = {
+        requests = { cpu = "10m", memory = "32Mi" }
+        limits   = { memory = "128Mi" }
+      }
+    }
+    redis = {
+      resources = {
+        requests = { cpu = "10m", memory = "16Mi" }
+        limits   = { memory = "128Mi" }
+      }
+    }
+    notifications = {
+      resources = {
+        requests = { cpu = "10m", memory = "32Mi" }
+        limits   = { memory = "128Mi" }
+      }
+    }
+    applicationSet = {
+      resources = {
+        requests = { cpu = "10m", memory = "64Mi" }
         limits   = { memory = "256Mi" }
       }
     }
@@ -312,6 +379,10 @@ resource "helm_release" "kargo" {
         passwordHash    = var.kargo_admin_password_hash
         tokenSigningKey = var.kargo_token_signing_key
       }
+      resources = {
+        requests = { cpu = "25m", memory = "64Mi" }
+        limits   = { memory = "256Mi" }
+      }
     }
     controller = {
       argocd = {
@@ -320,6 +391,28 @@ resource "helm_release" "kargo" {
       }
       argoRollouts = {
         integrationEnabled = false
+      }
+      resources = {
+        requests = { cpu = "25m", memory = "64Mi" }
+        limits   = { memory = "256Mi" }
+      }
+    }
+    managementController = {
+      resources = {
+        requests = { cpu = "10m", memory = "32Mi" }
+        limits   = { memory = "128Mi" }
+      }
+    }
+    webhooksServer = {
+      resources = {
+        requests = { cpu = "10m", memory = "32Mi" }
+        limits   = { memory = "128Mi" }
+      }
+    }
+    garbageCollector = {
+      resources = {
+        requests = { cpu = "10m", memory = "32Mi" }
+        limits   = { memory = "128Mi" }
       }
     }
   })]

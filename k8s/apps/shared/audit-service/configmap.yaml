@@ -13,3 +13,5 @@ data:
   SERVICE_AUTH_MODE: "mesh"
   OPENFGA_AUTH_MODE: "mesh"
   OPENFGA_URL: "http://openfga.shared.svc.cluster.local"
+  TENANT_REGISTRY_URL: "http://tenant-service.shared.svc.cluster.local"
+  OPENFGA_PLATFORM_STORE_ID: "01KKNR6JKJ90D779FW92ESJ54P"

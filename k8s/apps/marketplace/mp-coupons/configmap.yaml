@@ -11,3 +11,6 @@ data:
   DB_USER: "mp_coupons_user"
   DB_SSLMODE: "require"
   SERVICE_AUTH_MODE: "mesh"
+  OPENFGA_URL: "http://openfga.shared.svc.cluster.local"
+  OPENFGA_AUTH_MODE: "mesh"
+  OPENFGA_MARKETPLACE_STORE_ID: "01KKNQENND85P9T01YCBCTRDHV"

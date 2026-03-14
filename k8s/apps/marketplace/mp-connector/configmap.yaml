@@ -14,3 +14,6 @@ data:
   PRODUCTS_SERVICE_URL: "http://mp-products.marketplace.svc.cluster.local"
   ORDERS_SERVICE_URL: "http://mp-orders.marketplace.svc.cluster.local"
   INVENTORY_SERVICE_URL: "http://mp-inventory.marketplace.svc.cluster.local"
+  OPENFGA_URL: "http://openfga.shared.svc.cluster.local"
+  OPENFGA_AUTH_MODE: "mesh"
+  OPENFGA_MARKETPLACE_STORE_ID: "01KKNQENND85P9T01YCBCTRDHV"

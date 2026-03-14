@@ -15,3 +15,4 @@ data:
   TENANT_SERVICE_URL: "http://tenant-service.shared.svc.cluster.local"
   NOTIFICATION_SERVICE_URL: "http://notification-service.shared.svc.cluster.local"
   DOCUMENT_SERVICE_URL: "http://document-service.shared.svc.cluster.local"
+  OPENFGA_PLATFORM_STORE_ID: "01KKNR6JKJ90D779FW92ESJ54P"

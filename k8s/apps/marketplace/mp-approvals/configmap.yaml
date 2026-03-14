@@ -12,3 +12,6 @@ data:
   DB_SSLMODE: "require"
   SERVICE_AUTH_MODE: "mesh"
   STAFF_SERVICE_URL: "http://mp-staff.marketplace.svc.cluster.local"
+  OPENFGA_URL: "http://openfga.shared.svc.cluster.local"
+  OPENFGA_AUTH_MODE: "mesh"
+  OPENFGA_MARKETPLACE_STORE_ID: "01KKNQENND85P9T01YCBCTRDHV"
