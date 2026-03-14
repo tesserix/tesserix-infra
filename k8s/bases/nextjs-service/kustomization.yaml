@@ -5,6 +5,8 @@ resources:
   - kservice.yaml
   - service-account.yaml
 
-commonLabels:
-  app.kubernetes.io/part-of: tesserix
-  app.kubernetes.io/managed-by: kustomize
+labels:
+  - pairs:
+      app.kubernetes.io/part-of: tesserix
+      app.kubernetes.io/managed-by: kustomize
+    includeSelectors: false

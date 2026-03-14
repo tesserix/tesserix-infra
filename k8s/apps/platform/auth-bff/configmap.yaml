@@ -4,7 +4,7 @@ metadata:
   name: auth-bff-config
 data:
   ENVIRONMENT: "production"
-  GCP_PROJECT_ID: "tesserix"
+  GCP_PROJECT_ID: "tesserix-app"
   SERVICE_AUTH_MODE: "mesh"
   OPENFGA_AUTH_MODE: "mesh"
   OPENFGA_URL: "http://openfga.shared.svc.cluster.local"

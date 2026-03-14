@@ -4,7 +4,7 @@ metadata:
   name: marketplace-admin-config
 data:
   NODE_ENV: "production"
-  GCP_PROJECT_ID: "tesserix"
+  GCP_PROJECT_ID: "tesserix-app"
   AUTH_BFF_URL: "http://auth-bff.platform.svc.cluster.local"
   TENANT_SERVICE_URL: "http://tenant-service.shared.svc.cluster.local"
   TENANT_ROUTER_SERVICE_URL: "http://tenant-router-service.shared.svc.cluster.local"

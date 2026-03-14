@@ -6,6 +6,8 @@ resources:
   - service-account.yaml
   - external-secret.yaml
 
-commonLabels:
-  app.kubernetes.io/part-of: tesserix
-  app.kubernetes.io/component: authorization
+labels:
+  - pairs:
+      app.kubernetes.io/part-of: tesserix
+      app.kubernetes.io/component: authorization
+    includeSelectors: false

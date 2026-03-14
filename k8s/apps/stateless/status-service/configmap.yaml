@@ -4,5 +4,5 @@ metadata:
   name: status-service-config
 data:
   ENVIRONMENT: "production"
-  GCP_PROJECT_ID: "tesserix"
+  GCP_PROJECT_ID: "tesserix-app"
   SERVICE_AUTH_MODE: "mesh"

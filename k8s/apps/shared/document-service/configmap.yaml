@@ -4,7 +4,7 @@ metadata:
   name: document-service-config
 data:
   ENVIRONMENT: "production"
-  GCP_PROJECT_ID: "tesserix"
+  GCP_PROJECT_ID: "tesserix-app"
   DB_HOST: "10.0.0.3"
   DB_PORT: "5432"
   DB_NAME: "document_db"

@@ -4,7 +4,7 @@ metadata:
   name: mp-storefront-config
 data:
   NODE_ENV: "production"
-  GCP_PROJECT_ID: "tesserix"
+  GCP_PROJECT_ID: "tesserix-app"
   PRODUCTS_SERVICE_URL: "http://mp-products.marketplace.svc.cluster.local"
   CATEGORIES_SERVICE_URL: "http://mp-categories.marketplace.svc.cluster.local"
   REVIEWS_SERVICE_URL: "http://mp-reviews.marketplace.svc.cluster.local"
