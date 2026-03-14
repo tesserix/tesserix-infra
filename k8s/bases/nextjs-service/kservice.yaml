@@ -14,7 +14,7 @@ spec:
     spec:
       serviceAccountName: SERVICE_NAME
       containerConcurrency: 50
-      timeoutSeconds: 300
+      timeoutSeconds: 60
       containers:
         - name: app
           image: PLACEHOLDER
@@ -46,3 +46,15 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 5
             failureThreshold: 15
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            failureThreshold: 3
