@@ -3,21 +3,21 @@ kind: Namespace
 metadata:
   name: platform
   labels:
-    istio-injection: enabled
+    istio-injection: disabled
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: shared
   labels:
-    istio-injection: enabled
+    istio-injection: disabled
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: marketplace
   labels:
-    istio-injection: enabled
+    istio-injection: disabled
 ---
 apiVersion: v1
 kind: Namespace
