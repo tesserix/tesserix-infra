@@ -23,7 +23,7 @@ on:
 
 env:
   GAR_REGISTRY: asia-south1-docker.pkg.dev
-  GAR_REPOSITORY: tesserix/services
+  GAR_REPOSITORY: tesserix-app/services
   IMAGE_NAME: ${{ inputs.service_name }}
 
 jobs:

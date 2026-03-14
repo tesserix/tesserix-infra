@@ -12,7 +12,7 @@ ORG="tesserix"
 
 # Update these after Terraform creates the resources
 WIF_PROVIDER="projects/1095627480948/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
-CI_SERVICE_ACCOUNT="github-ci@tesserix-app.iam.gserviceaccount.com"
+CI_SERVICE_ACCOUNT="sa-github-ci@tesserix-app.iam.gserviceaccount.com"
 
 REPOS=(
   auth-bff
