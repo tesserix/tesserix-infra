@@ -9,3 +9,4 @@ data:
   OPENFGA_AUTH_MODE: "mesh"
   OPENFGA_URL: "http://openfga.shared.svc.cluster.local"
   TENANT_SERVICE_URL: "http://tenant-service.shared.svc.cluster.local"
+  PLATFORM_ALLOWED_EMAILS: "mahesh.sangawar@gmail.com"
