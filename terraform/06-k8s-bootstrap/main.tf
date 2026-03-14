@@ -74,7 +74,7 @@ resource "helm_release" "istiod" {
       proxy = {
         autoInject = "enabled"
         resources = {
-          requests = { cpu = "10m", memory = "40Mi" }
+          requests = { cpu = "10m", memory = "20Mi" }
           limits   = { memory = "256Mi" }
         }
       }
@@ -172,7 +172,7 @@ resource "kubectl_manifest" "knative_serving" {
           "progress-deadline"                      = "600s"
           "queue-sidecar-cpu-request"               = "25m"
           "queue-sidecar-cpu-limit"                  = "200m"
-          "queue-sidecar-memory-request"             = "50Mi"
+          "queue-sidecar-memory-request"             = "25Mi"
           "queue-sidecar-memory-limit"               = "200Mi"
           "queue-sidecar-ephemeral-storage-request"  = "50Mi"
           "queue-sidecar-ephemeral-storage-limit"    = "200Mi"
