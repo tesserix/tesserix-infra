@@ -290,7 +290,6 @@ metadata:
 spec:
   hosts:
     - "mark8ly.com"
-    - "onboarding.mark8ly.com"
   gateways:
     - istio-system/tesserix-gateway
   http:
